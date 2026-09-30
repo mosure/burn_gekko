@@ -1,0 +1,63 @@
+[workspace]
+members = ["crates/burn_vjepa", "crates/burn_gekko_data", "crates/burn_gekko_train", "crates/burn_gekko_eval", "crates/burn_gekko_report"]
+exclude = ["tools/zeroverse_capture"]
+resolver = "2"
+
+[package]
+name = "burn_gekko"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98"
+license = "MIT OR Apache-2.0"
+description = "Sparse-view latent completion and multi-view fusion models in Burn"
+repository = "https://github.com/mosure/burn_gekko"
+homepage = "https://github.com/mosure/burn_gekko"
+readme = "README.md"
+keywords = ["burn", "vision", "multi-view", "deep-learning"]
+categories = ["science", "computer-vision"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE-*", "/Cargo.toml"]
+
+[features]
+default = ["ndarray"]
+ndarray = ["burn/ndarray", "burn_vjepa/ndarray"]
+cuda = ["burn/cuda", "burn/fusion", "burn_vjepa/cuda"]
+wgpu = ["burn/wgpu", "burn/fusion", "burn_vjepa/wgpu"]
+
+[dependencies]
+anyhow = "1"
+burn = { version = "=0.21.0", default-features = false, features = ["std", "autodiff"] }
+burn_vjepa = { version = "0.1.0", path = "crates/burn_vjepa", default-features = false }
+rand = "0.9"
+rand_chacha = "0.9"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+safetensors = "0.7"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0
+
+[profile.release]
+debug = 0
+
+[profile.pilot]
+inherits = "release"
+opt-level = 2
+debug = 0
+
+[[test]]
+name = "model_contracts"
+required-features = ["ndarray"]
+
+[[test]]
+name = "rgb_upload"
+required-features = ["ndarray"]
+
+[[test]]
+name = "spatial_record"
+required-features = ["ndarray"]

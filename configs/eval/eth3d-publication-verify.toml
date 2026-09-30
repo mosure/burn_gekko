@@ -1,0 +1,11 @@
+benchmark = "eth3d"
+dataset = ".data/benchmarks/eth3d"
+predictions = ".data/pilot-07/fusion-audit/eth3d-export/route-balanced-continue.jsonl"
+provenance = ".data/pilot-07/fusion-audit/eth3d-export/route-balanced-continue-provenance.json"
+checkpoint_sha256 = "61ecd81f7d9c4094ff1fa120e761176301db14e4a22e056cc966bf8616a81bf6"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+geometry_sha256 = "23382999b5ba85e6dfb5e9fbbb396ef094814b467386df9e74cedea36e746ff3"
+predictions_sha256 = "a91420aefd718665404d76736c4c013d37ffbff5c094d01036a52395299aaf8c"
+evaluation_use = "held_out"
+output = ".data/pilot-07/native-study/eth3d-route-balanced-visuals.json"
+methods = ["fused_decoder", "conditional_decoder", "reciprocal_log_probability"]

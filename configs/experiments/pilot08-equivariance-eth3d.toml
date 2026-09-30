@@ -1,0 +1,14 @@
+images = ".data/benchmarks/eth3d/images.json"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+selection_record = ".data/pilot-08/eth3d-selection.toml"
+selection_sha256 = "a15f745510db2bf5accd86a8f9481b1e0a348d92b586496562cce183d0177f09"
+max_seconds = 430
+evaluation_use = "development"
+spatial_layer = 6
+self_conditioned_readouts = true
+focused_spatial_readouts = true
+
+[[models]]
+name = "equivariance"
+checkpoint = ".data/runs/pilot-08-equivariance/final"
+model_sha256 = "02b8027b41d951c60afb39fc606b210ecb44e3dec4b9d2a1d53a9ddee5a62244"

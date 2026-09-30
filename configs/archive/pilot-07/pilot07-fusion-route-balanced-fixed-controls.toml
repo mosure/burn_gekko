@@ -1,0 +1,295 @@
+output = ".data/pilot-07/fusion-audit/route-balanced-fixed-controls.json"
+
+[exports]
+continued = ".data/pilot-07/fusion-audit/route-balanced-export/continued.jsonl"
+spatial-l06 = ".data/pilot-07/fusion-audit/route-balanced-export/spatial-l06.jsonl"
+route-balanced-control = ".data/pilot-07/fusion-audit/route-balanced-export/route-balanced-control.jsonl"
+route-balanced-l06 = ".data/pilot-07/fusion-audit/route-balanced-export/route-balanced-l06.jsonl"
+
+[[comparisons]]
+name = "teacher_spatial-l06_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "spatial-l06/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_centered_teacher"
+first = "continued/centered_teacher"
+second = "spatial-l06/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "spatial-l06/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "spatial-l06/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "spatial-l06/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "spatial-l06/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "spatial-l06/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "spatial-l06/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "route-balanced-control/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_centered_teacher"
+first = "continued/centered_teacher"
+second = "route-balanced-control/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "route-balanced-control/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "route-balanced-control/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "route-balanced-control/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "route-balanced-control/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "route-balanced-control/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-control_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "route-balanced-control/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "route-balanced-l06/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_centered_teacher"
+first = "continued/centered_teacher"
+second = "route-balanced-l06/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "route-balanced-l06/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "route-balanced-l06/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "route-balanced-l06/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "route-balanced-l06/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "route-balanced-l06/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "teacher_route-balanced-l06_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "route-balanced-l06/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-control_student_encoder"
+first = "spatial-l06/student_encoder"
+second = "route-balanced-control/student_encoder"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-control_centered_student"
+first = "spatial-l06/centered_student"
+second = "route-balanced-control/centered_student"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-control_conditional_student"
+first = "spatial-l06/conditional_student"
+second = "route-balanced-control/conditional_student"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-control_conditional_centered_student"
+first = "spatial-l06/conditional_centered_student"
+second = "route-balanced-control/conditional_centered_student"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-control_student_l06_raw"
+first = "spatial-l06/student_l06_raw"
+second = "route-balanced-control/student_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-control_student_l06_raw_conditional"
+first = "spatial-l06/student_l06_raw_conditional"
+second = "route-balanced-control/student_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-control_student_l06_centered"
+first = "spatial-l06/student_l06_centered"
+second = "route-balanced-control/student_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-control_student_l06_centered_conditional"
+first = "spatial-l06/student_l06_centered_conditional"
+second = "route-balanced-control/student_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-l06_student_encoder"
+first = "spatial-l06/student_encoder"
+second = "route-balanced-l06/student_encoder"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-l06_centered_student"
+first = "spatial-l06/centered_student"
+second = "route-balanced-l06/centered_student"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-l06_conditional_student"
+first = "spatial-l06/conditional_student"
+second = "route-balanced-l06/conditional_student"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-l06_conditional_centered_student"
+first = "spatial-l06/conditional_centered_student"
+second = "route-balanced-l06/conditional_centered_student"
+identical = false
+
+[[comparisons]]
+name = "student_route-balanced-l06_student_l06_raw"
+first = "spatial-l06/student_l06_raw"
+second = "route-balanced-l06/student_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-l06_student_l06_raw_conditional"
+first = "spatial-l06/student_l06_raw_conditional"
+second = "route-balanced-l06/student_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-l06_student_l06_centered"
+first = "spatial-l06/student_l06_centered"
+second = "route-balanced-l06/student_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "student_route-balanced-l06_student_l06_centered_conditional"
+first = "spatial-l06/student_l06_centered_conditional"
+second = "route-balanced-l06/student_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "matched_student_student_encoder"
+first = "route-balanced-control/student_encoder"
+second = "route-balanced-l06/student_encoder"
+identical = true
+
+[[comparisons]]
+name = "matched_student_centered_student"
+first = "route-balanced-control/centered_student"
+second = "route-balanced-l06/centered_student"
+identical = true
+
+[[comparisons]]
+name = "matched_student_conditional_student"
+first = "route-balanced-control/conditional_student"
+second = "route-balanced-l06/conditional_student"
+identical = true
+
+[[comparisons]]
+name = "matched_student_conditional_centered_student"
+first = "route-balanced-control/conditional_centered_student"
+second = "route-balanced-l06/conditional_centered_student"
+identical = true
+
+[[comparisons]]
+name = "matched_student_student_l06_raw"
+first = "route-balanced-control/student_l06_raw"
+second = "route-balanced-l06/student_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "matched_student_student_l06_raw_conditional"
+first = "route-balanced-control/student_l06_raw_conditional"
+second = "route-balanced-l06/student_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "matched_student_student_l06_centered"
+first = "route-balanced-control/student_l06_centered"
+second = "route-balanced-l06/student_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "matched_student_student_l06_centered_conditional"
+first = "route-balanced-control/student_l06_centered_conditional"
+second = "route-balanced-l06/student_l06_centered_conditional"
+identical = true

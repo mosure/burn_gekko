@@ -1,0 +1,77 @@
+name: Rust workspace
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_BUILD_JOBS: 2
+  CARGO_PROFILE_DEV_DEBUG: 0
+  CARGO_PROFILE_TEST_DEBUG: 0
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: cpu
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python3 tools/interop/verify_encoder_import.py
+      # Preserve the audited encoder import byte-for-byte; its local wrappers are linted below.
+      - run: cargo fmt -p burn_gekko -p burn_gekko_data -p burn_gekko_train -p burn_gekko_eval -p burn_gekko_report --check
+      - run: rustfmt --edition 2024 --check crates/burn_vjepa/src/provenance.rs
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: cargo test --workspace --locked
+      - run: cargo doc --workspace --no-deps --locked
+        env:
+          RUSTDOCFLAGS: -D warnings
+  packages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: packages
+      - run: cargo publish --workspace --locked --dry-run
+  cuda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: cuda
+      - run: cargo clippy -p burn_gekko_train --all-targets --features cuda --locked -- -D warnings
+      - run: cargo check --workspace --all-features --locked
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tools/zeroverse_capture
+          shared-key: capture
+      - run: sudo apt-get update && sudo apt-get install -y libasound2-dev libudev-dev pkg-config
+      - run: cargo fmt --manifest-path tools/zeroverse_capture/Cargo.toml --check
+      - run: cargo clippy --manifest-path tools/zeroverse_capture/Cargo.toml --all-targets --locked -- -D warnings

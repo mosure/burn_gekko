@@ -1,0 +1,59 @@
+study = ".data/pilot-03"
+selected = "main-candidate"
+baseline = "main-baseline"
+overfit_run = ".data/runs/pilot-03-overfit"
+status = "2026-09-28 UTC • partial reconstruction improvement; coherent detail and co-visibility remain inadequate"
+findings = ["Updated to published bevy_zeroverse 0.23.0 and bevy_zeroverse_burn 0.6.0. A fresh 512/32/32-room, 256-pixel comparison trained both models for 9,000 updates on the same workstation.", "The candidate reduces held-out test RGB MSE by 27.7% versus the matched semantic-only baseline (0.003941 versus 0.005452). Validation edge cosine rises from 0.017 to 0.111; test export edge cosine is 0.105. Thin structures and textures remain severely smoothed.", "Correct references reduce RGB MSE by 24.3% versus unrelated rooms, with an unchanged monocular branch. However, the cross-view advantage over the monocular content objective is only 0.48%, and pooled co-visibility AUROC is 0.529. Reference sensitivity is not proof of coherent geometric matching.", "A real MAE context mismatch was corrected. Standalone RGB now predicts its own patch statistics, and panels composite only visible input pixels. Official encoder weight/CPU parity and ground-truth RGB warping argue against a gross encoder-loading or RGB/geometry alignment error."]
+design = ["Screen: five fresh decoder runs, each 5,000 updates, batch eight, 128 training rooms, 16 validation rooms, 256-wide four-layer decoder. All use seed 29, 75% masking and two references. The normalized oracle display is excluded from standalone RGB model selection.", "The calibrated screen reached RGB MSE 0.004595 and edge cosine 0.0372, versus semantic-only raw RGB 0.006162 and 0.00784. RI AUROC was 0.5153, below the amended 0.53 gate. The original RGB/edge gate passed; full co-visibility qualification did not.", "Protocol deviation: calibrated advances as a reconstruction diagnostic despite failing the amended RI gate. This was recorded before the main run; it is an exploratory follow-on, not a qualified screen winner. The fresh main cache provides a separate held-out evaluation.", "Main: semantic-only raw RGB with absolute positions versus semantic-plus-RGB, rotary positions, normalized content and learned statistics. Both use the corrected MAE context, width 384, depth six, six heads, batch 16, 512 training rooms and 9,000 updates. The candidate adds projection/head parameters, so parameter counts are not identical.", "Both terminal checkpoints are fixed in advance. Final validation and test each use all 96 target views. Unrelated references are a post-training intervention with geometric labels held fixed. No fitting or model selection follows test outcomes."]
+quality_assessment = "Visual inspection shows better room colors and broad contours, but incomplete shelves, chairs, thin legs and high-frequency floor texture. On 16 predetermined test exports, predicted edge energy averages only 6.3% of target energy. This is a partial reconstruction gain. Co-visibility and coherent cross-view completion remain inadequate."
+sizing_note = "The width-384/eight-head batch-eight cold-start benchmark hit its 190-second limit before completing a step. A width-384/six-head batch-16 benchmark completed, with 123.1 warm examples/s and 14.7 GiB peak process VRAM. It sized the 9,000-update comparison; interrupted and cold-start time remain in the cumulative ledger."
+limitations = ["One optimizer seed, one resolution, one fixed evaluation mask and a small synthetic test sample. No real-data transfer or pretrained Gekko quality claim. Sparse references, mixed precision and end-to-end encoder training remain unqualified.", "Main recipe changes are bundled. The study does not isolate rotary attention, appearance features, patch calibration, capacity or the MAE correction as a unique explanation for the outcome.", "48 Rust tests and strict Clippy checks pass locally. Image export metrics are independently recomputed in NumPy. CPU official-encoder parity and GPU precision are separate qualification results.", "The first decoder backend audit was invalid: saving a lazy clone then evaluating the independently initialized original produced unequal weights. Both backends now reload the same file; all three exported head weight arrays match exactly. The pilot trainer already eagerly materializes its record before cloning. The failed audit and its time remain in the ledger."]
+
+[[runs]]
+name = "normalized"
+label = "Normalized"
+stage = "screen"
+path = ".data/runs/pilot-03-normalized"
+evaluation = "evaluation-validation.json"
+
+[[runs]]
+name = "raw"
+label = "Raw semantic"
+stage = "screen"
+path = ".data/runs/pilot-03-raw"
+evaluation = "evaluation-validation.json"
+
+[[runs]]
+name = "appearance"
+label = "RGB bypass"
+stage = "screen"
+path = ".data/runs/pilot-03-appearance"
+evaluation = "evaluation-validation.json"
+
+[[runs]]
+name = "rope"
+label = "RGB + rotary"
+stage = "screen"
+path = ".data/runs/pilot-03-rope"
+evaluation = "evaluation-validation.json"
+
+[[runs]]
+name = "calibrated"
+label = "Calibrated"
+stage = "screen"
+path = ".data/runs/pilot-03-calibrated"
+evaluation = "evaluation-validation.json"
+
+[[runs]]
+name = "main-baseline"
+label = "Main baseline"
+stage = "main"
+path = ".data/runs/pilot-03-main-baseline"
+evaluation = "step-009000-evaluation-validation.json"
+
+[[runs]]
+name = "main-candidate"
+label = "Main candidate"
+stage = "main"
+path = ".data/runs/pilot-03-main-candidate"
+evaluation = "step-009000-evaluation-validation.json"

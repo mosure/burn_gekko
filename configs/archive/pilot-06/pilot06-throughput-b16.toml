@@ -1,0 +1,37 @@
+dataset = ".data/datasets/50d862fee206e017a7cee8192a3d5be84d2a8a1915e855b402741c5bc8611919"
+seed = 113
+train_rooms = 16
+batch_size = 16
+steps = 240
+decay_steps = 50000
+warmup_steps = 50
+max_seconds = 420
+eval_every = 240
+checkpoint_every = 0
+decoder_width = 384
+decoder_depth = 6
+decoder_heads = 6
+decoder_qk_norm = true
+learning_rate = 0.0006
+encoder_lr_ratio = 0.2
+weight_decay = 0.01
+mask_ratio = 0.75
+references = 2
+appearance_bypass = true
+rgb_head = "direct"
+rgb_cache = "host"
+rgb_cache_max_mib = 128
+edge_loss_weight = 1.0
+gradient_energy_weight = 0.0
+ri_start_step = 120
+ri_weight = 0.1
+unfreeze = true
+unfreeze_min_steps = 500
+unfreeze_min_improvement = 0.02
+fixed_example = false
+
+[initialization]
+kind = "scratch"
+width = 768
+depth = 12
+heads = 12

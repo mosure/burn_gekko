@@ -1,0 +1,127 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/preserve-score.json"
+export = ".data/pilot-07/fusion-audit/preserve-export"
+models = ["continued", "route-balanced-continue", "preserve-control", "preserve-strong"]
+output = ".data/pilot-07/fusion-audit/preserve-diagnostics.json"
+methods = ["centered_student", "conditional_centered_student", "student_l06_centered", "student_l06_centered_conditional", "fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+
+[[contrasts]]
+name = "route-balanced-continue_minus_preserve-control_fused_decoder"
+first = "route-balanced-continue/fused_decoder"
+second = "preserve-control/fused_decoder"
+
+[[contrasts]]
+name = "route-balanced-continue_minus_preserve-control_conditional_decoder"
+first = "route-balanced-continue/conditional_decoder"
+second = "preserve-control/conditional_decoder"
+
+[[contrasts]]
+name = "route-balanced-continue_minus_preserve-control_reciprocal_log_probability"
+first = "route-balanced-continue/reciprocal_log_probability"
+second = "preserve-control/reciprocal_log_probability"
+
+[[contrasts]]
+name = "route-balanced-continue_minus_preserve-strong_fused_decoder"
+first = "route-balanced-continue/fused_decoder"
+second = "preserve-strong/fused_decoder"
+
+[[contrasts]]
+name = "route-balanced-continue_minus_preserve-strong_conditional_decoder"
+first = "route-balanced-continue/conditional_decoder"
+second = "preserve-strong/conditional_decoder"
+
+[[contrasts]]
+name = "route-balanced-continue_minus_preserve-strong_reciprocal_log_probability"
+first = "route-balanced-continue/reciprocal_log_probability"
+second = "preserve-strong/reciprocal_log_probability"
+
+[[contrasts]]
+name = "preserve-control_minus_preserve-strong_fused_decoder"
+first = "preserve-control/fused_decoder"
+second = "preserve-strong/fused_decoder"
+
+[[contrasts]]
+name = "preserve-control_minus_preserve-strong_conditional_decoder"
+first = "preserve-control/conditional_decoder"
+second = "preserve-strong/conditional_decoder"
+
+[[contrasts]]
+name = "preserve-control_minus_preserve-strong_reciprocal_log_probability"
+first = "preserve-control/reciprocal_log_probability"
+second = "preserve-strong/reciprocal_log_probability"
+
+[[contrasts]]
+name = "continued_minus_preserve-control_fused_decoder"
+first = "continued/fused_decoder"
+second = "preserve-control/fused_decoder"
+
+[[contrasts]]
+name = "continued_minus_preserve-control_conditional_decoder"
+first = "continued/conditional_decoder"
+second = "preserve-control/conditional_decoder"
+
+[[contrasts]]
+name = "continued_minus_preserve-control_reciprocal_log_probability"
+first = "continued/reciprocal_log_probability"
+second = "preserve-control/reciprocal_log_probability"
+
+[[contrasts]]
+name = "continued_minus_preserve-strong_fused_decoder"
+first = "continued/fused_decoder"
+second = "preserve-strong/fused_decoder"
+
+[[contrasts]]
+name = "continued_minus_preserve-strong_conditional_decoder"
+first = "continued/conditional_decoder"
+second = "preserve-strong/conditional_decoder"
+
+[[contrasts]]
+name = "continued_minus_preserve-strong_reciprocal_log_probability"
+first = "continued/reciprocal_log_probability"
+second = "preserve-strong/reciprocal_log_probability"
+
+[[contrasts]]
+name = "block6_minus_route-balanced-continue_fused_decoder"
+first = "route-balanced-continue/student_l06_centered"
+second = "route-balanced-continue/fused_decoder"
+
+[[contrasts]]
+name = "block6_minus_route-balanced-continue_conditional_decoder"
+first = "route-balanced-continue/student_l06_centered_conditional"
+second = "route-balanced-continue/conditional_decoder"
+
+[[contrasts]]
+name = "block6_minus_route-balanced-continue_reciprocal_log_probability"
+first = "route-balanced-continue/student_l06_centered_conditional"
+second = "route-balanced-continue/reciprocal_log_probability"
+
+[[contrasts]]
+name = "block6_minus_preserve-control_fused_decoder"
+first = "preserve-control/student_l06_centered"
+second = "preserve-control/fused_decoder"
+
+[[contrasts]]
+name = "block6_minus_preserve-control_conditional_decoder"
+first = "preserve-control/student_l06_centered_conditional"
+second = "preserve-control/conditional_decoder"
+
+[[contrasts]]
+name = "block6_minus_preserve-control_reciprocal_log_probability"
+first = "preserve-control/student_l06_centered_conditional"
+second = "preserve-control/reciprocal_log_probability"
+
+[[contrasts]]
+name = "block6_minus_preserve-strong_fused_decoder"
+first = "preserve-strong/student_l06_centered"
+second = "preserve-strong/fused_decoder"
+
+[[contrasts]]
+name = "block6_minus_preserve-strong_conditional_decoder"
+first = "preserve-strong/student_l06_centered_conditional"
+second = "preserve-strong/conditional_decoder"
+
+[[contrasts]]
+name = "block6_minus_preserve-strong_reciprocal_log_probability"
+first = "preserve-strong/student_l06_centered_conditional"
+second = "preserve-strong/reciprocal_log_probability"

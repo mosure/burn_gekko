@@ -1,0 +1,6 @@
+max_command_seconds = 16160
+
+[[commands]]
+name = "refine"
+max_seconds = 16150
+argv = [".data/pilot-06/bin/e2e_pilot-v9", "--config", "configs/pilot06-refine.toml", "--warm-start", ".data/runs/pilot-06-coarse-mild/final", "--run", ".data/runs/pilot-06-refine"]

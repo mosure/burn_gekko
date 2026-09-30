@@ -1,0 +1,28 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+
+[[models]]
+name = "control"
+checkpoint = ".data/runs/pilot-07-fusion-control/final"
+model_sha256 = "2a033771867090b88bf43cb462ce8961d7173b9b9fada975eea974ed5b691160"
+
+[[models]]
+name = "no-rope"
+checkpoint = ".data/runs/pilot-07-fusion-no-rope/final"
+model_sha256 = "325f89c6a8f54f41021838bb818ad9ce72510edb0d98fe4ff851d07bab1bb3e5"
+
+[[models]]
+name = "guided"
+checkpoint = ".data/runs/pilot-07-fusion-guided/final"
+model_sha256 = "524d113e828c625d97c9be37c74d00672d3224182d7c57fa745b5c46e79ad06e"
+
+[[models]]
+name = "guided-no-rope"
+checkpoint = ".data/runs/pilot-07-fusion-guided-no-rope/final"
+model_sha256 = "a48142e997e7c09daa89a7d137c478302726936d9f5c10aee81201e391cd3dca"

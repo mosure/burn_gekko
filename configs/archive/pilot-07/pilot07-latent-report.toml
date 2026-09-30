@@ -1,0 +1,29 @@
+assessment = ".data/pilot-07/final-assessment"
+fresh_assessment = ".data/pilot-07/fresh-test-assessment"
+fresh_geometry = ".data/reports/c108953575b6e86ec761c998777e4a63af296999d68f117342e9e0469ac28188-geometry.json"
+external = ".data/pilot-07/hpatches-score.json"
+external_dataset = ".data/benchmarks/hpatches"
+external_export = ".data/pilot-07/hpatches-export"
+external_displacement = ".data/pilot-07/hpatches-displacement.json"
+memory = ".data/pilot-07/memory-comparison.json"
+pdf = ".data/pilot-07/latent-continuation-report.pdf"
+budget = ".data/pilot-07/budget.json"
+baseline = "parent"
+selected = "continued"
+
+[[models]]
+name = "parent"
+
+[[models]]
+name = "random90"
+run = ".data/runs/pilot-07-latent-random90"
+
+[[models]]
+name = "block90"
+run = ".data/runs/pilot-07-latent-block90-resume"
+prefix_run = ".data/runs/pilot-07-latent-block90"
+
+[[models]]
+name = "continued"
+run = ".data/runs/pilot-07-latent-random90-continue"
+prefix_run = ".data/runs/pilot-07-latent-random90"

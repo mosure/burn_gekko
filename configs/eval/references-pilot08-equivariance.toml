@@ -1,0 +1,20 @@
+checkpoint_sha256 = "02b8027b41d951c60afb39fc606b210ecb44e3dec4b9d2a1d53a9ddee5a62244"
+output = ".data/pilot-08/reference-count-capability.json"
+
+[[evaluations]]
+references = 1
+directory = ".data/pilot-08/references-1/equivariance"
+metrics_sha256 = "b14e4d1299bf789b001b0ac29067be20e3606507efd387983e160ed9344e51f2"
+provenance_sha256 = "82de7e168f9971d6a9de02b7b7297659c6edcc46b73a67475dd675ebbb84b625"
+
+[[evaluations]]
+references = 2
+directory = ".data/pilot-08/heldout/equivariance"
+metrics_sha256 = "5f512455abfcf007cf15ef8ee5f842dfdc626a99b15c12bc9daf203d93ec5096"
+provenance_sha256 = "b207606ae6d385778b46d4fd386a72859db17891f7a9e3d299fe72dac2f19828"
+
+[[evaluations]]
+references = 3
+directory = ".data/pilot-08/references-3/equivariance"
+metrics_sha256 = "3bcb3e8af916501af29f911f3952ddd1ce4eac58aed6fe8f53ee245671172d7f"
+provenance_sha256 = "2b63d4bbfe66f29de84db1eeff2b6cc7c19e45f5606715391b187f70f4f0ee65"

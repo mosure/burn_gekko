@@ -1,0 +1,6 @@
+max_command_seconds = 500
+
+[[commands]]
+name = "old-binary-contention-replay"
+max_seconds = 480
+argv = [".data/pilot-07/bin/latent_pilot-v16", "--config", "configs/pilot07-contention-replay.toml", "--run", ".data/runs/pilot-07-contention-replay"]

@@ -1,0 +1,16 @@
+output = ".data/pilot-07/fusion-audit/preserve-energy.json"
+max_gap_seconds = 3.0
+
+[commands.preserve-control]
+ledger = ".data/pilot-07/fusion-audit/preserve-run/ledger.json"
+command = "fusion-preserve-control"
+telemetry = ".data/pilot-07/fusion-audit/preserve-run/fusion-preserve-control-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-preserve-control"
+purpose = "Matched frozen-encoder descriptor preservation screen under recorded shared desktop load; native default parity qualifies the validation-only binary change"
+
+[commands.preserve-strong]
+ledger = ".data/pilot-07/fusion-audit/preserve-retry-run/ledger.json"
+command = "fusion-preserve-strong"
+telemetry = ".data/pilot-07/fusion-audit/preserve-retry-run/fusion-preserve-strong-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-preserve-strong"
+purpose = "Matched frozen-encoder descriptor preservation screen under recorded shared desktop load; native default parity qualifies the validation-only binary change"

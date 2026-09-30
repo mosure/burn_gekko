@@ -1,0 +1,6 @@
+max_command_seconds = 600
+
+[[commands]]
+name = "throughput-b32"
+max_seconds = 580
+argv = [".data/pilot-06/bin/e2e_pilot-v2", "--config", "configs/pilot06-throughput-b32.toml", "--run", ".data/runs/pilot-06-throughput-b32"]

@@ -1,0 +1,7 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+geometry_sha256 = "07166b74782d36d2835eecf8875d45898ad52857c500cc2ca30c9ed638bdd258"
+export = ".data/pilot-07/fusion-audit/screen-export"
+output = ".data/pilot-07/fusion-audit/screen-score.json"
+evaluation_use = "development"
+models = ["continued", "control", "no-rope", "guided", "guided-no-rope"]

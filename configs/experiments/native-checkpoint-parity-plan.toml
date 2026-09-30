@@ -1,0 +1,5 @@
+max_command_seconds = 160
+[[commands]]
+name = "checkpoint-parity"
+max_seconds = 150
+argv = [".data/pilot-07/bin/latent_assess-native-v21", "--config", "configs/experiments/native-checkpoint-parity.toml", "--output", ".data/pilot-07/native-study/checkpoint-parity"]

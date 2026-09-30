@@ -1,0 +1,8 @@
+dataset = ".data/benchmarks/eth3d"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+geometry_sha256 = "23382999b5ba85e6dfb5e9fbbb396ef094814b467386df9e74cedea36e746ff3"
+export = ".data/pilot-07/fusion-audit/eth3d-export"
+output = ".data/pilot-07/fusion-audit/eth3d-score.json"
+selection_record = "configs/pilot07-fusion-final-selection.toml"
+selection_sha256 = "0c1db35495a645773d261db02592b7d1c0c4056d1ba8cce4aeb9521078564e4a"
+models = ["continued", "route-balanced-continue"]

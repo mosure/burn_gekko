@@ -1,0 +1,11 @@
+max_command_seconds = 8300
+
+[[commands]]
+name = "fusion-refine-frozen"
+max_seconds = 4100
+argv = [".data/pilot-07/bin/latent_pilot-v13", "--config", "configs/pilot07-fusion-refine-frozen.toml", "--run", ".data/runs/pilot-07-fusion-refine-frozen"]
+
+[[commands]]
+name = "fusion-refine-adapt"
+max_seconds = 4100
+argv = [".data/pilot-07/bin/latent_pilot-v13", "--config", "configs/pilot07-fusion-refine-adapt.toml", "--run", ".data/runs/pilot-07-fusion-refine-adapt"]

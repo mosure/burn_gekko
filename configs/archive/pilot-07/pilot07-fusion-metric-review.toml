@@ -1,0 +1,10 @@
+output = ".data/pilot-07/fusion-audit/metric-review.json"
+
+[runs]
+metric-control = ".data/runs/pilot-07-fusion-metric-control"
+metric-strong = ".data/runs/pilot-07-fusion-metric-strong"
+
+[comparisons.descriptor_strength]
+left = "metric-control"
+right = "metric-strong"
+changed_fields = ["fusion_auxiliary.descriptor_weight"]

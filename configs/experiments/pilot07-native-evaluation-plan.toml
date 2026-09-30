@@ -1,0 +1,26 @@
+max_command_seconds = 1840
+
+[[commands]]
+name = "heldout"
+max_seconds = 500
+argv = [".data/pilot-07/bin/latent_assess-native-v22", "--config", "configs/experiments/pilot07-native-heldout.toml", "--output", ".data/pilot-07/native-study/heldout"]
+
+[[commands]]
+name = "eth3d"
+max_seconds = 650
+argv = [".data/pilot-07/bin/eth3d_export-native-v22", "--config", "configs/experiments/pilot07-native-eth3d.toml", "--output", ".data/pilot-07/native-study/eth3d"]
+
+[[commands]]
+name = "hpatches"
+max_seconds = 250
+argv = [".data/pilot-07/bin/hpatches_export-native-v22", "--config", "configs/experiments/pilot07-native-hpatches.toml", "--output", ".data/pilot-07/native-study/hpatches"]
+
+[[commands]]
+name = "references-1"
+max_seconds = 180
+argv = [".data/pilot-07/bin/latent_assess-native-v22", "--config", "configs/experiments/pilot07-native-references-1.toml", "--output", ".data/pilot-07/native-study/references-1"]
+
+[[commands]]
+name = "references-3"
+max_seconds = 220
+argv = [".data/pilot-07/bin/latent_assess-native-v22", "--config", "configs/experiments/pilot07-native-references-3.toml", "--output", ".data/pilot-07/native-study/references-3"]

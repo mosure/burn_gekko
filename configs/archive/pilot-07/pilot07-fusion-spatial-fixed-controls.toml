@@ -1,0 +1,247 @@
+output = ".data/pilot-07/fusion-audit/spatial-fixed-controls.json"
+
+[exports]
+continued = ".data/pilot-07/fusion-audit/spatial-export/continued.jsonl"
+metric-continue = ".data/pilot-07/fusion-audit/spatial-export/metric-continue.jsonl"
+spatial-control = ".data/pilot-07/fusion-audit/spatial-export/spatial-control.jsonl"
+spatial-l06 = ".data/pilot-07/fusion-audit/spatial-export/spatial-l06.jsonl"
+
+[[comparisons]]
+name = "teacher_metric-continue_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "metric-continue/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-continue_centered_teacher"
+first = "continued/centered_teacher"
+second = "metric-continue/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-continue_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "metric-continue/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-continue_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "metric-continue/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-continue_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "metric-continue/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-continue_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "metric-continue/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-continue_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "metric-continue/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-continue_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "metric-continue/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "spatial-control/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_centered_teacher"
+first = "continued/centered_teacher"
+second = "spatial-control/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "spatial-control/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "spatial-control/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "spatial-control/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "spatial-control/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "spatial-control/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-control_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "spatial-control/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "spatial-l06/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_centered_teacher"
+first = "continued/centered_teacher"
+second = "spatial-l06/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "spatial-l06/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "spatial-l06/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "spatial-l06/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "spatial-l06/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "spatial-l06/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "teacher_spatial-l06_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "spatial-l06/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_student_encoder"
+first = "metric-continue/student_encoder"
+second = "spatial-control/student_encoder"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_centered_student"
+first = "metric-continue/centered_student"
+second = "spatial-control/centered_student"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_conditional_student"
+first = "metric-continue/conditional_student"
+second = "spatial-control/conditional_student"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_conditional_centered_student"
+first = "metric-continue/conditional_centered_student"
+second = "spatial-control/conditional_centered_student"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_student_l06_raw"
+first = "metric-continue/student_l06_raw"
+second = "spatial-control/student_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_student_l06_raw_conditional"
+first = "metric-continue/student_l06_raw_conditional"
+second = "spatial-control/student_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_student_l06_centered"
+first = "metric-continue/student_l06_centered"
+second = "spatial-control/student_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-control_student_l06_centered_conditional"
+first = "metric-continue/student_l06_centered_conditional"
+second = "spatial-control/student_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_student_encoder"
+first = "metric-continue/student_encoder"
+second = "spatial-l06/student_encoder"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_centered_student"
+first = "metric-continue/centered_student"
+second = "spatial-l06/centered_student"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_conditional_student"
+first = "metric-continue/conditional_student"
+second = "spatial-l06/conditional_student"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_conditional_centered_student"
+first = "metric-continue/conditional_centered_student"
+second = "spatial-l06/conditional_centered_student"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_student_l06_raw"
+first = "metric-continue/student_l06_raw"
+second = "spatial-l06/student_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_student_l06_raw_conditional"
+first = "metric-continue/student_l06_raw_conditional"
+second = "spatial-l06/student_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_student_l06_centered"
+first = "metric-continue/student_l06_centered"
+second = "spatial-l06/student_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "student_spatial-l06_student_l06_centered_conditional"
+first = "metric-continue/student_l06_centered_conditional"
+second = "spatial-l06/student_l06_centered_conditional"
+identical = true

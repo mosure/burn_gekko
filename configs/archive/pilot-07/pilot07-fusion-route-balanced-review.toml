@@ -1,0 +1,10 @@
+output = ".data/pilot-07/fusion-audit/route-balanced-review.json"
+
+[runs]
+route-balanced-control = ".data/runs/pilot-07-fusion-route-balanced-control"
+route-balanced-l06 = ".data/runs/pilot-07-fusion-route-balanced-l06"
+
+[comparisons.spatial_input]
+left = "route-balanced-control"
+right = "route-balanced-l06"
+changed_fields = ["spatial_input_scale"]

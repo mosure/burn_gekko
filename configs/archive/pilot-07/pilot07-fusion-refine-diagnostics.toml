@@ -1,0 +1,47 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/refinement-score.json"
+export = ".data/pilot-07/fusion-audit/refinement-export"
+output = ".data/pilot-07/fusion-audit/refinement-transfer-diagnostics.json"
+models = ["continued", "descriptor", "refine-frozen", "refine-adapt"]
+methods = ["centered_student", "conditional_centered_student", "fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+
+[[contrasts]]
+name = "frozen_minus_adaptive_decoder"
+first = "refine-frozen/fused_decoder"
+second = "refine-adapt/fused_decoder"
+
+[[contrasts]]
+name = "frozen_conditional_encoder_minus_attention"
+first = "refine-frozen/conditional_centered_student"
+second = "refine-frozen/reciprocal_log_probability"
+
+[[contrasts]]
+name = "adaptive_conditional_encoder_minus_attention"
+first = "refine-adapt/conditional_centered_student"
+second = "refine-adapt/reciprocal_log_probability"
+
+[[contrasts]]
+name = "frozen_minus_adaptive_attention"
+first = "refine-frozen/reciprocal_log_probability"
+second = "refine-adapt/reciprocal_log_probability"
+
+[[contrasts]]
+name = "frozen_encoder_minus_frozen_decoder"
+first = "refine-frozen/centered_student"
+second = "refine-frozen/fused_decoder"
+
+[[contrasts]]
+name = "adaptive_encoder_minus_adaptive_decoder"
+first = "refine-adapt/centered_student"
+second = "refine-adapt/fused_decoder"
+
+[[contrasts]]
+name = "descriptor_minus_frozen_decoder"
+first = "descriptor/fused_decoder"
+second = "refine-frozen/fused_decoder"
+
+[[contrasts]]
+name = "descriptor_minus_adaptive_decoder"
+first = "descriptor/fused_decoder"
+second = "refine-adapt/fused_decoder"

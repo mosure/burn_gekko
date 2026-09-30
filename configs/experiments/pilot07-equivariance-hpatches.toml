@@ -1,0 +1,10 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+spatial_layer = 6
+self_conditioned_readouts = true
+
+[[models]]
+name = "equivariance-preflight"
+checkpoint = ".data/runs/pilot-07-equivariance-preflight/final"
+model_sha256 = "996fedf858d6c5e1fe0cdaabd8539e87ff3bd7e6041625ea2981b41056be5e73"

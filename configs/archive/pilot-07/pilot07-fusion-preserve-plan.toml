@@ -1,0 +1,11 @@
+max_command_seconds = 4300
+
+[[commands]]
+name = "fusion-preserve-control"
+max_seconds = 2100
+argv = [".data/pilot-07/bin/latent_pilot-v18", "--config", "configs/pilot07-fusion-preserve-control.toml", "--run", ".data/runs/pilot-07-fusion-preserve-control"]
+
+[[commands]]
+name = "fusion-preserve-strong"
+max_seconds = 2100
+argv = [".data/pilot-07/bin/latent_pilot-v18", "--config", "configs/pilot07-fusion-preserve-strong.toml", "--run", ".data/runs/pilot-07-fusion-preserve-strong"]

@@ -1,0 +1,6 @@
+max_command_seconds = 880
+
+[[commands]]
+name = "refine-continue"
+max_seconds = 870
+argv = [".data/pilot-06/bin/e2e_pilot-v9", "--config", "configs/pilot06-refine-continue.toml", "--checkpoint", ".data/runs/pilot-06-refine/final", "--run", ".data/runs/pilot-06-refine-continue"]

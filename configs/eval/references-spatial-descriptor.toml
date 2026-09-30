@@ -1,0 +1,20 @@
+checkpoint_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"
+output = ".data/pilot-07/spatial-head-study/reference-count-capability.json"
+
+[[evaluations]]
+references = 1
+directory = ".data/pilot-07/spatial-head-study/references-1/spatial-descriptor"
+metrics_sha256 = "22ca67708c079fe18d6a30be1e226d5592a6ad1b1fc0e2078e767c06c4abf274"
+provenance_sha256 = "2b1906e126abaa6f0a127400312ba2c89e8f987a8cb7fa9a5b5df11bb8185583"
+
+[[evaluations]]
+references = 2
+directory = ".data/pilot-07/spatial-head-study/heldout/spatial-descriptor"
+metrics_sha256 = "d1262656ec89ccfc3d43d9a3eb5518ffd87129a66cee3749f6d3d96cff7468a3"
+provenance_sha256 = "c667a7be8df1de03741cfeac6b13fc7da4d138d232cc7f8ea31330bac93ad51e"
+
+[[evaluations]]
+references = 3
+directory = ".data/pilot-07/spatial-head-study/references-3/spatial-descriptor"
+metrics_sha256 = "0767913a1a536347b88dba0681a3eff888951664040d83e36448077fb68b651a"
+provenance_sha256 = "675c0ea1c28f1b591f69e15e9a5a7e921383cf393b326f486aa91f2aaeb87ac6"

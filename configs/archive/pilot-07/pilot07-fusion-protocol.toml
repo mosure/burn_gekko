@@ -1,0 +1,246 @@
+registered_utc = "2026-09-29T17:05:44Z"
+objective = "Resolve decoder/attention regression under real viewpoint change without noncommercial weights"
+budget_ledger = ".data/pilot-07/budget.json"
+cumulative_ceiling_seconds = 43200
+primary_task = "V-JEPA latent prediction"
+weight_policy = "Own trained fusion plus audited MIT V-JEPA 2.1 only"
+camera_inputs = "None; RGB-only candidate. Camera-supervised variants require a separate declared experiment."
+
+[development]
+hpatches = "All 116 sequences now development data: prior evaluation motivated this experiment"
+synthetic = "Existing training/validation and already observed 256-room fresh test are development evidence"
+holdout_requirement = "Freeze candidate/readout before a new external or independently captured holdout; no SOTA claim from this screen"
+
+[readout_screen]
+checkpoint_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+primary_subset = "59 viewpoint sequences, 295 pairs"
+primary_metric = "HP-240 AEPE, hard 16x16 patch match with bilinear displacement upsampling"
+secondary_metrics = ["PCK1", "PCK3", "PCK5", "same-position fraction", "illumination AEPE"]
+interventions = ["unchanged hidden states with probability/logit/content/centered-content readouts", "cross-view RoPE disabled; self-attention RoPE retained", "centered decoder descriptors"]
+layer_aggregation = "Each of six layers and arithmetic layer mean; no cherry-picked held-out result"
+reciprocity = "Geometric mean for probability maps; arithmetic mean for signed score maps"
+stop_rule = "Screen is diagnostic; no training until causal readout results and existing forward parity are checked"
+qualification = "Readout selection is development tuning, not a learned-weight improvement"
+
+[training_screen]
+design = "2x2 factorial: cross-view RoPE on/off, dense semantic guidance on/off"
+arms = ["control", "no-rope", "guided", "guided-no-rope"]
+initial_weights = ".data/runs/pilot-07-latent-random90-continue/final"
+initial_weights_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+optimizer = "Fresh AdamW in every arm; same seed, samples, mask, schedule and update count"
+encoder_policy = "Frozen in all screen arms to isolate fusion learning; later unfreezing requires an explicit continuation"
+updates = 600
+batch_size = 16
+rooms = 1024
+primary_loss = "Existing fixed V-JEPA masked latent prediction and relative-improvement objective"
+auxiliary_teacher = "Frozen audited warm-start student V-JEPA encoder; never updated, including on exact resume"
+auxiliary_loss = "0.1 mean layer/head-score KL to centered teacher cosine affinities, temperature 0.07; 0.1 dense latent MSE"
+supervision = "RGB-only self-distillation; no renderer depth, cameras, homographies or correspondence labels"
+selection = "HPatches viewpoint development AEPE for fused decoder and attention, with masked latent validation regression limited to 5 percent relative to matched control"
+extension = "Continue only a qualifying arm; freeze choices before ETH3D scoring"
+normalized_attention_readout = "Before trained-model evaluation: average per-layer log-softmax of head-mean scores, then reciprocal mean. This is invariant to row offsets left unidentified by the KL objective. Raw logits and historical probability maps remain controls."
+
+[independent_holdout]
+dataset = "ETH3D interval correspondence: all 3365 official pairs, 10 scenes, intervals 3,5,7,9,11,13,15"
+role = "Untouched qualification until candidate and readouts are frozen"
+input = "256x256 RGB only; no correspondence labels or cameras in the native export manifest"
+metrics = "Original-image-pixel AEPE and PCK1/3/5; mean over pairs within scene, scenes within interval, intervals overall"
+aggregation = "Full official pair list; local hard patch matching readout, not published ZeroCo refinement parity"
+required_baselines = ["fixed_teacher", "student_encoder", "centered_teacher", "centered_student", "fused_decoder", "reciprocal_attention", "same_position"]
+non_claim = "A single model seed and local readout do not establish SOTA"
+
+[latent_qualification]
+config = "configs/capture-pilot07-fusion-qualification.toml"
+seed = 2610010000
+test_rooms = 128
+cameras = 4
+primary_references = 2
+secondary_reference_counts = "1 and 3 references on first 32 test rooms; same checkpoint, no tuning"
+unused_rooms = "one train and one validation room required by capture schema; never used"
+camera_baseline_control = 0.5
+control_units = "dimensionless published camera-policy control; training uses 0.25, not 0.25 metres"
+model_input = "same sparse target and reference RGB contract; geometry for metrics only"
+role = "fresh rooms with wider viewpoint proposals; score only after candidate selection"
+metrics = ["masked latent MSE", "monocular-relative gain", "reference perturbation sensitivity", "spatial variance", "co-visibility AUROC/AP", "correspondence EPE"]
+
+[descriptor_screen]
+motivation = "First screen improves attention transfer to 30.60 viewpoint AEPE but decoder descriptors still regress"
+arms = ["descriptor-control", "descriptor"]
+parent = ".data/runs/pilot-07-fusion-guided/final"
+parent_sha256 = "524d113e828c625d97c9be37c74d00672d3224182d7c57fa745b5c46e79ad06e"
+rooms = 8192
+validation_rooms = 64
+updates = 600
+batch_size = 16
+cross_view_rope = true
+encoder = "frozen for both arms; fresh optimizers, identical examples and masks"
+shared_auxiliary = "Both arms compute both pair directions; mean attention KL and dense latent MSE remain weight 0.1 each"
+treatment = "0.1 symmetric KL between raw decoder cosine scores at temperature 0.07 and frozen ancestor centered-cosine affinities; control weight is zero"
+additional_readout = "Centered prediction-head latents, to distinguish a descriptor metric mismatch from destroyed information"
+primary_selection = "Improve decoder and attention viewpoint AEPE, with at most 5 percent primary latent error regression against the matched control"
+secondary_selection = "Prefer retained co-visibility and cross-view gain; explain any tradeoff explicitly"
+holdout = "ETH3D and new four-view rooms remain unscored until final selection"
+
+[refinement_screen]
+motivation = "Direct descriptor alignment lowers viewpoint decoder AEPE from 36.59 to 33.95 and attention AEPE from 29.76 to 29.36; decoder still trails the unchanged encoder's 31.01"
+parent = ".data/runs/pilot-07-fusion-descriptor/final"
+parent_sha256 = "8096057fc2cbc25fd6c68b19b5afb4df3f726d27488e29c6742ddbc5459ba4bc"
+arms = ["refine-frozen", "refine-adapt"]
+updates = 2000
+decay_horizon = 6000
+rooms = 8192
+validation_rooms = 64
+batch_size = 16
+peak_learning_rate = 0.0001
+shared_objective = "Retain bidirectional attention/dense/descriptor weights 0.1 each; RI weight 0.1 active immediately in both arms"
+optimizer = "Weights-only phase with fresh optimizers and gate; identical samples, masks, learning-rate schedule and probe cadence"
+unfreeze_treatment = "Minimum 400 updates and 0.2 percent measured latent improvement per stage; last two encoder blocks, then all image blocks/stem; encoder LR ratio 0.05"
+selection = "Primary decoder and attention viewpoint transfer; preserve latent validation within 5 percent of matched control; explicitly assess learned RI and raw error-gain co-visibility"
+extension = "A qualifying endpoint can resume the same 6000-update horizon exactly; final candidate/readouts freeze before new holdouts"
+holdout = "ETH3D and new four-view rooms remain unscored"
+
+[readout_fairness]
+registered_before = "Refinement HPatches endpoint scoring and all independent model evaluation"
+reason = "Reciprocal attention normalization can improve matches independently of learned feature quality; plain cosine encoder baselines alone do not isolate this effect"
+controls = ["conditional_teacher", "conditional_centered_teacher", "conditional_student", "conditional_centered_student", "conditional_decoder", "conditional_centered_decoder"]
+operator = "Cosine score divided by 0.07, forward and reverse row log-softmax, reciprocal arithmetic mean, unchanged hard nearest-neighbor and displacement interpolation"
+temperature = 0.07
+temperature_policy = "Fixed to the already registered affinity-teacher temperature; no temperature sweep on a holdout"
+training_change = "None; v13 training and exact optimizer continuation stay unchanged"
+evaluation_change = "v14 adds six feature controls; all original twelve readouts remain"
+claim_gate = "Report the equally normalized encoder controls before attributing a matching gain to learned fusion; retain raw decoder and latent metrics"
+
+[descriptor_strength_screen]
+motivation = "After 2000 refinement updates, adaptive raw decoder AEPE is 33.108 versus centered encoder 30.927; with reciprocal normalization decoder is 32.233 versus encoder 30.071. Attention is 28.946, but its scene-bootstrap improvement over the normalized encoder remains uncertain."
+parent = ".data/runs/pilot-07-fusion-refine-adapt/final"
+parent_sha256 = "8030b3b5354849ee257b43da2ff0078df88ba98a75958c74751089780d02a9be"
+arms = ["metric-control", "metric-strong"]
+updates = 1000
+rooms = 8192
+validation_rooms = 64
+batch_size = 16
+peak_learning_rate = 0.0001
+decay_horizon = 4000
+single_treatment = "Direct descriptor affinity KL weight 0.1 versus 1.0; attention and dense preservation weights stay 0.1"
+controls = "Same weights-only warm start, fresh optimizers, samples, masks, LR schedule, RI active from update 0 and all other configuration fields"
+encoder = "Frozen during all 1000 screen updates. Earliest gate occurs after update 1000; qualifying exact continuation may open last blocks and then the full encoder after another 1000 updates and 0.2 percent latent improvement."
+selection = "Improve both raw and equally normalized decoder viewpoint AEPE versus matched control; attention may regress no more than 2 percent relative, primary latent MSE no more than 5 percent relative; report RI and variance tradeoffs."
+claim_gate = "Decoder-versus-encoder and attention-versus-encoder contrasts remain explicit; development means and scene intervals do not establish SOTA."
+holdout = "ETH3D and new four-view rooms remain unobserved until final selection"
+
+[descriptor_strength_extension]
+parent = ".data/runs/pilot-07-fusion-metric-strong/final"
+parent_sha256 = "68d48234b22b941c9e5d565cb657ccb63287367a3d871d71e0beecb1ebc59ed7"
+resume = "Exact v13 model, both AdamW states, unfreezing gate, sample/mask position and 4000-step learning-rate horizon"
+updates = "Continue schedule steps 1000 through 4000, adding 3000 optimizer updates"
+permitted_config_changes = ["steps", "max_seconds", "checkpoint_every"]
+reason = "Strong descriptor weight improves raw/conditional decoder viewpoint AEPE by 2.98/3.54 percent versus the matched control; attention regression 0.15 percent and latent regression 0.66 percent satisfy registered limits. Decoder still trails its encoder."
+selection = "Evaluate the declared endpoint against its 1000-step parent with common v14 readouts; retain both and their precision tradeoffs. No holdout-based checkpoint or readout choice."
+holdout = "ETH3D and new four-view rooms remain untouched"
+
+[encoder_layer_probe]
+role = "Read-only development diagnosis; does not change active v13 continuation"
+checkpoint = ".data/runs/pilot-07-fusion-refine-adapt/final"
+checkpoint_sha256 = "8030b3b5354849ee257b43da2ff0078df88ba98a75958c74751089780d02a9be"
+reason = "Annotated large-viewpoint cases remain weak even in the final-layer encoder. Check trained earlier feature levels before attributing all remaining errors to fusion or adding camera heads."
+backbones = ["fixed MIT V-JEPA teacher", "own frozen refinement student"]
+trained_normalized_layers_one_based = [3, 6, 9, 12]
+ensemble = "Uniform mean of all four cosine affinity matrices; no fitted weights, no per-pair selection"
+readouts = "Each level and uniform mean: raw and per-image-centered cosine, each with plain NN or the same reciprocal conditional normalization at fixed temperature 0.07"
+control = "Retain all 18 standard readouts; verify final-level predictions against the corresponding standard feature controls"
+data = "All 116 HPatches development sequences; primary 59 viewpoint sequences, 295 pairs"
+claim = "Selecting a layer on development data is a diagnostic, not a trained fusion gain. Any changed affinity teacher needs a separately registered matched training control."
+holdout = "No ETH3D or fresh four-view-room model outcomes inspected"
+
+
+[spatial_affinity_screen]
+registered_utc = "2026-09-29T22:16:16.518909+00:00"
+basis = "The development-only encoder hierarchy probe finds trained block 6 stronger than block 12 for both viewpoint AEPE and PCK3. This selects an affinity target, not a completed fusion improvement."
+parent = ".data/runs/pilot-07-fusion-metric-continue/final"
+parent_sha256 = "69ac2750c49d88265ff3718678ca5dcb922c724215fcc7e84eaea859a0f8d4c0"
+arms = ["final-layer affinity control", "trained block-6 affinity treatment"]
+sole_objective_difference = "fusion_auxiliary.teacher_layers: empty versus [6]; primary latent and dense latent targets remain final-layer, with unchanged teacher, coefficients and masking"
+updates_per_arm = 1000
+training_rooms = 8192
+validation_rooms = 64
+batch_size = 16
+optimizer = "Both arms start from identical own weights with fresh AdamW optimizers and identical examples, masks, learning-rate horizon and seed 719"
+encoder = "Frozen in both screen arms to isolate the affinity teacher; unfreezing is reserved for a qualifying continuation"
+selection = "Improve raw and conditional decoder plus conditional-attention viewpoint AEPE versus matched control, with primary latent validation within 5 percent; retain PCK3 and RI tradeoffs"
+stronger_baseline = "Retain the preselected block-6 teacher and student encoder controls, including equally normalized scores, in all subsequent external comparisons. Beating the weaker final-layer encoder alone is insufficient."
+independent_readouts = "All original 18 readouts plus 8 fixed block-6 controls; no holdout layer sweep"
+holdout = "ETH3D and the new 128 four-view rooms have no model outcomes yet"
+execution = "The shared v16 upload optimization must pass numerical and bounded training/energy preflight before either quality arm starts"
+
+[power_efficiency]
+trigger = "User requested power-efficient GPU execution and investigation of stalls or excessive dispatch"
+trace = "Exact replay of full-encoder updates 3501-3532 with sealed v13 binary and both optimizer states; profiled checkpoints are diagnostic only"
+trace_replay = "All 32 logged total losses match the original unprofiled continuation exactly; median profiled step 1.0621 seconds versus 1.0367 seconds in the original"
+finding = "In a warmed 24-update trace window, kernel union occupied 40.34 percent; RGB H2D transfers occupied 7.668 seconds, or 0.3195 seconds per update. CubeCL 0.10 uploads rank-4 NHWC with 12-byte pitched rows."
+intervention = "Upload a contiguous rank-1 RGB buffer, then reshape and permute on the device; input values and tensor shape must be preserved"
+microbenchmark = "Alternate legacy NHWC, flat NHWC and CPU planar NCHW at batch sizes 1 and 16, 256 pixels, 3 warmups and 32 measured repeats; normalized RGB must match bitwise"
+training_gate = "Matched bounded warm-start replay with the same examples, masks, optimizer initialization and frozen-encoder policy under v13 versus v16; report loss/norm/validation parity, throughput, gross board energy and profiler limitations"
+limits = "GPU activity is not SM occupancy. Board energy includes desktop activity and preparation/evaluation. Do not infer whole-training energy gains from upload-only timing. Keep the existing cumulative 12-hour ledger."
+
+
+[direct_spatial_input_screen]
+registered_utc = "2026-09-29T23:05:43.337827+00:00"
+basis = "Block-6 affinity guidance improves all three matching metrics against its matched control, but fused descriptors and attention still trail the block-6 encoder. Guidance alone does not supply the intermediate features to the trunk."
+parent = ".data/runs/pilot-07-fusion-spatial-l06/final"
+parent_sha256 = "e9d9090f8de0652dab9b7dc643c3a481564f1f0f7ddf689a55a4da70e28799d5"
+arms = ["final-layer input control", "final plus block-6 input"]
+sole_configuration_difference = "spatial_input_layer absent versus 6"
+architecture = "Append block-6 normalized tokens to final-layer tokens. Extend the shared 768-to-384 fusion projection to 1536-to-384, preserving old rows and initializing new rows to zero. Both inputs are extracted only from the branch's available RGB patches."
+parameter_delta = "294912 additional projection weights; all own initialization, no additional pretrained package"
+primary_target = "Unchanged fixed final-layer V-JEPA latent target; auxiliary block-6 affinity target and dense final-layer target unchanged"
+encoder_baselines = "Retain separate final-layer and block-6 controls; do not relabel concatenated features as the historical encoder baseline"
+optimizer = "Both arms use identical own weights, fresh AdamW states, examples, masks, schedule, seed and gate. Only the input extension differs."
+updates_per_arm = 1000
+learning_rate_horizon = 6000
+training_rooms = 8192
+validation_rooms = 64
+batch_size = 16
+encoder = "Frozen through the 1000-update screen. Qualifying exact continuation retains the 6000-step horizon and opens the last two blocks then full encoder only after minimum-stage and validation gates."
+native_preflight = "Unchanged-default 64-update replay must retain the prior numerical tolerance. A separate paired 16-update control/route check requires finite losses, unchanged frozen teacher/encoder, zero hidden-RGB and monocular-reference leakage, and initial per-view latent-MSE differences at most 1e-5."
+selection = "Improve raw and conditional decoder plus conditional-attention development AEPE in mean versus matched control; decoder PCK3 may regress no more than 1 percent relative; latent validation no more than 5 percent relative; learned RI AUROC no more than 0.02 absolute. Retain stronger block-6 baselines and sequence intervals."
+holdout = "ETH3D and new four-view rooms still have no model outcomes; seal the selected checkpoint and readouts before any independent evaluation"
+
+[direct_input_numeric_controls]
+registered_before = "Direct-input quality training and external outcome scoring"
+fixed_controls = "All teacher and separately captured block-6 student controls must be identical across frozen arms"
+final_encoder_layout = "Concatenating and slicing the final features can change CUDA reduction dispatch near ties even with identical frozen weights; record these changes separately"
+maximum_changed_argmax_fraction = 0.0025
+maximum_absolute_development_aepe_change = 0.1
+maximum_absolute_development_pck3_change = 0.0005
+failure_policy = "Stop for investigation if any bound is exceeded; do not relabel a numerical baseline difference as learned encoder improvement"
+
+[matched_layout_spatial_input_screen]
+registered_utc = "2026-09-29T23:30:49.919427+00:00"
+rejected_preflight = "The earlier v17 wide-input versus narrow-input check exceeded its 1e-5 initial per-view MSE gate (maximum cross difference 1.28204e-5). Its quality run never started and its gate is not relaxed."
+new_control = "Both arms capture block 6 and use the same 1536-to-384 projection shape with zero-initialized new rows. Control scales block-6 features to zero; treatment scales them to one. Parameter count, encoder work, tensor layout and CUDA GEMM shape match."
+sole_configuration_difference = "spatial_input_scale 0.0 versus 1.0; spatial_input_layer is 6 in both arms"
+parent = ".data/runs/pilot-07-fusion-spatial-l06/final"
+parent_sha256 = "e9d9090f8de0652dab9b7dc643c3a481564f1f0f7ddf689a55a4da70e28799d5"
+updates_per_arm = 1000
+learning_rate_horizon = 6000
+training_rooms = 8192
+validation_rooms = 64
+batch_size = 16
+encoder = "Frozen through the 1000-update screen; qualifying exact continuation may use the registered validation-gated unfreezing schedule"
+initial_gate = "Paired 16-update native preflight: initial cross and monocular per-view MSE differences at most 1e-5, finite losses, frozen teacher/encoder unchanged, zero hidden-RGB and monocular-reference leakage. Compare matched layout arms; separately retain drift versus the narrow legacy parent."
+selection = "Improve raw and conditional decoder plus conditional-attention development AEPE in mean versus matched control; decoder PCK3 may regress no more than 1 percent relative; latent validation no more than 5 percent relative; learned RI AUROC no more than 0.02 absolute. Strong block-6 encoder controls remain mandatory."
+compute = "Record shared desktop GPU load, gross board joules per trained target, throughput, and cumulative Pilot07 budget. Retain at least 4000 seconds for independent qualification."
+holdout = "ETH3D and new four-view rooms have no model outcomes. Candidate and readouts must be frozen before their inference."
+
+[matched_spatial_input_continuation]
+registered_utc = "2026-09-30T00:28:06.631114+00:00"
+parent = ".data/runs/pilot-07-fusion-route-balanced-l06/final"
+parent_sha256 = "fd5c79c837421a40985a58f562aa1282814537f8b59f178284783f848cae8bac"
+reason = "All registered screen gates passed. Raw/conditional decoder and attention AEPE improve 1.73/1.64/1.08 percent against the matched control; precision improves; latent error increases 0.072 percent; RI AUROC improves 0.0145. Fusion still trails its stronger block-6 encoder."
+resume = "Sealed v18 binary restores model, both AdamW states, unfreezing gate, sample/mask positions, fixed affinity teacher and original 6000-step learning-rate horizon"
+updates = "Schedule steps 1001 through 6000, adding 5000 optimizer updates"
+permitted_config_changes = ["steps", "max_seconds", "checkpoint_every"]
+encoder = "Keep existing minimum-stage and validation gates; no forced unfreezing or new supervision"
+selection = "Retain the endpoint only if all three primary development AEPE means improve over its step-1000 parent, decoder PCK3 declines at most 1 percent relative, latent validation rises at most 5 percent relative, and RI AUROC declines at most 0.02 absolute. Otherwise retain the qualifying parent and report the continuation failure."
+compute = "At most 9000 command seconds for this continuation; retain at least 4000 seconds for independent qualification and separately account bounded evaluation/profiling"
+holdout = "No ETH3D or fresh four-view model outcomes observed. Freeze checkpoint and all readouts before their first inference."

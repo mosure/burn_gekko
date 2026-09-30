@@ -1,0 +1,20 @@
+checkpoint_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"
+output = ".data/pilot-07/native-study/reference-count-capability.json"
+
+[[evaluations]]
+references = 1
+directory = ".data/pilot-07/native-study/references-1/native-spatial-refinement"
+metrics_sha256 = "a295f096ae061a9aace86f5c736a218cbd49cafaf6c16c5e955e20d2be89a74c"
+provenance_sha256 = "319476290a3dc27edbc0a620c50027b979b76f4cabc323b4626bb393e1563db4"
+
+[[evaluations]]
+references = 2
+directory = ".data/pilot-07/native-study/heldout/native-spatial-refinement"
+metrics_sha256 = "5a0c5623284562592c33aa07d8bbf2d05edb687fc1da0b7b91a84eeaab28e6b0"
+provenance_sha256 = "068970023e6e99b5a50cda5aa9842eafd7f8dd5c9578eb61e793d325de0ec1b4"
+
+[[evaluations]]
+references = 3
+directory = ".data/pilot-07/native-study/references-3/native-spatial-refinement"
+metrics_sha256 = "683f3fe557618d1bdf7ed6d7d280cfa14a09a27d5e56e322d626d18e47f397fb"
+provenance_sha256 = "80c6636e850f1245ccfd42c08aa601e8d326e1476c35e7d5cba33ab121478ecd"

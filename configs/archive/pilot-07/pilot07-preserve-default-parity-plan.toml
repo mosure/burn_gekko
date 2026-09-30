@@ -1,0 +1,6 @@
+max_command_seconds = 230
+
+[[commands]]
+name = "preserve-default-parity"
+max_seconds = 220
+argv = [".data/pilot-07/bin/latent_pilot-v20", "--config", "configs/pilot07-preserve-default-parity.toml", "--run", ".data/runs/pilot-07-preserve-default-parity"]

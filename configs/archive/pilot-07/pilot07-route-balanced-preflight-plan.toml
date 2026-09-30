@@ -1,0 +1,11 @@
+max_command_seconds = 1100
+
+[[commands]]
+name = "route-balanced-preflight-control"
+max_seconds = 350
+argv = [".data/pilot-07/bin/latent_pilot-v18", "--config", "configs/pilot07-route-balanced-preflight-control.toml", "--run", ".data/runs/pilot-07-route-balanced-preflight-control"]
+
+[[commands]]
+name = "route-balanced-preflight-l06"
+max_seconds = 350
+argv = [".data/pilot-07/bin/latent_pilot-v18", "--config", "configs/pilot07-route-balanced-preflight-l06.toml", "--run", ".data/runs/pilot-07-route-balanced-preflight-l06"]

@@ -1,0 +1,6 @@
+max_command_seconds = 650
+
+[[commands]]
+name = "hpatches-preservation"
+max_seconds = 625
+argv = [".data/pilot-07/bin/hpatches_export-v18", "--config", "configs/pilot07-fusion-preserve-assessment.toml", "--output", ".data/pilot-07/fusion-audit/preserve-export"]

@@ -1,0 +1,6 @@
+dataset = ".data/datasets/c3bdc80be000d76cbed85ac95f7e1a5f736e6ed068a66df5a56ed69fe127ebd6"
+rooms = 1
+residual_radius = 0.25
+[weights]
+checkpoint = ".data/runs/pilot-07-native-spatial-refinement/final"
+model_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"

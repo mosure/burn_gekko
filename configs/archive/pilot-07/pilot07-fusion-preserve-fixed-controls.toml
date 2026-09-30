@@ -1,0 +1,247 @@
+output = ".data/pilot-07/fusion-audit/preserve-fixed-controls.json"
+
+[exports]
+continued = ".data/pilot-07/fusion-audit/preserve-export/continued.jsonl"
+route-balanced-continue = ".data/pilot-07/fusion-audit/preserve-export/route-balanced-continue.jsonl"
+preserve-control = ".data/pilot-07/fusion-audit/preserve-export/preserve-control.jsonl"
+preserve-strong = ".data/pilot-07/fusion-audit/preserve-export/preserve-strong.jsonl"
+
+[[comparisons]]
+name = "route-balanced-continue_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "route-balanced-continue/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "route-balanced-continue_centered_teacher"
+first = "continued/centered_teacher"
+second = "route-balanced-continue/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "route-balanced-continue_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "route-balanced-continue/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "route-balanced-continue_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "route-balanced-continue/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "route-balanced-continue_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "route-balanced-continue/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "route-balanced-continue_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "route-balanced-continue/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "route-balanced-continue_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "route-balanced-continue/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "route-balanced-continue_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "route-balanced-continue/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "preserve-control/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_centered_teacher"
+first = "continued/centered_teacher"
+second = "preserve-control/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "preserve-control/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "preserve-control/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "preserve-control/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "preserve-control/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "preserve-control/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "preserve-control/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "preserve-strong/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_centered_teacher"
+first = "continued/centered_teacher"
+second = "preserve-strong/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "preserve-strong/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "preserve-strong/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_teacher_l06_raw"
+first = "continued/teacher_l06_raw"
+second = "preserve-strong/teacher_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_teacher_l06_raw_conditional"
+first = "continued/teacher_l06_raw_conditional"
+second = "preserve-strong/teacher_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_teacher_l06_centered"
+first = "continued/teacher_l06_centered"
+second = "preserve-strong/teacher_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_teacher_l06_centered_conditional"
+first = "continued/teacher_l06_centered_conditional"
+second = "preserve-strong/teacher_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_student_encoder"
+first = "route-balanced-continue/student_encoder"
+second = "preserve-control/student_encoder"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_centered_student"
+first = "route-balanced-continue/centered_student"
+second = "preserve-control/centered_student"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_conditional_student"
+first = "route-balanced-continue/conditional_student"
+second = "preserve-control/conditional_student"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_conditional_centered_student"
+first = "route-balanced-continue/conditional_centered_student"
+second = "preserve-control/conditional_centered_student"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_student_l06_raw"
+first = "route-balanced-continue/student_l06_raw"
+second = "preserve-control/student_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_student_l06_raw_conditional"
+first = "route-balanced-continue/student_l06_raw_conditional"
+second = "preserve-control/student_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_student_l06_centered"
+first = "route-balanced-continue/student_l06_centered"
+second = "preserve-control/student_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "preserve-control_student_l06_centered_conditional"
+first = "route-balanced-continue/student_l06_centered_conditional"
+second = "preserve-control/student_l06_centered_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_student_encoder"
+first = "route-balanced-continue/student_encoder"
+second = "preserve-strong/student_encoder"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_centered_student"
+first = "route-balanced-continue/centered_student"
+second = "preserve-strong/centered_student"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_conditional_student"
+first = "route-balanced-continue/conditional_student"
+second = "preserve-strong/conditional_student"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_conditional_centered_student"
+first = "route-balanced-continue/conditional_centered_student"
+second = "preserve-strong/conditional_centered_student"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_student_l06_raw"
+first = "route-balanced-continue/student_l06_raw"
+second = "preserve-strong/student_l06_raw"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_student_l06_raw_conditional"
+first = "route-balanced-continue/student_l06_raw_conditional"
+second = "preserve-strong/student_l06_raw_conditional"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_student_l06_centered"
+first = "route-balanced-continue/student_l06_centered"
+second = "preserve-strong/student_l06_centered"
+identical = true
+
+[[comparisons]]
+name = "preserve-strong_student_l06_centered_conditional"
+first = "route-balanced-continue/student_l06_centered_conditional"
+second = "preserve-strong/student_l06_centered_conditional"
+identical = true

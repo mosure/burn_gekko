@@ -1,0 +1,11 @@
+images = ".data/benchmarks/eth3d/images.json"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+spatial_layer = 6
+evaluation_use = "development"
+selection_record = "configs/experiments/pilot07-native-selection.toml"
+selection_sha256 = "cb443347c8422834d41902d17c9b85a43249b666ffc591e8f61bed0835d31ad4"
+
+[[models]]
+name = "native-spatial-refinement"
+checkpoint = ".data/runs/pilot-07-native-spatial-refinement/final"
+model_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"

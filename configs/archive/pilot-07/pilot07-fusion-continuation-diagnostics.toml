@@ -1,0 +1,52 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/continuation-score.json"
+export = ".data/pilot-07/fusion-audit/continuation-export"
+output = ".data/pilot-07/fusion-audit/continuation-transfer-diagnostics.json"
+models = ["continued", "metric-control", "metric-strong", "metric-continue"]
+methods = ["centered_student", "conditional_centered_student", "fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+
+[[contrasts]]
+name = "strong_minus_continued_fused_decoder"
+first = "metric-strong/fused_decoder"
+second = "metric-continue/fused_decoder"
+
+[[contrasts]]
+name = "strong_minus_continued_conditional_decoder"
+first = "metric-strong/conditional_decoder"
+second = "metric-continue/conditional_decoder"
+
+[[contrasts]]
+name = "strong_minus_continued_reciprocal_log_probability"
+first = "metric-strong/reciprocal_log_probability"
+second = "metric-continue/reciprocal_log_probability"
+
+[[contrasts]]
+name = "control_minus_continued_fused_decoder"
+first = "metric-control/fused_decoder"
+second = "metric-continue/fused_decoder"
+
+[[contrasts]]
+name = "control_minus_continued_conditional_decoder"
+first = "metric-control/conditional_decoder"
+second = "metric-continue/conditional_decoder"
+
+[[contrasts]]
+name = "control_minus_continued_reciprocal_log_probability"
+first = "metric-control/reciprocal_log_probability"
+second = "metric-continue/reciprocal_log_probability"
+
+[[contrasts]]
+name = "encoder_minus_continued_fused_decoder"
+first = "metric-continue/centered_student"
+second = "metric-continue/fused_decoder"
+
+[[contrasts]]
+name = "encoder_minus_continued_conditional_decoder"
+first = "metric-continue/conditional_centered_student"
+second = "metric-continue/conditional_decoder"
+
+[[contrasts]]
+name = "encoder_minus_continued_reciprocal_log_probability"
+first = "metric-continue/conditional_centered_student"
+second = "metric-continue/reciprocal_log_probability"

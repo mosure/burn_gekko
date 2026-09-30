@@ -1,0 +1,9 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+encoder_layer_audit = true
+
+[[models]]
+name = "refine-adapt"
+checkpoint = ".data/runs/pilot-07-fusion-refine-adapt/final"
+model_sha256 = "8030b3b5354849ee257b43da2ff0078df88ba98a75958c74751089780d02a9be"

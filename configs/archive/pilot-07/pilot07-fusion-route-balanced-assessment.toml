@@ -1,0 +1,24 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+spatial_layer = 6
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+
+[[models]]
+name = "spatial-l06"
+checkpoint = ".data/runs/pilot-07-fusion-spatial-l06/final"
+model_sha256 = "e9d9090f8de0652dab9b7dc643c3a481564f1f0f7ddf689a55a4da70e28799d5"
+
+[[models]]
+name = "route-balanced-control"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-control/final"
+model_sha256 = "7fbe68a4dc02d7ac183d7667d08080becac98a1f72c7e5d937bbab0fa31cecb3"
+
+[[models]]
+name = "route-balanced-l06"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-l06/final"
+model_sha256 = "fd5c79c837421a40985a58f562aa1282814537f8b59f178284783f848cae8bac"

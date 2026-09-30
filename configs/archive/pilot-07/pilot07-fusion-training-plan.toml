@@ -1,0 +1,21 @@
+max_command_seconds = 6000
+
+[[commands]]
+name = "fusion-control"
+max_seconds = 1450
+argv = [".data/pilot-07/bin/latent_pilot-v9", "--config", "configs/pilot07-fusion-control.toml", "--run", ".data/runs/pilot-07-fusion-control"]
+
+[[commands]]
+name = "fusion-no-rope"
+max_seconds = 1450
+argv = [".data/pilot-07/bin/latent_pilot-v9", "--config", "configs/pilot07-fusion-no-rope.toml", "--run", ".data/runs/pilot-07-fusion-no-rope"]
+
+[[commands]]
+name = "fusion-guided"
+max_seconds = 1450
+argv = [".data/pilot-07/bin/latent_pilot-v9", "--config", "configs/pilot07-fusion-guided.toml", "--run", ".data/runs/pilot-07-fusion-guided"]
+
+[[commands]]
+name = "fusion-guided-no-rope"
+max_seconds = 1450
+argv = [".data/pilot-07/bin/latent_pilot-v9", "--config", "configs/pilot07-fusion-guided-no-rope.toml", "--run", ".data/runs/pilot-07-fusion-guided-no-rope"]

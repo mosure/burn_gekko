@@ -1,0 +1,7 @@
+before = ".data/runs/pilot-07-upload-training-before"
+after = ".data/runs/pilot-07-upload-training-after"
+output = ".data/pilot-07/fusion-audit/upload-training-comparison.json"
+warmup_updates = 8
+absolute_tolerance = 0.000001
+relative_tolerance = 0.00001
+validation_absolute_tolerance = 0.000001

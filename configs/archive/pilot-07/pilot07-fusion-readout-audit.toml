@@ -1,0 +1,9 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+diagnostic_readouts = true
+evaluation_use = "development"
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"

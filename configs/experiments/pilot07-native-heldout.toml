@@ -1,0 +1,15 @@
+dataset = ".data/datasets/c3bdc80be000d76cbed85ac95f7e1a5f736e6ed068a66df5a56ed69fe127ebd6"
+split = "test"
+rooms = 128
+export_rooms = 6
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 719
+stable_attention = false
+correspondence = true
+references = 2
+
+[[models]]
+name = "native-spatial-refinement"
+checkpoint = ".data/runs/pilot-07-native-spatial-refinement/final"
+model_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"

@@ -1,0 +1,101 @@
+output = ".data/pilot-07/fusion-audit/encoder-layer-controls.json"
+
+[exports]
+layer-audit = ".data/pilot-07/fusion-audit/encoder-layer-export/refine-adapt.jsonl"
+standard-v14 = ".data/pilot-07/fusion-audit/metric-export/refine-adapt.jsonl"
+
+[[comparisons]]
+name = "teacher_raw_within_audit"
+first = "layer-audit/teacher_l12_raw"
+second = "layer-audit/fixed_teacher"
+identical = false
+
+[[comparisons]]
+name = "teacher_raw_between_export_versions"
+first = "standard-v14/fixed_teacher"
+second = "layer-audit/fixed_teacher"
+identical = false
+
+[[comparisons]]
+name = "teacher_centered_within_audit"
+first = "layer-audit/teacher_l12_centered"
+second = "layer-audit/centered_teacher"
+identical = false
+
+[[comparisons]]
+name = "teacher_centered_between_export_versions"
+first = "standard-v14/centered_teacher"
+second = "layer-audit/centered_teacher"
+identical = false
+
+[[comparisons]]
+name = "teacher_raw_conditional_within_audit"
+first = "layer-audit/teacher_l12_raw_conditional"
+second = "layer-audit/conditional_teacher"
+identical = false
+
+[[comparisons]]
+name = "teacher_raw_conditional_between_export_versions"
+first = "standard-v14/conditional_teacher"
+second = "layer-audit/conditional_teacher"
+identical = false
+
+[[comparisons]]
+name = "teacher_centered_conditional_within_audit"
+first = "layer-audit/teacher_l12_centered_conditional"
+second = "layer-audit/conditional_centered_teacher"
+identical = false
+
+[[comparisons]]
+name = "teacher_centered_conditional_between_export_versions"
+first = "standard-v14/conditional_centered_teacher"
+second = "layer-audit/conditional_centered_teacher"
+identical = false
+
+[[comparisons]]
+name = "student_raw_within_audit"
+first = "layer-audit/student_l12_raw"
+second = "layer-audit/student_encoder"
+identical = false
+
+[[comparisons]]
+name = "student_raw_between_export_versions"
+first = "standard-v14/student_encoder"
+second = "layer-audit/student_encoder"
+identical = false
+
+[[comparisons]]
+name = "student_centered_within_audit"
+first = "layer-audit/student_l12_centered"
+second = "layer-audit/centered_student"
+identical = false
+
+[[comparisons]]
+name = "student_centered_between_export_versions"
+first = "standard-v14/centered_student"
+second = "layer-audit/centered_student"
+identical = false
+
+[[comparisons]]
+name = "student_raw_conditional_within_audit"
+first = "layer-audit/student_l12_raw_conditional"
+second = "layer-audit/conditional_student"
+identical = false
+
+[[comparisons]]
+name = "student_raw_conditional_between_export_versions"
+first = "standard-v14/conditional_student"
+second = "layer-audit/conditional_student"
+identical = false
+
+[[comparisons]]
+name = "student_centered_conditional_within_audit"
+first = "layer-audit/student_l12_centered_conditional"
+second = "layer-audit/conditional_centered_student"
+identical = false
+
+[[comparisons]]
+name = "student_centered_conditional_between_export_versions"
+first = "standard-v14/conditional_centered_student"
+second = "layer-audit/conditional_centered_student"
+identical = false

@@ -1,0 +1,10 @@
+dataset = ".data/datasets/4287ae3d171d81e05febe5ad057d2ca448a03d006f0da30e018c5350e90ec149"
+backbone_config = ".data/runs/pilot-03-main-candidate/config.toml"
+initial_backbone = ".data/runs/pilot-03-main-candidate/checkpoint-009000/decoder.mpk"
+train_rooms = 32
+batch_size = 4
+steps = 64
+max_seconds = 180
+eval_every = 64
+learning_rate = 0.0001
+max_displacement = 64.0

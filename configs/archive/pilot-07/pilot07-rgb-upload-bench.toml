@@ -1,0 +1,4 @@
+batches = [1, 16]
+image_size = 256
+warmup = 3
+repetitions = 32

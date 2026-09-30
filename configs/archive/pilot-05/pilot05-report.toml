@@ -1,0 +1,48 @@
+study = ".data/pilot-05"
+selected = "vjepa_qknorm"
+output = ".data/pilot-05/burn_gekko_pilot_05_report.pdf"
+summary = ".data/pilot-05/quality-summary.json"
+diagnostics = ".data/pilot-05/selected-test-audit/report.json"
+overfit_sample = ".data/pilot-05/overfit-audit/completion/room-2026120000-view-0"
+visual_review = "Reviewed evenly spaced test exports, the first reserved rooms, median- and worst-error cases, and annotated detail crops. They remain blocky and blurry: broad room colors are recovered, but furniture, window framing and ceiling detail are largely missing. The sharp one-room example is training-only. Visual quality review fails."
+visual_review_passed = false
+conclusion = "The pipeline now optimizes reconstruction encoders end to end without NC pretrained weights. This bounded study does not resolve held-out blur or establish useful co-visibility: the selected RI AUROC is approximately chance. A fixed training example can be reconstructed sharply, while the 16-room varying-mask run still underfits. No candidate is accepted as a quality solution."
+
+[[arms]]
+name = "vjepa_energy"
+label = "V-JEPA + energy"
+run = ".data/runs/pilot-05-vjepa"
+config = "configs/pilot05-vjepa.toml"
+telemetry = ".data/pilot-05/training/vjepa-progressive-gpu.jsonl"
+executable = ".data/pilot-05/bin/e2e_pilot-v1"
+
+[[arms]]
+name = "scratch"
+label = "Random encoder"
+run = ".data/runs/pilot-05-scratch"
+config = "configs/pilot05-scratch.toml"
+telemetry = ".data/pilot-05/training/scratch-gpu.jsonl"
+executable = ".data/pilot-05/bin/e2e_pilot-v1"
+
+[[arms]]
+name = "vjepa_no_energy"
+label = "V-JEPA, no energy"
+run = ".data/runs/pilot-05-vjepa-no-energy"
+config = "configs/pilot05-vjepa-no-energy.toml"
+telemetry = ".data/pilot-05/no-energy/vjepa-no-energy-gpu.jsonl"
+executable = ".data/pilot-05/bin/e2e_pilot-v2"
+
+[[arms]]
+name = "vjepa_qknorm"
+label = "V-JEPA + Q/K norm"
+run = ".data/runs/pilot-05-vjepa-qknorm"
+config = "configs/pilot05-vjepa-qknorm.toml"
+telemetry = ".data/pilot-05/qknorm/vjepa-qknorm-gpu.jsonl"
+executable = ".data/pilot-05/bin/e2e_pilot-v2"
+test = ".data/runs/pilot-05-selected-test"
+test_unrelated = ".data/runs/pilot-05-selected-test-unrelated"
+
+[smallset]
+run = ".data/runs/pilot-05-smallset"
+telemetry = ".data/pilot-05/smallset/scratch-sixteen-rooms-gpu.jsonl"
+audit = ".data/pilot-05/smallset-audit"

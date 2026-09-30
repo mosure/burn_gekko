@@ -1,0 +1,6 @@
+output = ".data/pilot-06/pyramid-throughput.json"
+
+[[arms]]
+name = "pyramid-b16"
+run = ".data/runs/pilot-06-pyramid-throughput"
+telemetry = ".data/pilot-06/pyramid-throughput/pyramid-throughput-gpu.jsonl"

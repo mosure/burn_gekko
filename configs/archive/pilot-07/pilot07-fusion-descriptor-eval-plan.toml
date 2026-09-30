@@ -1,0 +1,6 @@
+max_command_seconds = 1500
+
+[[commands]]
+name = "hpatches-descriptor-screen"
+max_seconds = 1450
+argv = [".data/pilot-07/bin/hpatches_export-v13", "--config", "configs/pilot07-fusion-descriptor-assessment.toml", "--output", ".data/pilot-07/fusion-audit/descriptor-export"]

@@ -1,0 +1,16 @@
+benchmark = "hpatches"
+dataset = ".data/benchmarks/hpatches"
+predictions = ".data/pilot-07/spatial-head-study/hpatches/spatial-descriptor.jsonl"
+provenance = ".data/pilot-07/spatial-head-study/hpatches/spatial-descriptor-provenance.json"
+checkpoint_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+geometry_sha256 = "07166b74782d36d2835eecf8875d45898ad52857c500cc2ca30c9ed638bdd258"
+predictions_sha256 = "97df5d0a41de744ffd817b27d9660a5e4a7c2aa522722ef14e85f1f0d6425821"
+evaluation_use = "development"
+output = ".data/pilot-07/spatial-head-study/hpatches-score.json"
+methods = ["spatial_residual", "spatial_residual_conditional", "student_l06_centered", "student_l06_centered_conditional", "fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+visual_method = "spatial_residual_conditional"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "student_l06_centered_conditional"

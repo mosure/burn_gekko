@@ -1,0 +1,82 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/route-balanced-score.json"
+export = ".data/pilot-07/fusion-audit/route-balanced-export"
+models = ["continued", "spatial-l06", "route-balanced-control", "route-balanced-l06"]
+output = ".data/pilot-07/fusion-audit/route-balanced-transfer-diagnostics.json"
+methods = ["centered_student", "conditional_centered_student", "student_l06_centered", "student_l06_centered_conditional", "fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+
+[[contrasts]]
+name = "route-balanced-control_minus_route-balanced-l06_fused_decoder"
+first = "route-balanced-control/fused_decoder"
+second = "route-balanced-l06/fused_decoder"
+
+[[contrasts]]
+name = "route-balanced-control_minus_route-balanced-l06_conditional_decoder"
+first = "route-balanced-control/conditional_decoder"
+second = "route-balanced-l06/conditional_decoder"
+
+[[contrasts]]
+name = "route-balanced-control_minus_route-balanced-l06_reciprocal_log_probability"
+first = "route-balanced-control/reciprocal_log_probability"
+second = "route-balanced-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "spatial-l06_minus_route-balanced-l06_fused_decoder"
+first = "spatial-l06/fused_decoder"
+second = "route-balanced-l06/fused_decoder"
+
+[[contrasts]]
+name = "spatial-l06_minus_route-balanced-l06_conditional_decoder"
+first = "spatial-l06/conditional_decoder"
+second = "route-balanced-l06/conditional_decoder"
+
+[[contrasts]]
+name = "spatial-l06_minus_route-balanced-l06_reciprocal_log_probability"
+first = "spatial-l06/reciprocal_log_probability"
+second = "route-balanced-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "continued_minus_route-balanced-l06_fused_decoder"
+first = "continued/fused_decoder"
+second = "route-balanced-l06/fused_decoder"
+
+[[contrasts]]
+name = "continued_minus_route-balanced-l06_conditional_decoder"
+first = "continued/conditional_decoder"
+second = "route-balanced-l06/conditional_decoder"
+
+[[contrasts]]
+name = "continued_minus_route-balanced-l06_reciprocal_log_probability"
+first = "continued/reciprocal_log_probability"
+second = "route-balanced-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "last_encoder_minus_route-balanced_fused_decoder"
+first = "route-balanced-l06/centered_student"
+second = "route-balanced-l06/fused_decoder"
+
+[[contrasts]]
+name = "last_encoder_minus_route-balanced_conditional_decoder"
+first = "route-balanced-l06/conditional_centered_student"
+second = "route-balanced-l06/conditional_decoder"
+
+[[contrasts]]
+name = "last_encoder_minus_route-balanced_reciprocal_log_probability"
+first = "route-balanced-l06/conditional_centered_student"
+second = "route-balanced-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "block6_encoder_minus_route-balanced_fused_decoder"
+first = "route-balanced-l06/student_l06_centered"
+second = "route-balanced-l06/fused_decoder"
+
+[[contrasts]]
+name = "block6_encoder_minus_route-balanced_conditional_decoder"
+first = "route-balanced-l06/student_l06_centered_conditional"
+second = "route-balanced-l06/conditional_decoder"
+
+[[contrasts]]
+name = "block6_encoder_minus_route-balanced_reciprocal_log_probability"
+first = "route-balanced-l06/student_l06_centered_conditional"
+second = "route-balanced-l06/reciprocal_log_probability"

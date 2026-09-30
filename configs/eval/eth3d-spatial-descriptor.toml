@@ -1,0 +1,16 @@
+benchmark = "eth3d"
+dataset = ".data/benchmarks/eth3d"
+predictions = ".data/pilot-07/spatial-head-study/eth3d/spatial-descriptor.jsonl"
+provenance = ".data/pilot-07/spatial-head-study/eth3d/spatial-descriptor-provenance.json"
+checkpoint_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+geometry_sha256 = "23382999b5ba85e6dfb5e9fbbb396ef094814b467386df9e74cedea36e746ff3"
+predictions_sha256 = "f0a0df3bd456d1f0c01871ad5d6c0f4d7b319f92362737ba7eff0c56698cb1bb"
+evaluation_use = "development"
+output = ".data/pilot-07/spatial-head-study/eth3d-score.json"
+methods = ["spatial_residual", "spatial_residual_conditional", "student_l06_centered", "student_l06_centered_conditional", "fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+visual_method = "spatial_residual_conditional"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "student_l06_centered_conditional"

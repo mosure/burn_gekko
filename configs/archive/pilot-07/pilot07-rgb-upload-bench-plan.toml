@@ -1,0 +1,6 @@
+max_command_seconds = 120
+
+[[commands]]
+name = "rgb-upload-layouts"
+max_seconds = 110
+argv = [".data/pilot-07/bin/rgb_upload_bench-v16", "--config", "configs/pilot07-rgb-upload-bench.toml", "--output", ".data/pilot-07/fusion-audit/rgb-upload-bench.json"]

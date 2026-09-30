@@ -1,0 +1,6 @@
+max_command_seconds = 1200
+
+[[commands]]
+name = "hpatches-descriptor-strength"
+max_seconds = 1150
+argv = [".data/pilot-07/bin/hpatches_export-v14", "--config", "configs/pilot07-fusion-metric-assessment.toml", "--output", ".data/pilot-07/fusion-audit/metric-export"]

@@ -1,0 +1,34 @@
+schema = 1
+id = "pilot07-route-balanced-continue"
+title = "burn_gekko: Sparse-View Latent Completion in Burn"
+author = "Mitchell Mosure"
+description = "A shared multi-view fusion model predicts missing V-JEPA 2.1 representations from sparse target observations and independent reference views."
+architecture = "V-JEPA 2.1 Base (12 blocks, width 768, 16-pixel patches), with final and block-6 features feeding six fusion blocks of width 384 and six attention heads. The shared latent head predicts 768 channels per image-grid token. A separate full-target relative-improvement head is trained from reconstruction-error differences."
+run = ".data/runs/pilot-07-fusion-route-balanced-continue"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+checkpoint_sha256 = "61ecd81f7d9c4094ff1fa120e761176301db14e4a22e056cc966bf8616a81bf6"
+sample_count = 6
+limitations = ["One training seed and a synthetic indoor training distribution; no broad foundation-model or SOTA qualification.", "Latent prediction suppresses high-frequency appearance and is not a trained RGB reconstruction capability. The earlier RGB blur problem is not claimed resolved.", "ETH3D uses local hard-patch matching, not the published refinement pipeline. HPatches was used as development evidence.", "The fusion readouts still trail stronger intermediate-encoder controls on real viewpoint changes.", "Camera estimation and depth heads are not trained for this checkpoint. Image-grid RoPE is not calibrated camera/spatial encoding.", "Strict 1e-5 reference-permutation invariance fails in float32. Hidden-target isolation passes.", "GPU power includes shared desktop activity; board energy is not a per-process attribution."]
+
+[latent]
+directory = ".data/pilot-07/fusion-audit/fresh-qualification/route-balanced-continue"
+metrics_sha256 = "fb57c08bf33566c2d7782d0eb5306065e2507befee401488fabc646ab6911ac0"
+provenance_sha256 = "9003602186b8530b647277d415dcd6b8298ae740ebb6cf50bacb6fd2d0b25638"
+evaluation_use = "held_out"
+
+[[benchmarks]]
+path = ".data/pilot-07/native-study/eth3d-route-balanced-visuals.json"
+sha256 = "5ca434af2b49d13f21d9453858283edb394b98538e4db69ce14984f6a36a467c"
+
+[[benchmarks]]
+path = ".data/pilot-07/native-study/hpatches-route-balanced-visuals.json"
+sha256 = "2935bd739030b6dadb779ef2dd3763bc1ea5e7f35e65f3a66c12c7d005fcacf8"
+
+[efficiency]
+command = "fusion-route-balanced-continue"
+[efficiency.ledger]
+path = ".data/pilot-07/fusion-audit/route-balanced-continuation-run/ledger.json"
+sha256 = "0bc6d16d0727e91280303ec200094c9ac355dcb012dd6764ba0d9cb92fb75082"
+[efficiency.telemetry]
+path = ".data/pilot-07/fusion-audit/route-balanced-continuation-run/fusion-route-balanced-continue-gpu.jsonl"
+sha256 = "29e598b7ea65dc7f4f0519980a41d70a38c04775f8a673f1d32778ce09b1a09e"

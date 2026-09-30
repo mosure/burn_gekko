@@ -1,0 +1,11 @@
+max_command_seconds = 1380
+
+[[commands]]
+name = "fit-detail"
+max_seconds = 1200
+argv = [".data/pilot-06/bin/e2e_pilot-v4", "--config", "configs/pilot06-fit-detail.toml", "--warm-start", ".data/runs/pilot-06-fit-continue/final", "--run", ".data/runs/pilot-06-fit-detail"]
+
+[[commands]]
+name = "fit-detail-audit"
+max_seconds = 180
+argv = [".data/pilot-06/bin/e2e_diagnostics-v4", "--config", "configs/pilot06-fit-detail.toml", "--checkpoint", ".data/runs/pilot-06-fit-detail/final", "--output", ".data/pilot-06/fit-detail-audit", "--split", "train", "--rooms", "16", "--rgb-all"]

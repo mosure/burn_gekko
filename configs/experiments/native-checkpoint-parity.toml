@@ -1,0 +1,15 @@
+dataset = ".data/datasets/c203504f589b3ee32425a68039a853d500fc18e318fc6457a063e6c7251c509b"
+split = "test"
+rooms = 2
+export_rooms = 2
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 719
+stable_attention = false
+correspondence = false
+references = 2
+
+[[models]]
+name = "route-balanced-continue"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+model_sha256 = "61ecd81f7d9c4094ff1fa120e761176301db14e4a22e056cc966bf8616a81bf6"

@@ -1,0 +1,10 @@
+output = ".data/pilot-07/fusion-audit/preserve-review.json"
+
+[runs]
+preserve-control = ".data/runs/pilot-07-fusion-preserve-control"
+preserve-strong = ".data/runs/pilot-07-fusion-preserve-strong"
+
+[comparisons.descriptor_strength]
+left = "preserve-control"
+right = "preserve-strong"
+changed_fields = ["fusion_auxiliary.descriptor_weight"]

@@ -1,0 +1,15 @@
+dataset = ".data/datasets/9ce1ee777326018a0c88aebae9bbb141704b4009467b2e8a94b08bb7f4229c4d"
+split = "test"
+rooms = 32
+export_rooms = 0
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 719
+stable_attention = false
+correspondence = false
+references = 1
+
+[[models]]
+name = "spatial-descriptor"
+checkpoint = ".data/runs/pilot-07-spatial-descriptor/final"
+model_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"

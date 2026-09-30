@@ -1,0 +1,9 @@
+output = ".data/pilot-07/fusion-audit/route-balanced-continuation-energy.json"
+max_gap_seconds = 3.0
+
+[commands.continuation]
+ledger = ".data/pilot-07/fusion-audit/route-balanced-continuation-run/ledger.json"
+command = "fusion-route-balanced-continue"
+telemetry = ".data/pilot-07/fusion-audit/route-balanced-continuation-run/fusion-route-balanced-continue-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-route-balanced-continue"
+purpose = "Exact 5000 additional updates including measured adaptive encoder stages; device-wide energy under shared desktop load"

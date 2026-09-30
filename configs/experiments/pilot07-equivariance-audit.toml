@@ -1,0 +1,20 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+rooms = 16
+seed = 1000733
+
+[weights]
+checkpoint = ".data/runs/pilot-07-equivariance-preflight/final"
+model_sha256 = "996fedf858d6c5e1fe0cdaabd8539e87ff3bd7e6041625ea2981b41056be5e73"
+
+[augmentation]
+weight = 0.1
+temperature = 0.07
+self_weight = 1.0
+max_rotation_degrees = 20.0
+max_translation = 0.125
+min_scale = 0.9
+max_scale = 1.1
+max_perspective = 0.05
+brightness = 0.1
+contrast = 0.15
+min_valid_fraction = 0.4

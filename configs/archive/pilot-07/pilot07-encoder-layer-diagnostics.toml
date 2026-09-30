@@ -1,0 +1,47 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/encoder-layer-score.json"
+export = ".data/pilot-07/fusion-audit/encoder-layer-export"
+output = ".data/pilot-07/fusion-audit/encoder-layer-diagnostics.json"
+models = ["refine-adapt"]
+methods = ["conditional_centered_teacher", "conditional_centered_student", "teacher_l03_centered_conditional", "teacher_l06_centered_conditional", "teacher_l09_centered_conditional", "teacher_l12_centered_conditional", "teacher_mean_centered_conditional", "student_l03_centered_conditional", "student_l06_centered_conditional", "student_l09_centered_conditional", "student_l12_centered_conditional", "student_mean_centered_conditional"]
+
+[[contrasts]]
+name = "teacher_final_minus_l03"
+first = "refine-adapt/conditional_centered_teacher"
+second = "refine-adapt/teacher_l03_centered_conditional"
+
+[[contrasts]]
+name = "teacher_final_minus_l06"
+first = "refine-adapt/conditional_centered_teacher"
+second = "refine-adapt/teacher_l06_centered_conditional"
+
+[[contrasts]]
+name = "teacher_final_minus_l09"
+first = "refine-adapt/conditional_centered_teacher"
+second = "refine-adapt/teacher_l09_centered_conditional"
+
+[[contrasts]]
+name = "teacher_final_minus_mean"
+first = "refine-adapt/conditional_centered_teacher"
+second = "refine-adapt/teacher_mean_centered_conditional"
+
+[[contrasts]]
+name = "student_final_minus_l03"
+first = "refine-adapt/conditional_centered_student"
+second = "refine-adapt/student_l03_centered_conditional"
+
+[[contrasts]]
+name = "student_final_minus_l06"
+first = "refine-adapt/conditional_centered_student"
+second = "refine-adapt/student_l06_centered_conditional"
+
+[[contrasts]]
+name = "student_final_minus_l09"
+first = "refine-adapt/conditional_centered_student"
+second = "refine-adapt/student_l09_centered_conditional"
+
+[[contrasts]]
+name = "student_final_minus_mean"
+first = "refine-adapt/conditional_centered_student"
+second = "refine-adapt/student_mean_centered_conditional"

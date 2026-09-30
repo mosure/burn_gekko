@@ -1,0 +1,26 @@
+max_command_seconds = 4000
+
+[[commands]]
+name = "eth3d-independent-export"
+max_seconds = 2100
+argv = [".data/pilot-07/bin/eth3d_export-v19", "--config", "configs/pilot07-fusion-eth3d-assessment.toml", "--output", ".data/pilot-07/fusion-audit/eth3d-export"]
+
+[[commands]]
+name = "fresh-qualification"
+max_seconds = 1050
+argv = [".data/pilot-07/bin/latent_assess-v18", "--config", "configs/pilot07-fusion-fresh-qualification.toml", "--output", ".data/pilot-07/fusion-audit/fresh-qualification"]
+
+[[commands]]
+name = "fresh-references-1"
+max_seconds = 250
+argv = [".data/pilot-07/bin/latent_assess-v18", "--config", "configs/pilot07-fusion-fresh-references-1.toml", "--output", ".data/pilot-07/fusion-audit/fresh-references-1"]
+
+[[commands]]
+name = "fresh-references-2"
+max_seconds = 250
+argv = [".data/pilot-07/bin/latent_assess-v18", "--config", "configs/pilot07-fusion-fresh-references-2.toml", "--output", ".data/pilot-07/fusion-audit/fresh-references-2"]
+
+[[commands]]
+name = "fresh-references-3"
+max_seconds = 250
+argv = [".data/pilot-07/bin/latent_assess-v18", "--config", "configs/pilot07-fusion-fresh-references-3.toml", "--output", ".data/pilot-07/fusion-audit/fresh-references-3"]

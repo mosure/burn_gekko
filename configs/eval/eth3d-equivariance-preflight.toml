@@ -1,0 +1,20 @@
+benchmark = "eth3d"
+dataset = ".data/benchmarks/eth3d"
+predictions = ".data/pilot-07/equivariance-study/eth3d/equivariance-preflight.jsonl"
+provenance = ".data/pilot-07/equivariance-study/eth3d/equivariance-preflight-provenance.json"
+checkpoint_sha256 = "996fedf858d6c5e1fe0cdaabd8539e87ff3bd7e6041625ea2981b41056be5e73"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+geometry_sha256 = "23382999b5ba85e6dfb5e9fbbb396ef094814b467386df9e74cedea36e746ff3"
+predictions_sha256 = "c4e88a62ed0989a4d9927fdac9f7283e1b009ee0c58ead4714ab3821afa39abf"
+evaluation_use = "development"
+output = ".data/pilot-07/equivariance-study/eth3d-score.json"
+methods = ["spatial_residual_conditional", "spatial_self_conditional", "student_l06_centered_conditional"]
+visual_method = "spatial_residual_conditional"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "student_l06_centered_conditional"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "spatial_self_conditional"

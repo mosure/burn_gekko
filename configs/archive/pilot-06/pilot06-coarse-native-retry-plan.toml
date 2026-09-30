@@ -1,0 +1,8 @@
+# The first 75-second cap was shorter than full 24 GB cache validation.
+# Preserve that partial command and account it; use a separate output here.
+max_command_seconds = 270
+
+[[commands]]
+name = "coarse-native-audit-retry"
+max_seconds = 250
+argv = [".data/pilot-06/bin/e2e_diagnostics-v9", "--config", "configs/pilot06-coarse-screen.toml", "--checkpoint", ".data/runs/pilot-06-coarse-screen/final", "--split", "validation", "--rooms", "16", "--rgb-all", "--output", ".data/pilot-06/coarse-native-audit-retry"]

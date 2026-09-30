@@ -1,0 +1,82 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/spatial-score.json"
+export = ".data/pilot-07/fusion-audit/spatial-export"
+models = ["continued", "metric-continue", "spatial-control", "spatial-l06"]
+output = ".data/pilot-07/fusion-audit/spatial-transfer-diagnostics.json"
+methods = ["centered_student", "conditional_centered_student", "student_l06_centered", "student_l06_centered_conditional", "fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+
+[[contrasts]]
+name = "spatial-control_minus_spatial-l06_fused_decoder"
+first = "spatial-control/fused_decoder"
+second = "spatial-l06/fused_decoder"
+
+[[contrasts]]
+name = "spatial-control_minus_spatial-l06_conditional_decoder"
+first = "spatial-control/conditional_decoder"
+second = "spatial-l06/conditional_decoder"
+
+[[contrasts]]
+name = "spatial-control_minus_spatial-l06_reciprocal_log_probability"
+first = "spatial-control/reciprocal_log_probability"
+second = "spatial-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "metric-continue_minus_spatial-l06_fused_decoder"
+first = "metric-continue/fused_decoder"
+second = "spatial-l06/fused_decoder"
+
+[[contrasts]]
+name = "metric-continue_minus_spatial-l06_conditional_decoder"
+first = "metric-continue/conditional_decoder"
+second = "spatial-l06/conditional_decoder"
+
+[[contrasts]]
+name = "metric-continue_minus_spatial-l06_reciprocal_log_probability"
+first = "metric-continue/reciprocal_log_probability"
+second = "spatial-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "continued_minus_spatial-l06_fused_decoder"
+first = "continued/fused_decoder"
+second = "spatial-l06/fused_decoder"
+
+[[contrasts]]
+name = "continued_minus_spatial-l06_conditional_decoder"
+first = "continued/conditional_decoder"
+second = "spatial-l06/conditional_decoder"
+
+[[contrasts]]
+name = "continued_minus_spatial-l06_reciprocal_log_probability"
+first = "continued/reciprocal_log_probability"
+second = "spatial-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "last_encoder_minus_spatial_fused_decoder"
+first = "spatial-l06/centered_student"
+second = "spatial-l06/fused_decoder"
+
+[[contrasts]]
+name = "last_encoder_minus_spatial_conditional_decoder"
+first = "spatial-l06/conditional_centered_student"
+second = "spatial-l06/conditional_decoder"
+
+[[contrasts]]
+name = "last_encoder_minus_spatial_reciprocal_log_probability"
+first = "spatial-l06/conditional_centered_student"
+second = "spatial-l06/reciprocal_log_probability"
+
+[[contrasts]]
+name = "block6_encoder_minus_spatial_fused_decoder"
+first = "spatial-l06/student_l06_centered"
+second = "spatial-l06/fused_decoder"
+
+[[contrasts]]
+name = "block6_encoder_minus_spatial_conditional_decoder"
+first = "spatial-l06/student_l06_centered_conditional"
+second = "spatial-l06/conditional_decoder"
+
+[[contrasts]]
+name = "block6_encoder_minus_spatial_reciprocal_log_probability"
+first = "spatial-l06/student_l06_centered_conditional"
+second = "spatial-l06/reciprocal_log_probability"

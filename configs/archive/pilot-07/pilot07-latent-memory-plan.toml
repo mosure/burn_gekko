@@ -1,0 +1,11 @@
+max_command_seconds = 900
+
+[[commands]]
+name = "legacy-captures"
+max_seconds = 420
+argv = [".data/pilot-07/bin/latent_memory_audit-v7", "--config", "configs/pilot07-latent-random90.toml", "--output", ".data/pilot-07/memory-legacy", "--steps", "200", "--batch", "48", "--legacy"]
+
+[[commands]]
+name = "final-only"
+max_seconds = 420
+argv = [".data/pilot-07/bin/latent_memory_audit-v7", "--config", "configs/pilot07-latent-random90.toml", "--output", ".data/pilot-07/memory-final-only", "--steps", "200", "--batch", "48"]

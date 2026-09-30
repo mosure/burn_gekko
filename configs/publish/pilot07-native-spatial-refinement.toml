@@ -1,0 +1,38 @@
+schema = 1
+id = "pilot07-native-spatial-refinement"
+title = "burn_gekko: Sparse-View Latent Completion in Burn"
+author = "Mitchell Mosure"
+description = "A shared multi-view fusion model predicts missing V-JEPA 2.1 representations from sparse target observations and independent reference views."
+architecture = "V-JEPA 2.1 Base (12 blocks, width 768, 16-pixel patches), with final and block-6 features feeding six fusion blocks of width 384 and six attention heads. The shared latent head predicts 768 channels per image-grid token. A separate full-target relative-improvement head is trained from reconstruction-error differences."
+run = ".data/runs/pilot-07-native-spatial-refinement"
+checkpoint = ".data/runs/pilot-07-native-spatial-refinement/final"
+checkpoint_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"
+sample_count = 6
+limitations = ["One training seed, a warm-start refinement phase and synthetic indoor training; no broad foundation-model or SOTA qualification.", "Latent prediction is primary. No RGB synthesis head was trained, and sharp RGB reconstruction is not established. Spatial prediction variance is 38.3% of the fixed teacher on this cohort.", "ETH3D and HPatches are development benchmarks because earlier outcomes informed the research direction. Their hard-patch readouts do not reproduce published refinement pipelines.", "Conditional fusion matching has greater AEPE than the same checkpoint's conditional block-6 encoder control on both real-image benchmarks. Fusion transfer remains an open quality gate.", "Camera intrinsics/pose and depth heads are untrained. Image-grid RoPE is not a calibrated camera or 3D positional encoding.", "Hidden-target isolation passes exactly, but strict reference-permutation invariance at 1e-5 fails: maximum float32 output difference is 0.003803 and RMS is 0.000171.", "Latent samples are selected deterministically from the first six exported rooms; population metrics use all 128 held-out rooms and 512 target views. Reference-count controls use the common first 32 rooms.", "Board energy and activity include shared desktop load. Utilization is not SM occupancy, and energy is not attributed solely to the training process."]
+
+[latent]
+directory = ".data/pilot-07/native-study/heldout/native-spatial-refinement"
+metrics_sha256 = "5a0c5623284562592c33aa07d8bbf2d05edb687fc1da0b7b91a84eeaab28e6b0"
+provenance_sha256 = "068970023e6e99b5a50cda5aa9842eafd7f8dd5c9578eb61e793d325de0ec1b4"
+evaluation_use = "held_out"
+
+[[benchmarks]]
+path = ".data/pilot-07/native-study/eth3d-score.json"
+sha256 = "ad02e9cf557d6ab4d5b6a5bc691c697d43f6e31a1b60bd83f35d65284eaf7dda"
+
+[[benchmarks]]
+path = ".data/pilot-07/native-study/hpatches-score.json"
+sha256 = "eb1660af8a6563d82aa41f80701a9f82f119e24c953d0172878496c49c8b05e1"
+
+[[heads]]
+path = ".data/pilot-07/native-study/reference-count-capability.json"
+sha256 = "35cc22d2e228763e5c70d586aead3bc30f432988145b5d35f3f78b0fb2e006be"
+
+[efficiency]
+command = "native-spatial-refinement"
+[efficiency.ledger]
+path = ".data/pilot-07/native-study/training-run/ledger.json"
+sha256 = "7e5ef646dc2ca673e487ce4daa94269379e3956c9cafa25a5f48eeb19853fc6e"
+[efficiency.telemetry]
+path = ".data/pilot-07/native-study/training-run/native-spatial-refinement-gpu.jsonl"
+sha256 = "8432d567b55f2ce66d48a530db28bc193bdce65980ed55102a5f6d30cf03f6a6"

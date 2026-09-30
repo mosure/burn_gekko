@@ -1,0 +1,11 @@
+max_command_seconds = 3600
+
+[[commands]]
+name = "fusion-descriptor-control"
+max_seconds = 1780
+argv = [".data/pilot-07/bin/latent_pilot-v13", "--config", "configs/pilot07-fusion-descriptor-control.toml", "--run", ".data/runs/pilot-07-fusion-descriptor-control"]
+
+[[commands]]
+name = "fusion-descriptor"
+max_seconds = 1780
+argv = [".data/pilot-07/bin/latent_pilot-v13", "--config", "configs/pilot07-fusion-descriptor.toml", "--run", ".data/runs/pilot-07-fusion-descriptor"]

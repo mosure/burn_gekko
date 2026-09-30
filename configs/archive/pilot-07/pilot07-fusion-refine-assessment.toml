@@ -1,0 +1,23 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+
+[[models]]
+name = "descriptor"
+checkpoint = ".data/runs/pilot-07-fusion-descriptor/final"
+model_sha256 = "8096057fc2cbc25fd6c68b19b5afb4df3f726d27488e29c6742ddbc5459ba4bc"
+
+[[models]]
+name = "refine-frozen"
+checkpoint = ".data/runs/pilot-07-fusion-refine-frozen/final"
+model_sha256 = "c591bf8ee25a2f0a85e9aa825c6b0222962f8b9bb2c9d6dac852598d779c71e6"
+
+[[models]]
+name = "refine-adapt"
+checkpoint = ".data/runs/pilot-07-fusion-refine-adapt/final"
+model_sha256 = "8030b3b5354849ee257b43da2ff0078df88ba98a75958c74751089780d02a9be"

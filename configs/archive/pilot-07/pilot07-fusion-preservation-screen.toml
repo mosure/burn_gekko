@@ -1,0 +1,17 @@
+registered_utc = "2026-09-30T01:47:14.025965+00:00"
+parent = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+parent_sha256 = "61ecd81f7d9c4094ff1fa120e761176301db14e4a22e056cc966bf8616a81bf6"
+reason = "The 6000-step endpoint passes its registered gates but decoder/attention still trail stronger block-6 controls. Remaining budget permits one final matched development screen before independent inference."
+arms = ["preserve-control", "preserve-strong"]
+descriptor_weights = [1.0, 4.0]
+sole_difference = "fusion_auxiliary.descriptor_weight"
+steps_per_arm = 1500
+learning_rate = 5e-05
+learning_rate_horizon = 1500
+encoder = "Frozen in both arms; fresh optimizers and same own weights, sample sequence and masks"
+affinity_teacher = "Frozen own endpoint student ancestor, block 6; primary dense/masked targets remain fixed MIT V-JEPA final-layer latents"
+gates = "Each eligible arm must improve all three primary viewpoint AEPE means over the route-balanced-continue parent; all three PCK3 values may decline at most 1 percent relative; latent validation rises at most 5 percent and RI AUROC falls at most 0.02 absolute. Select strong only if it also passes those same gates against the matched control. Otherwise select eligible control, else retain the parent."
+readouts = ["fused_decoder", "conditional_decoder", "reciprocal_log_probability"]
+strong_controls = ["student_l06_centered", "student_l06_centered_conditional"]
+compute = "Maximum 4300 command seconds for both training arms, 650 for HP development export, reserve 4000 for independent qualification. This is the final development screen; no further accuracy tuning after this choice."
+holdout = "ETH3D and fresh four-view rooms have no model outcomes; freeze the selected checkpoint and readouts before first inference."

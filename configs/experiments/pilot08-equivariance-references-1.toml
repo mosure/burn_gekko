@@ -1,0 +1,15 @@
+dataset = ".data/datasets/7ccea4c4c9de4afeb642865043845f55c69f052e0ef846d59511b4c5fdb97ca3"
+split = "test"
+rooms = 32
+export_rooms = 0
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 739
+stable_attention = false
+correspondence = false
+references = 1
+
+[[models]]
+name = "equivariance"
+checkpoint = ".data/runs/pilot-08-equivariance/final"
+model_sha256 = "02b8027b41d951c60afb39fc606b210ecb44e3dec4b9d2a1d53a9ddee5a62244"

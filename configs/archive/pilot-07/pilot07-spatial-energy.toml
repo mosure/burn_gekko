@@ -1,0 +1,16 @@
+output = ".data/pilot-07/fusion-audit/spatial-energy.json"
+max_gap_seconds = 3.0
+
+[commands.control]
+ledger = ".data/pilot-07/fusion-audit/spatial-run/ledger.json"
+command = "fusion-spatial-control"
+telemetry = ".data/pilot-07/fusion-audit/spatial-run/fusion-spatial-control-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-spatial-control"
+purpose = "1000-update frozen-encoder final-layer affinity control, inclusive command and desktop board energy"
+
+[commands.block6]
+ledger = ".data/pilot-07/fusion-audit/spatial-run/ledger.json"
+command = "fusion-spatial-l06"
+telemetry = ".data/pilot-07/fusion-audit/spatial-run/fusion-spatial-l06-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-spatial-l06"
+purpose = "1000-update frozen-encoder block-6 affinity treatment, inclusive command and desktop board energy"

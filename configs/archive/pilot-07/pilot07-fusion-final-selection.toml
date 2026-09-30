@@ -1,0 +1,26 @@
+schema = 1
+frozen_utc = "2026-09-30T02:44:03.300167+00:00"
+choice_record = "configs/pilot07-fusion-final-choice.toml"
+choice_sha256 = "6d18d68eb958cc4c3aefd8587525e402f68fe738ca7a39f1ec5cced255710f72"
+basis_score = ".data/pilot-07/fusion-audit/preserve-score.json"
+basis_score_sha256 = "e8664e8d59390ecf99f6f51a1bb91ba24b0620b8714ece6eeb458924bad2fc69"
+selection_reason = "Apply the final descriptor-preservation screen registration: selected route-balanced-continue. See preserve-decision.json for every gate, including rejected arms."
+candidate = "route-balanced-continue"
+parent = "continued"
+encoder_method = "student_l06_centered_conditional"
+plain_encoder_method = "student_l06_centered"
+decoder_method = "conditional_decoder"
+attention_method = "reciprocal_log_probability"
+spatial_layer = 6
+readouts = ["centered_decoder", "centered_latent", "centered_student", "centered_teacher", "conditional_centered_decoder", "conditional_centered_student", "conditional_centered_teacher", "conditional_decoder", "conditional_student", "conditional_teacher", "fixed_teacher", "fused_decoder", "fused_latent", "reciprocal_attention", "reciprocal_log_probability", "reciprocal_logits", "same_position", "student_encoder", "student_l06_centered", "student_l06_centered_conditional", "student_l06_raw", "student_l06_raw_conditional", "teacher_l06_centered", "teacher_l06_centered_conditional", "teacher_l06_raw", "teacher_l06_raw_conditional"]
+scope = "Independent ETH3D and fresh rooms; one seed; local hard-patch readout; no published-refinement parity or SOTA claim"
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+
+[[models]]
+name = "route-balanced-continue"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+model_sha256 = "61ecd81f7d9c4094ff1fa120e761176301db14e4a22e056cc966bf8616a81bf6"

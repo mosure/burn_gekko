@@ -1,0 +1,37 @@
+output = ".data/pilot-06/coarse-final-comparison.json"
+
+[[arms]]
+name = "pyramid"
+run = ".data/runs/pilot-06-pyramid"
+geometry = ".data/pilot-06/pyramid-flow-validation.json"
+
+[[arms]]
+name = "control"
+run = ".data/runs/pilot-06-coarse-control"
+geometry = ".data/pilot-06/coarse-control-flow-validation.json"
+
+[[arms]]
+name = "regularized"
+run = ".data/runs/pilot-06-coarse-screen"
+geometry = ".data/pilot-06/coarse-screen-flow-validation.json"
+
+[[comparisons]]
+control = "control"
+candidate = "regularized"
+
+[[comparisons]]
+control = "pyramid"
+candidate = "control"
+
+[[comparisons]]
+control = "pyramid"
+candidate = "regularized"
+
+[[arms]]
+name = "mild"
+run = ".data/runs/pilot-06-coarse-mild"
+geometry = ".data/pilot-06/coarse-mild-flow-validation.json"
+
+[[comparisons]]
+control = "control"
+candidate = "mild"

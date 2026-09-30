@@ -1,0 +1,14 @@
+seed = 17
+steps = 2
+learning_rate = 0.0001
+weight_decay = 0.05
+mask_ratio = 0.75
+references = 1
+decoder_width = 32
+decoder_depth = 1
+decoder_heads = 4
+normalize_targets = true
+global_grad_clip = 1.0
+
+[encoder]
+kind = "diagnostic_tiny"

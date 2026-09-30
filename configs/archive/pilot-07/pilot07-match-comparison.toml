@@ -1,0 +1,13 @@
+output = ".data/pilot-07/match-comparison.json"
+
+[[arms]]
+name = "parent"
+run = ".data/runs/pilot-06-refine-continue"
+
+[[arms]]
+name = "matcher_600"
+run = ".data/runs/pilot-07-match-screen"
+
+[[comparisons]]
+control = "parent"
+candidate = "matcher_600"

@@ -1,0 +1,15 @@
+images = ".data/benchmarks/eth3d/images.json"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+selection_record = "configs/pilot07-fusion-final-selection.toml"
+selection_sha256 = "0c1db35495a645773d261db02592b7d1c0c4056d1ba8cce4aeb9521078564e4a"
+spatial_layer = 6
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+
+[[models]]
+name = "route-balanced-continue"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+model_sha256 = "61ecd81f7d9c4094ff1fa120e761176301db14e4a22e056cc966bf8616a81bf6"

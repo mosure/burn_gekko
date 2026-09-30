@@ -1,0 +1,11 @@
+schema = 1
+reviewed = "2026-09-29"
+upstream_revision = "939abcea4648fd2ad0e12cb6d7bf4874f6bdf871"
+scope = "Imported-source adaptations; local package loader and export manifest are described separately in UPSTREAM.md"
+
+[[files]]
+source = "src/model.rs"
+upstream_sha256 = "4e35f34f549ab6cee7b359d24187b3e719f719c8dd9ad0240a7dac3b36a7997f"
+local_sha256 = "4a473777783c2378a127a4eb74fa986b897422439a253f7720085444e899e676"
+changes = ["explicit image capture-layer policy with final-only path"]
+verification = "Exact CPU dense/sparse final outputs and active parameter gradients; 200-update native partial-unfreeze capture audit with max loss difference 1.1921e-6"

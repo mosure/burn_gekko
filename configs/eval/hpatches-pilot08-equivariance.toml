@@ -1,0 +1,20 @@
+benchmark = "hpatches"
+dataset = ".data/benchmarks/hpatches"
+predictions = ".data/pilot-08/hpatches/equivariance.jsonl"
+provenance = ".data/pilot-08/hpatches/equivariance-provenance.json"
+checkpoint_sha256 = "02b8027b41d951c60afb39fc606b210ecb44e3dec4b9d2a1d53a9ddee5a62244"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+geometry_sha256 = "07166b74782d36d2835eecf8875d45898ad52857c500cc2ca30c9ed638bdd258"
+predictions_sha256 = "f671dd18cf979a6e09e54f0e11d222fc1be512d3fca108231312baf0908e5aac"
+evaluation_use = "development"
+output = ".data/pilot-08/hpatches-score.json"
+methods = ["spatial_residual_conditional", "spatial_self_conditional", "student_l06_centered_conditional", "conditional_decoder", "reciprocal_log_probability"]
+visual_method = "spatial_residual_conditional"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "student_l06_centered_conditional"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "spatial_self_conditional"

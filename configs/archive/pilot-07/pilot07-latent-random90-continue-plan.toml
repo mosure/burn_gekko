@@ -1,0 +1,6 @@
+max_command_seconds = 2050
+
+[[commands]]
+name = "random90-continue"
+max_seconds = 2030
+argv = [".data/pilot-07/bin/latent_pilot-v2", "--config", "configs/pilot07-latent-random90-continue.toml", "--run", ".data/runs/pilot-07-latent-random90-continue", "--checkpoint", ".data/runs/pilot-07-latent-random90/final"]

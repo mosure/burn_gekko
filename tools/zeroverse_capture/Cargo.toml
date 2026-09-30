@@ -1,0 +1,35 @@
+[workspace]
+
+[package]
+name = "burn_gekko_capture"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+
+rust-version = "1.98"
+description = "Procedural multi-view room dataset capture using published Bevy Zeroverse packages"
+repository = "https://github.com/mosure/burn_gekko"
+homepage = "https://github.com/mosure/burn_gekko"
+readme = "README.md"
+include = ["/src/**", "/README.md", "/LICENSE-*", "/Cargo.toml"]
+
+[[bin]]
+name = "gekko_zeroverse_capture"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4.5", features = ["derive"] }
+burn_gekko_data = { version = "0.1.0", path = "../../crates/burn_gekko_data" }
+bevy_zeroverse = "=0.25.0"
+bevy_zeroverse_burn = "=0.8.0"
+
+[profile.dev]
+debug = 0
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.release]
+debug = 0

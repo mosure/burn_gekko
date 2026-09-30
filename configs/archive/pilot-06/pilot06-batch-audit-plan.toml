@@ -1,0 +1,6 @@
+max_command_seconds = 200
+
+[[commands]]
+name = "fit-batch-audit"
+max_seconds = 180
+argv = [".data/pilot-06/bin/e2e_diagnostics-v5", "--config", "configs/pilot06-fit-detail-continue.toml", "--checkpoint", ".data/runs/pilot-06-fit-detail-continue/final", "--output", ".data/pilot-06/fit-batch-audit", "--split", "train", "--rooms", "16"]

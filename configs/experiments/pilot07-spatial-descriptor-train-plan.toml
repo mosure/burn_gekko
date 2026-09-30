@@ -1,0 +1,6 @@
+max_command_seconds = 2000
+
+[[commands]]
+name = "spatial-descriptor"
+max_seconds = 2000
+argv = [".data/pilot-07/bin/latent_pilot-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor.toml", "--run", ".data/runs/pilot-07-spatial-descriptor"]

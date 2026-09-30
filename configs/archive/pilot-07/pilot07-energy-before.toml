@@ -1,0 +1,23 @@
+output = ".data/pilot-07/fusion-audit/energy-before.json"
+max_gap_seconds = 3.0
+
+[commands.metric-control]
+ledger = ".data/pilot-07/fusion-audit/metric-run/ledger.json"
+command = "fusion-metric-control"
+telemetry = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-control-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-metric-control"
+purpose = "Unprofiled quality training; board energy includes command overhead"
+
+[commands.metric-strong]
+ledger = ".data/pilot-07/fusion-audit/metric-run/ledger.json"
+command = "fusion-metric-strong"
+telemetry = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-strong-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-metric-strong"
+purpose = "Unprofiled quality training; board energy includes command overhead"
+
+[commands.metric-continue]
+ledger = ".data/pilot-07/fusion-audit/metric-continuation-run/ledger.json"
+command = "fusion-metric-continue"
+telemetry = ".data/pilot-07/fusion-audit/metric-continuation-run/fusion-metric-continue-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-metric-continue"
+purpose = "Unprofiled quality training; board energy includes command overhead"

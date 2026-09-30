@@ -1,0 +1,57 @@
+[package]
+name = "burn_gekko_train"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98"
+license = "MIT OR Apache-2.0"
+description = "Bounded Burn training, checkpoint auditing and prediction exports"
+repository = "https://github.com/mosure/burn_gekko"
+homepage = "https://github.com/mosure/burn_gekko"
+readme = "README.md"
+keywords = ["burn", "vision", "multi-view", "deep-learning"]
+categories = ["science", "computer-vision"]
+include = ["/src/**", "/tests/**", "/examples/**", "/build.rs", "/README.md", "/LICENSE-*", "/Cargo.toml"]
+
+[features]
+default = ["ndarray"]
+ndarray = ["burn/ndarray", "burn_gekko/ndarray", "burn_vjepa/ndarray"]
+cuda = ["burn/cuda", "burn/fusion", "burn_gekko/cuda", "burn_vjepa/cuda"]
+wgpu = ["burn/wgpu", "burn/fusion", "burn_gekko/wgpu", "burn_vjepa/wgpu"]
+[dependencies]
+anyhow = "1"
+burn = { version = "=0.21.0", default-features = false, features = ["std", "autodiff"] }
+burn_gekko = { version = "0.1.0", path = "../..", default-features = false }
+burn_vjepa = { version = "0.1.0", path = "../burn_vjepa", default-features = false }
+burn_gekko_data = { version = "0.1.0", path = "../burn_gekko_data" }
+burn_gekko_eval = { version = "0.1.0", path = "../burn_gekko_eval" }
+clap = { version = "4.5", features = ["derive"] }
+rand = "0.9"
+rand_chacha = "0.9"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+safetensors = "0.7"
+[dev-dependencies]
+tempfile = "3"
+[[bin]]
+name = "gekko"
+path = "src/main.rs"
+
+[[test]]
+name = "e2e_contracts"
+required-features = ["ndarray"]
+
+[[test]]
+name = "pipeline"
+required-features = ["ndarray"]
+
+[[example]]
+name = "released_audit"
+required-features = ["ndarray"]
+
+[[example]]
+name = "encoder_audit"
+required-features = ["ndarray"]
+
+[[example]]
+name = "decoder_backend_audit"
+required-features = ["ndarray"]

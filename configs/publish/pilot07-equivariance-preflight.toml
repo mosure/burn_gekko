@@ -1,0 +1,50 @@
+schema = 1
+id = "pilot07-equivariance-preflight"
+title = "burn_gekko: Known-Transform Correspondence Preflight"
+author = "Mitchell Mosure"
+description = "Known RGB transforms improve descriptor matching over the same checkpoint's encoder control in a bounded 256-update preflight. Pair-conditioned and same-image-conditioned descriptors remain tied on HPatches, while ETH3D shows a small gain over that control but an uncertain gain over the encoder. The combined transfer gate is not passed. This is one experiment, with explicit quality and capability limits."
+architecture = "An audited MIT V-JEPA 2.1 Base encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. The encoder is frozen during this phase. A freshly zero-initialized matching head adds a correction bounded by 25% of the centered block-6 descriptor norm. Known projective transforms of training RGB supply bidirectional bilinear patch-grid labels, supervised by cosine NLL at temperature 0.07. Pair-conditioned and shared-weight same-image-conditioned descriptors receive equal weight; their averaged auxiliary contributes 0.1 to the objective. Sparse latent completion and RI remain active. No renderer geometry, camera labels or noncommercial pretrained weights supervise this phase."
+run = ".data/runs/pilot-07-equivariance-preflight"
+checkpoint = ".data/runs/pilot-07-equivariance-preflight/final"
+checkpoint_sha256 = "996fedf858d6c5e1fe0cdaabd8539e87ff3bd7e6041625ea2981b41056be5e73"
+sample_count = 4
+limitations = [
+"This is a 256-update, one-seed development preflight over 128 cached training rooms, not a full foundation-model training study or a SOTA result.",
+"All displayed results belong to this one final checkpoint. Encoder and same-image readouts are controls within it, not separately trained model versions.",
+"HPatches and ETH3D are development benchmarks whose earlier outcomes informed the project. Hard patch-grid flow at 256-pixel input does not reproduce published full-resolution refinement protocols.",
+"Pair-conditioned matching must improve over both the encoder and the trained same-image control before claiming a fusion benefit. Better matching than the encoder alone does not establish this.",
+"Latent evaluation reuses 16 validation rooms; the first eight also supplied training probes. It is not a fresh held-out cohort.",
+"The model has no trained RGB reconstruction, camera or depth head. Representation variance remains suppressed, so latent prediction has not resolved RGB blur.",
+"Hidden-target isolation passes exactly. Strict reference-order invariance at 1e-5 fails; the observed maximum float32 difference is 0.003796.",
+"Known-transform examples use the first four validation rooms and evenly spaced valid queries. Their geometric labels are derived only from the applied image warp and never enter model inputs.",
+"Board power and utilization include shared desktop processes. They are not process-attributed energy or measurements of SM occupancy."
+]
+
+[latent]
+directory = ".data/pilot-07/equivariance-study/latent/equivariance-preflight"
+metrics_sha256 = "dcd978821f78d938dae6577bd2fb2222bbcc28e5fc47f4100b665ac21be69033"
+provenance_sha256 = "f546b57984c6c0a91f2cc0ade877494818c11b116b09a278c1f8e0a6595c3488"
+evaluation_use = "development"
+
+[equivariance]
+path = ".data/pilot-07/equivariance-study/warp/metrics.json"
+sha256 = "44aeb475eb0a6b8bebb6e98ed245e12e5d2892b323f9d337368d74913149d9bb"
+
+[[benchmarks]]
+path = ".data/pilot-07/equivariance-study/hpatches-score.json"
+sha256 = "419f0a81fa3da70f3a4c293db82052f9ba8b38127a7515c4aa1e85bd93d24f6d"
+
+[efficiency]
+command = "equivariance-preflight"
+
+[efficiency.ledger]
+path = ".data/pilot-07/equivariance-study/preflight-run/ledger.json"
+sha256 = "e5da17be9dc77634eef3b42a586b2d65cc9d3c71e796792fae12e597a9b3134f"
+
+[efficiency.telemetry]
+path = ".data/pilot-07/equivariance-study/preflight-run/equivariance-preflight-gpu.jsonl"
+sha256 = "d1733dea19ffbbba6ccfbc44afa968410d7a9951921c9cdae2b1c0d45522d1e5"
+
+[[benchmarks]]
+path = ".data/pilot-07/equivariance-study/eth3d-score.json"
+sha256 = "c00a6b9e188fae4461e474d5375dbb55284c1bbd198808047f5f078c017fb529"

@@ -1,0 +1,17 @@
+assessment = ".data/pilot-07/mask-assessment"
+pdf = ".data/pilot-07/mask-screen-interim.pdf"
+budget = ".data/pilot-07/budget.json"
+baseline = "parent"
+selected = "random90"
+
+[[models]]
+name = "parent"
+
+[[models]]
+name = "random90"
+run = ".data/runs/pilot-07-latent-random90"
+
+[[models]]
+name = "block90"
+run = ".data/runs/pilot-07-latent-block90-resume"
+prefix_run = ".data/runs/pilot-07-latent-block90"

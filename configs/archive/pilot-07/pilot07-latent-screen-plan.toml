@@ -1,0 +1,6 @@
+max_command_seconds = 2100
+
+[[commands]]
+name = "latent-screen"
+max_seconds = 2050
+argv = [".data/pilot-07/bin/latent_pilot-v1", "--config", "configs/pilot07-latent-screen.toml", "--run", ".data/runs/pilot-07-latent-screen"]

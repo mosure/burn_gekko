@@ -1,0 +1,11 @@
+max_command_seconds = 340
+
+[[commands]]
+name = "references-1"
+max_seconds = 140
+argv = [".data/pilot-07/bin/latent_assess-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor-references-1.toml", "--output", ".data/pilot-07/spatial-head-study/references-1"]
+
+[[commands]]
+name = "references-3"
+max_seconds = 180
+argv = [".data/pilot-07/bin/latent_assess-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor-references-3.toml", "--output", ".data/pilot-07/spatial-head-study/references-3"]

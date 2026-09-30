@@ -1,0 +1,53 @@
+spatial_input_layer = 6
+spatial_input_scale = 1.0
+cross_view_rope = true
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+seed = 719
+train_rooms = 8192
+validation_rooms = 64
+export_rooms = 2
+batch_size = 16
+steps = 1000
+decay_steps = 6000
+warmup_steps = 50
+max_seconds = 1800
+eval_every = 250
+checkpoint_every = 250
+decoder_width = 384
+decoder_depth = 6
+decoder_heads = 6
+learning_rate = 0.0001
+encoder_lr_ratio = 0.05
+weight_decay = 0.05
+train_mask = "random"
+mask_ratio = 0.90
+eval_mask_ratio = 0.90
+eval_mask = "random"
+stable_attention = false
+references = 2
+visible_loss_weight = 0.1
+ri_weight = 0.1
+ri_start_step = 0
+unfreeze = true
+encoder_stage_cap = 2
+unfreeze_min_steps = 1000
+unfreeze_min_improvement = 0.002
+
+[teacher]
+kind = "burnpack"
+directory = ".data/models/vjepa2_1_base"
+
+[warm_start]
+checkpoint = ".data/runs/pilot-07-fusion-spatial-l06/final"
+model_sha256 = "e9d9090f8de0652dab9b7dc643c3a481564f1f0f7ddf689a55a4da70e28799d5"
+
+[fusion_auxiliary]
+attention_weight = 0.1
+dense_weight = 0.1
+teacher_temperature = 0.07
+anchor_warm_start = true
+
+bidirectional = true
+descriptor_weight = 1.0
+
+teacher_layers = [6]

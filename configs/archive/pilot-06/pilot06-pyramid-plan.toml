@@ -1,0 +1,6 @@
+max_command_seconds = 21510
+
+[[commands]]
+name = "pyramid"
+max_seconds = 21500
+argv = [".data/pilot-06/bin/e2e_pilot-v8", "--config", "configs/pilot06-pyramid.toml", "--warm-start", ".data/runs/pilot-06-main/final", "--run", ".data/runs/pilot-06-pyramid"]

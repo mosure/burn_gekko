@@ -1,0 +1,16 @@
+max_command_seconds = 1000
+
+[[commands]]
+name = "heldout"
+max_seconds = 320
+argv = [".data/pilot-07/bin/latent_assess-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor-heldout.toml", "--output", ".data/pilot-07/spatial-head-study/heldout"]
+
+[[commands]]
+name = "eth3d"
+max_seconds = 500
+argv = [".data/pilot-07/bin/eth3d_export-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor-eth3d.toml", "--output", ".data/pilot-07/spatial-head-study/eth3d"]
+
+[[commands]]
+name = "hpatches"
+max_seconds = 150
+argv = [".data/pilot-07/bin/hpatches_export-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor-hpatches.toml", "--output", ".data/pilot-07/spatial-head-study/hpatches"]

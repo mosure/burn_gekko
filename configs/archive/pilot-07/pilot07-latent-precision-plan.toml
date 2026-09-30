@@ -1,0 +1,6 @@
+max_command_seconds = 240
+
+[[commands]]
+name = "latent-precision"
+max_seconds = 220
+argv = [".data/pilot-07/bin/latent_precision_audit-v1", "--config", "configs/pilot07-latent-screen.toml", "--checkpoint", ".data/runs/pilot-07-latent-screen/final", "--output", ".data/pilot-07/latent-precision.json"]

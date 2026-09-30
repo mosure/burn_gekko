@@ -1,0 +1,11 @@
+max_command_seconds = 550
+
+[[commands]]
+name = "pyramid-throughput"
+max_seconds = 450
+argv = [".data/pilot-06/bin/e2e_pilot-v8", "--config", "configs/pilot06-pyramid-throughput.toml", "--warm-start", ".data/runs/pilot-06-main/final", "--run", ".data/runs/pilot-06-pyramid-throughput"]
+
+[[commands]]
+name = "pyramid-throughput-audit"
+max_seconds = 90
+argv = [".data/pilot-06/bin/e2e_diagnostics-v8", "--config", "configs/pilot06-pyramid-throughput.toml", "--checkpoint", ".data/runs/pilot-06-pyramid-throughput/final", "--output", ".data/pilot-06/pyramid-throughput-audit", "--split", "train", "--rooms", "16", "--rgb-all"]

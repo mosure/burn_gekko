@@ -1,0 +1,6 @@
+max_command_seconds = 33100
+
+[[commands]]
+name = "main"
+max_seconds = 33000
+argv = [".data/pilot-06/bin/e2e_pilot-v4", "--config", "configs/pilot06-main.toml", "--warm-start", ".data/runs/pilot-06-fit-detail-continue/final", "--run", ".data/runs/pilot-06-main"]

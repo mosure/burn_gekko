@@ -1,0 +1,11 @@
+output = ".data/pilot-07/fusion-audit/refinement-review.json"
+
+[runs]
+refine-frozen = ".data/runs/pilot-07-fusion-refine-frozen"
+refine-adapt = ".data/runs/pilot-07-fusion-refine-adapt"
+
+[comparisons.encoder_unfreezing]
+left = "refine-frozen"
+right = "refine-adapt"
+changed_fields = ["unfreeze", "encoder_stage_cap"]
+match_encoder_stages = false

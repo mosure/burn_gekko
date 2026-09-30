@@ -1,0 +1,12 @@
+schema = 1
+registered = "2026-09-29T15:57:08.397662+00:00"
+timing = "During the selected random-mask continuation, before fresh capture and any HPatches model evaluation"
+checkpoint_selection = "Continue the selected arm through its existing step-2000 horizon; retain step 2000 if common validation latent MSE improves over step 1000 and encoder EPE does not regress more than 2 percent; otherwise retain step 1000. No test-dependent selection."
+fresh_synthetic = "New generator seed 2609400000, one unused training room, one unused validation room, 256 test rooms; assess all test rooms once after checkpoint selection"
+mask = "Same fixed random 90 percent mask as validation; multiple mask seeds remain a separate qualification gate"
+external_primary = "HPatches 59 viewpoint sequences / 295 pairs; matched fixed V-JEPA and adapted encoder, decoder and attention readouts"
+external_supplementary = "All 57 illumination sequences and all 116 sequences combined"
+external_annotation_selection = "Lexicographically first and median viewpoint sequence, target view 6, 12 evenly spaced in-bounds patch queries; show fixed teacher, adapted student and reciprocal attention"
+external_training = false
+external_checkpoint_selection = false
+next_training = "Any subsequent optimization informed by these external results must declare HPatches development-data reuse"

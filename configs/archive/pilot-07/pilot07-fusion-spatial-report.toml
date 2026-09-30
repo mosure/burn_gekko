@@ -1,0 +1,87 @@
+output = ".data/pilot-07/fusion-audit/spatial-affinity-interim-report.pdf"
+audit_score = ".data/pilot-07/fusion-audit/readout-score.json"
+hpatches_score = ".data/pilot-07/fusion-audit/spatial-score.json"
+candidate = "spatial-l06"
+encoder_method = "student_l06_centered_conditional"
+plain_encoder_method = "student_l06_centered"
+lineage_record = ".data/pilot-07/fusion-audit/spatial-l06-lineage.json"
+parent = "continued"
+attention_method = "reciprocal_log_probability"
+hpatches_images = ".data/benchmarks/hpatches/images.json"
+hpatches_export = ".data/pilot-07/fusion-audit/spatial-export"
+budget_ledger = ".data/pilot-07/budget.json"
+conclusion = "INTERIM: middle-layer affinity guidance improves decoder and attention transfer against its matched control while preserving the primary latent task. Fusion now beats its final-layer encoder, but still trails the stronger block-6 encoder. A direct spatial-input experiment is in native preflight; both independent holdouts remain untouched."
+transfer_diagnostics = ".data/pilot-07/fusion-audit/spatial-transfer-diagnostics.json"
+
+preservation_diagnostics = ".data/pilot-07/fusion-audit/spatial-preservation.json"
+
+encoder_audit_score = ".data/pilot-07/fusion-audit/encoder-layer-score.json"
+efficiency_comparison = ".data/pilot-07/fusion-audit/upload-training-comparison.json"
+efficiency_energy = ".data/pilot-07/fusion-audit/upload-training-energy.json"
+efficiency_trace = ".data/pilot-07/fusion-audit/efficiency-trace-review.json"
+decoder_method = "conditional_decoder"
+
+[runs]
+control = ".data/runs/pilot-07-fusion-control"
+no-rope = ".data/runs/pilot-07-fusion-no-rope"
+guided = ".data/runs/pilot-07-fusion-guided"
+guided-no-rope = ".data/runs/pilot-07-fusion-guided-no-rope"
+descriptor-control = ".data/runs/pilot-07-fusion-descriptor-control"
+descriptor = ".data/runs/pilot-07-fusion-descriptor"
+
+refine-frozen = ".data/runs/pilot-07-fusion-refine-frozen"
+refine-adapt = ".data/runs/pilot-07-fusion-refine-adapt"
+
+metric-control = ".data/runs/pilot-07-fusion-metric-control"
+metric-strong = ".data/runs/pilot-07-fusion-metric-strong"
+
+metric-continue = ".data/runs/pilot-07-fusion-metric-continue"
+
+spatial-control = ".data/runs/pilot-07-fusion-spatial-control"
+spatial-l06 = ".data/runs/pilot-07-fusion-spatial-l06"
+
+[telemetry]
+control = ".data/pilot-07/fusion-audit/training-run/fusion-control-gpu.jsonl"
+no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-no-rope-gpu.jsonl"
+guided = ".data/pilot-07/fusion-audit/training-run/fusion-guided-gpu.jsonl"
+guided-no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-guided-no-rope-gpu.jsonl"
+descriptor-control = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-control-gpu.jsonl"
+descriptor = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-gpu.jsonl"
+refine-frozen = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-frozen-gpu.jsonl"
+refine-adapt = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-adapt-gpu.jsonl"
+
+metric-control = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-control-gpu.jsonl"
+metric-strong = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-strong-gpu.jsonl"
+
+metric-continue = ".data/pilot-07/fusion-audit/metric-continuation-run/fusion-metric-continue-gpu.jsonl"
+
+spatial-control = ".data/pilot-07/fusion-audit/spatial-run/fusion-spatial-control-gpu.jsonl"
+spatial-l06 = ".data/pilot-07/fusion-audit/spatial-run/fusion-spatial-l06-gpu.jsonl"
+
+[convergence_groups]
+positional_and_guidance_screen = ["control", "no-rope", "guided", "guided-no-rope"]
+descriptor_alignment = ["descriptor-control", "descriptor"]
+encoder_adaptation = ["refine-frozen", "refine-adapt"]
+descriptor_strength = ["metric-control", "metric-strong"]
+descriptor_continuation = ["metric-strong", "metric-continue"]
+spatial_affinity = ["spatial-control", "spatial-l06"]
+
+[historical_scores.screen]
+score = ".data/pilot-07/fusion-audit/screen-score.json"
+export = ".data/pilot-07/fusion-audit/screen-export"
+
+[historical_scores.descriptor]
+score = ".data/pilot-07/fusion-audit/descriptor-score.json"
+export = ".data/pilot-07/fusion-audit/descriptor-export"
+
+[historical_scores.refinement]
+score = ".data/pilot-07/fusion-audit/refinement-score.json"
+export = ".data/pilot-07/fusion-audit/refinement-export"
+
+[historical_scores.metric]
+score = ".data/pilot-07/fusion-audit/metric-score.json"
+export = ".data/pilot-07/fusion-audit/metric-export"
+
+[historical_scores.continuation]
+score = ".data/pilot-07/fusion-audit/continuation-score.json"
+export = ".data/pilot-07/fusion-audit/continuation-export"

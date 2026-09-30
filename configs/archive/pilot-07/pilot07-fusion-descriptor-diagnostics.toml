@@ -1,0 +1,22 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/descriptor-score.json"
+export = ".data/pilot-07/fusion-audit/descriptor-export"
+output = ".data/pilot-07/fusion-audit/descriptor-transfer-diagnostics.json"
+models = ["continued", "descriptor-control", "descriptor"]
+methods = ["centered_student", "fused_decoder", "centered_decoder", "reciprocal_log_probability"]
+
+[[contrasts]]
+name = "matched_control_minus_descriptor"
+first = "descriptor-control/fused_decoder"
+second = "descriptor/fused_decoder"
+
+[[contrasts]]
+name = "unchanged_encoder_minus_descriptor"
+first = "descriptor/centered_student"
+second = "descriptor/fused_decoder"
+
+[[contrasts]]
+name = "matched_control_minus_attention"
+first = "descriptor-control/reciprocal_log_probability"
+second = "descriptor/reciprocal_log_probability"

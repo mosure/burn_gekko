@@ -1,0 +1,11 @@
+max_command_seconds = 900
+
+[[commands]]
+name = "upload-training-before"
+max_seconds = 440
+argv = [".data/pilot-07/bin/latent_pilot-v13", "--config", "configs/pilot07-upload-training-check.toml", "--run", ".data/runs/pilot-07-upload-training-before"]
+
+[[commands]]
+name = "upload-training-after"
+max_seconds = 440
+argv = [".data/pilot-07/bin/latent_pilot-v16", "--config", "configs/pilot07-upload-training-check.toml", "--run", ".data/runs/pilot-07-upload-training-after"]

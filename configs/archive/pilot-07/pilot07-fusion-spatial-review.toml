@@ -1,0 +1,10 @@
+output = ".data/pilot-07/fusion-audit/spatial-review.json"
+
+[runs]
+spatial-control = ".data/runs/pilot-07-fusion-spatial-control"
+spatial-l06 = ".data/runs/pilot-07-fusion-spatial-l06"
+
+[comparisons.affinity_level]
+left = "spatial-control"
+right = "spatial-l06"
+changed_fields = ["fusion_auxiliary.teacher_layers"]

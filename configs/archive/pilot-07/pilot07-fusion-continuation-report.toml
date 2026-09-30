@@ -1,0 +1,59 @@
+output = ".data/pilot-07/fusion-audit/continuation-and-efficiency-interim.pdf"
+audit_score = ".data/pilot-07/fusion-audit/readout-score.json"
+hpatches_score = ".data/pilot-07/fusion-audit/continuation-score.json"
+candidate = "metric-continue"
+encoder_method = "conditional_centered_student"
+lineage_record = ".data/pilot-07/fusion-audit/metric-continue-lineage.json"
+parent = "continued"
+attention_method = "reciprocal_log_probability"
+hpatches_images = ".data/benchmarks/hpatches/images.json"
+hpatches_export = ".data/pilot-07/fusion-audit/continuation-export"
+budget_ledger = ".data/pilot-07/budget.json"
+conclusion = "INTERIM: exact continuation further improves decoder matching, but the decoder still trails its encoder. A hierarchy probe exposes a stronger block-6 baseline. A matched affinity-level study is running; independent holdouts remain untouched. GPU upload repair passes numerical and energy qualification."
+transfer_diagnostics = ".data/pilot-07/fusion-audit/continuation-transfer-diagnostics.json"
+
+preservation_diagnostics = ".data/pilot-07/fusion-audit/continuation-preservation.json"
+
+encoder_audit_score = ".data/pilot-07/fusion-audit/encoder-layer-score.json"
+efficiency_comparison = ".data/pilot-07/fusion-audit/upload-training-comparison.json"
+efficiency_energy = ".data/pilot-07/fusion-audit/upload-training-energy.json"
+efficiency_trace = ".data/pilot-07/fusion-audit/efficiency-trace-review.json"
+decoder_method = "conditional_decoder"
+
+[runs]
+control = ".data/runs/pilot-07-fusion-control"
+no-rope = ".data/runs/pilot-07-fusion-no-rope"
+guided = ".data/runs/pilot-07-fusion-guided"
+guided-no-rope = ".data/runs/pilot-07-fusion-guided-no-rope"
+descriptor-control = ".data/runs/pilot-07-fusion-descriptor-control"
+descriptor = ".data/runs/pilot-07-fusion-descriptor"
+
+refine-frozen = ".data/runs/pilot-07-fusion-refine-frozen"
+refine-adapt = ".data/runs/pilot-07-fusion-refine-adapt"
+
+metric-control = ".data/runs/pilot-07-fusion-metric-control"
+metric-strong = ".data/runs/pilot-07-fusion-metric-strong"
+
+metric-continue = ".data/runs/pilot-07-fusion-metric-continue"
+
+[telemetry]
+control = ".data/pilot-07/fusion-audit/training-run/fusion-control-gpu.jsonl"
+no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-no-rope-gpu.jsonl"
+guided = ".data/pilot-07/fusion-audit/training-run/fusion-guided-gpu.jsonl"
+guided-no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-guided-no-rope-gpu.jsonl"
+descriptor-control = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-control-gpu.jsonl"
+descriptor = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-gpu.jsonl"
+refine-frozen = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-frozen-gpu.jsonl"
+refine-adapt = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-adapt-gpu.jsonl"
+
+metric-control = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-control-gpu.jsonl"
+metric-strong = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-strong-gpu.jsonl"
+
+metric-continue = ".data/pilot-07/fusion-audit/metric-continuation-run/fusion-metric-continue-gpu.jsonl"
+
+[convergence_groups]
+positional_and_guidance_screen = ["control", "no-rope", "guided", "guided-no-rope"]
+descriptor_alignment = ["descriptor-control", "descriptor"]
+encoder_adaptation = ["refine-frozen", "refine-adapt"]
+descriptor_strength = ["metric-control", "metric-strong"]
+descriptor_continuation = ["metric-strong", "metric-continue"]

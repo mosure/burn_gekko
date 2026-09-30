@@ -1,0 +1,127 @@
+output = ".data/pilot-07/fusion-audit/metric-fixed-controls.json"
+
+[exports]
+continued = ".data/pilot-07/fusion-audit/metric-export/continued.jsonl"
+refine-adapt = ".data/pilot-07/fusion-audit/metric-export/refine-adapt.jsonl"
+metric-control = ".data/pilot-07/fusion-audit/metric-export/metric-control.jsonl"
+metric-strong = ".data/pilot-07/fusion-audit/metric-export/metric-strong.jsonl"
+
+[[comparisons]]
+name = "teacher_refine-adapt_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "refine-adapt/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_refine-adapt_centered_teacher"
+first = "continued/centered_teacher"
+second = "refine-adapt/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_refine-adapt_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "refine-adapt/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_refine-adapt_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "refine-adapt/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-control_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "metric-control/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-control_centered_teacher"
+first = "continued/centered_teacher"
+second = "metric-control/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-control_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "metric-control/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-control_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "metric-control/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-strong_fixed_teacher"
+first = "continued/fixed_teacher"
+second = "metric-strong/fixed_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-strong_centered_teacher"
+first = "continued/centered_teacher"
+second = "metric-strong/centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-strong_conditional_teacher"
+first = "continued/conditional_teacher"
+second = "metric-strong/conditional_teacher"
+identical = true
+
+[[comparisons]]
+name = "teacher_metric-strong_conditional_centered_teacher"
+first = "continued/conditional_centered_teacher"
+second = "metric-strong/conditional_centered_teacher"
+identical = true
+
+[[comparisons]]
+name = "student_metric-control_student_encoder"
+first = "refine-adapt/student_encoder"
+second = "metric-control/student_encoder"
+identical = true
+
+[[comparisons]]
+name = "student_metric-control_centered_student"
+first = "refine-adapt/centered_student"
+second = "metric-control/centered_student"
+identical = true
+
+[[comparisons]]
+name = "student_metric-control_conditional_student"
+first = "refine-adapt/conditional_student"
+second = "metric-control/conditional_student"
+identical = true
+
+[[comparisons]]
+name = "student_metric-control_conditional_centered_student"
+first = "refine-adapt/conditional_centered_student"
+second = "metric-control/conditional_centered_student"
+identical = true
+
+[[comparisons]]
+name = "student_metric-strong_student_encoder"
+first = "refine-adapt/student_encoder"
+second = "metric-strong/student_encoder"
+identical = true
+
+[[comparisons]]
+name = "student_metric-strong_centered_student"
+first = "refine-adapt/centered_student"
+second = "metric-strong/centered_student"
+identical = true
+
+[[comparisons]]
+name = "student_metric-strong_conditional_student"
+first = "refine-adapt/conditional_student"
+second = "metric-strong/conditional_student"
+identical = true
+
+[[comparisons]]
+name = "student_metric-strong_conditional_centered_student"
+first = "refine-adapt/conditional_centered_student"
+second = "metric-strong/conditional_centered_student"
+identical = true

@@ -1,0 +1,11 @@
+benchmark = "eth3d"
+dataset = ".data/benchmarks/eth3d"
+predictions = ".data/pilot-07/native-study/eth3d/native-spatial-refinement.jsonl"
+provenance = ".data/pilot-07/native-study/eth3d/native-spatial-refinement-provenance.json"
+checkpoint_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+geometry_sha256 = "23382999b5ba85e6dfb5e9fbbb396ef094814b467386df9e74cedea36e746ff3"
+predictions_sha256 = "d32e5e83c6aee1dc54de3cc2683b88c2c7cb7137b204a451c6225757767a0838"
+evaluation_use = "development"
+output = ".data/pilot-07/native-study/eth3d-score.json"
+methods = ["fused_decoder", "conditional_decoder", "reciprocal_log_probability", "student_l06_centered", "student_l06_centered_conditional"]

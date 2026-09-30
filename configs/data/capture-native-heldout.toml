@@ -1,0 +1,10 @@
+schema = 1
+seed = 2610030000
+split_scenes = [1, 1, 128]
+width = 256
+height = 256
+cameras = 4
+density = 0.35
+timeout_secs = 600
+multiview = true
+camera_baseline = 0.5

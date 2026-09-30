@@ -1,0 +1,24 @@
+# Launch only after full-validation checkpoint selection is recorded in
+# .data/pilot-06/selection.json and all reserved parallel legs are accounted.
+# If a periodic checkpoint is selected, replace every checkpoint path together.
+max_command_seconds = 1120
+
+[[commands]]
+name = "reserved-test"
+max_seconds = 250
+argv = [".data/pilot-06/bin/e2e_pilot-v9", "--config", "configs/pilot06-refine-continue.toml", "--checkpoint", ".data/runs/pilot-06-refine-continue/final", "--evaluate", "test", "--run", ".data/runs/pilot-06-selected-test"]
+
+[[commands]]
+name = "reserved-test-unrelated"
+max_seconds = 250
+argv = [".data/pilot-06/bin/e2e_pilot-v9", "--config", "configs/pilot06-refine-continue.toml", "--checkpoint", ".data/runs/pilot-06-refine-continue/final", "--evaluate", "test", "--unrelated", "--run", ".data/runs/pilot-06-selected-test-unrelated"]
+
+[[commands]]
+name = "reserved-test-audit"
+max_seconds = 300
+argv = [".data/pilot-06/bin/e2e_diagnostics-v9", "--config", "configs/pilot06-refine-continue.toml", "--checkpoint", ".data/runs/pilot-06-refine-continue/final", "--split", "test", "--rooms", "128", "--output", ".data/pilot-06/selected-test-audit"]
+
+[[commands]]
+name = "refine-training-audit"
+max_seconds = 300
+argv = [".data/pilot-06/bin/e2e_diagnostics-v9", "--config", "configs/pilot06-refine-continue.toml", "--checkpoint", ".data/runs/pilot-06-refine-continue/final", "--split", "train", "--rooms", "128", "--rgb-all", "--output", ".data/pilot-06/refine-training-audit"]

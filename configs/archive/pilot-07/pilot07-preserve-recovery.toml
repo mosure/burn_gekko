@@ -1,0 +1,7 @@
+registered_utc = "2026-09-30T02:07:36.250869+00:00"
+failed_command = "preserve-run/fusion-preserve-strong"
+cause = "v18 rejects descriptor_weight above 1 before dataset/model loading; zero optimizer updates"
+change = "v20 accepts finite descriptor weights in [0,4]; loss arithmetic and all other validation/experiment gates unchanged"
+recovery = "Preserve the completed v18 control. Before the v20 strong arm, replay the first 64 weight-1 updates with v20 and require every component loss exact, gradient-norm delta at most 1e-6, initial per-view latent MSE delta at most 1e-5, unchanged teacher/encoder and zero hidden RGB leakage."
+budget = "Failed startup, 230-second native parity allowance, and the remaining 2100-second strong-arm allowance all count in the same Pilot07 ledger; independent qualification retains 4000 seconds."
+holdout = "Still no independent model outcomes; no hyperparameter or selection threshold changed in response to control outcomes."

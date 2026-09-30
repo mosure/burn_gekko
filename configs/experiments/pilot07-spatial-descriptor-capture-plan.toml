@@ -1,0 +1,6 @@
+max_command_seconds = 120
+
+[[commands]]
+name = "fresh-heldout-capture"
+max_seconds = 110
+argv = [".data/pilot-07/bin/gekko-native-v22", "capture", "--config", "configs/data/capture-spatial-descriptor-heldout.toml", "--binary", "tools/zeroverse_capture/target/debug/gekko_zeroverse_capture"]

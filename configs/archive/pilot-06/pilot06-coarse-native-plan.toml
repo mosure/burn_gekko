@@ -1,0 +1,6 @@
+max_command_seconds = 90
+
+[[commands]]
+name = "coarse-native-audit"
+max_seconds = 75
+argv = [".data/pilot-06/bin/e2e_diagnostics-v9", "--config", "configs/pilot06-coarse-screen.toml", "--checkpoint", ".data/runs/pilot-06-coarse-screen/final", "--split", "validation", "--rooms", "16", "--rgb-all", "--output", ".data/pilot-06/coarse-native-audit"]

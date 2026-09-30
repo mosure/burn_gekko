@@ -1,0 +1,6 @@
+max_command_seconds = 22810
+
+[[commands]]
+name = "appearance"
+max_seconds = 22800
+argv = [".data/pilot-06/bin/e2e_pilot-v7", "--config", "configs/pilot06-appearance.toml", "--warm-start", ".data/runs/pilot-06-main/final", "--run", ".data/runs/pilot-06-appearance"]

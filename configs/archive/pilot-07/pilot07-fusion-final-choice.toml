@@ -1,0 +1,5 @@
+candidate = "route-balanced-continue"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+hpatches_score = ".data/pilot-07/fusion-audit/preserve-score.json"
+hpatches_export = ".data/pilot-07/fusion-audit/preserve-export"
+selection_reason = "Apply the final descriptor-preservation screen registration: selected route-balanced-continue. See preserve-decision.json for every gate, including rejected arms."

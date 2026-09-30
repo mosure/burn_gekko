@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/mosure/burn_jepa",
+  "revision": "939abcea4648fd2ad0e12cb6d7bf4874f6bdf871",
+  "source_license": "MIT OR Apache-2.0",
+  "files": [
+    {
+      "source": "src/config.rs",
+      "sha256": "3afa6986651b96755891469ab7084aea1282b483cbdfb1055ce7e755cdf78369"
+    },
+    {
+      "source": "src/model.rs",
+      "sha256": "4e35f34f549ab6cee7b359d24187b3e719f719c8dd9ad0240a7dac3b36a7997f"
+    },
+    {
+      "source": "src/tokens.rs",
+      "sha256": "eea8b711939dd51316636d213f69954828ffb48046aff120a1da72971172e0ce"
+    },
+    {
+      "source": "src/positional.rs",
+      "sha256": "6570c50e944b0102655cc360bf97f86507e1d5da0333d51704d8b11d5cb17354"
+    },
+    {
+      "source": "src/sparse_patchify.rs",
+      "sha256": "013332cea67f6f95d8953d00b6a6eb53a47954420124ab2bd701c7240e30080e"
+    },
+    {
+      "source": "src/safetensors_io.rs",
+      "sha256": "cbe42d7d1f68c2d810e601d52a1e1f111eb97560d74a07108e521cb765a72bb7"
+    }
+  ]
+}

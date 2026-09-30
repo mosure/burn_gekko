@@ -1,0 +1,6 @@
+max_command_seconds = 400
+
+[[commands]]
+name = "stable-attention-audit"
+max_seconds = 380
+argv = [".data/pilot-07/bin/e2e_diagnostics-v3", "--config", "configs/pilot07-match-screen.toml", "--checkpoint", ".data/runs/pilot-07-match-screen/final", "--split", "validation", "--rooms", "1", "--rgb-all", "--stable-attention", "--output", ".data/pilot-07/stable-attention-audit"]

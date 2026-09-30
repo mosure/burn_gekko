@@ -1,0 +1,11 @@
+max_command_seconds = 550
+
+[[commands]]
+name = "appearance-throughput"
+max_seconds = 450
+argv = [".data/pilot-06/bin/e2e_pilot-v7", "--config", "configs/pilot06-appearance-throughput.toml", "--warm-start", ".data/runs/pilot-06-main/final", "--run", ".data/runs/pilot-06-appearance-throughput"]
+
+[[commands]]
+name = "appearance-throughput-audit"
+max_seconds = 90
+argv = [".data/pilot-06/bin/e2e_diagnostics-v7", "--config", "configs/pilot06-appearance-throughput.toml", "--checkpoint", ".data/runs/pilot-06-appearance-throughput/final", "--output", ".data/pilot-06/appearance-throughput-audit", "--split", "train", "--rooms", "16", "--rgb-all"]

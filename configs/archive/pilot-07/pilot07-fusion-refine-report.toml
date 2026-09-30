@@ -1,0 +1,39 @@
+output = ".data/pilot-07/fusion-audit/refinement-interim-report.pdf"
+audit_score = ".data/pilot-07/fusion-audit/readout-score.json"
+hpatches_score = ".data/pilot-07/fusion-audit/refinement-score.json"
+candidate = "refine-adapt"
+encoder_method = "conditional_centered_student"
+lineage_record = ".data/pilot-07/fusion-audit/refinement-adapt-lineage.json"
+parent = "continued"
+attention_method = "reciprocal_log_probability"
+hpatches_images = ".data/benchmarks/hpatches/images.json"
+hpatches_export = ".data/pilot-07/fusion-audit/refinement-export"
+budget_ledger = ".data/pilot-07/budget.json"
+conclusion = "INTERIM: refinement improves latent prediction and matching slightly; attention mean AEPE is below the equally normalized encoder, with an inconclusive sequence interval. Decoder matching still regresses. A matched descriptor-strength screen is running; independent qualification remains untouched."
+transfer_diagnostics = ".data/pilot-07/fusion-audit/refinement-transfer-diagnostics.json"
+
+[runs]
+control = ".data/runs/pilot-07-fusion-control"
+no-rope = ".data/runs/pilot-07-fusion-no-rope"
+guided = ".data/runs/pilot-07-fusion-guided"
+guided-no-rope = ".data/runs/pilot-07-fusion-guided-no-rope"
+descriptor-control = ".data/runs/pilot-07-fusion-descriptor-control"
+descriptor = ".data/runs/pilot-07-fusion-descriptor"
+
+refine-frozen = ".data/runs/pilot-07-fusion-refine-frozen"
+refine-adapt = ".data/runs/pilot-07-fusion-refine-adapt"
+
+[telemetry]
+control = ".data/pilot-07/fusion-audit/training-run/fusion-control-gpu.jsonl"
+no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-no-rope-gpu.jsonl"
+guided = ".data/pilot-07/fusion-audit/training-run/fusion-guided-gpu.jsonl"
+guided-no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-guided-no-rope-gpu.jsonl"
+descriptor-control = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-control-gpu.jsonl"
+descriptor = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-gpu.jsonl"
+refine-frozen = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-frozen-gpu.jsonl"
+refine-adapt = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-adapt-gpu.jsonl"
+
+[convergence_groups]
+positional_and_guidance_screen = ["control", "no-rope", "guided", "guided-no-rope"]
+descriptor_alignment = ["descriptor-control", "descriptor"]
+encoder_adaptation = ["refine-frozen", "refine-adapt"]

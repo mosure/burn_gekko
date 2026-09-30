@@ -1,0 +1,15 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+split = "validation"
+rooms = 16
+export_rooms = 2
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 733
+stable_attention = false
+correspondence = false
+references = 2
+
+[[models]]
+name = "equivariance-preflight"
+checkpoint = ".data/runs/pilot-07-equivariance-preflight/final"
+model_sha256 = "996fedf858d6c5e1fe0cdaabd8539e87ff3bd7e6041625ea2981b41056be5e73"

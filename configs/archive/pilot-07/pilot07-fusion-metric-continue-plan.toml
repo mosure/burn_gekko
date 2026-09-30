@@ -1,0 +1,6 @@
+max_command_seconds = 5300
+
+[[commands]]
+name = "fusion-metric-continue"
+max_seconds = 5250
+argv = [".data/pilot-07/bin/latent_pilot-v13", "--config", "configs/pilot07-fusion-metric-continue.toml", "--run", ".data/runs/pilot-07-fusion-metric-continue", "--checkpoint", ".data/runs/pilot-07-fusion-metric-strong/final"]

@@ -1,0 +1,13 @@
+output = ".data/pilot-06/restart-comparison.json"
+
+[[arms]]
+name = "refine"
+run = ".data/runs/pilot-06-refine"
+
+[[arms]]
+name = "refine_continue"
+run = ".data/runs/pilot-06-refine-continue"
+
+[[comparisons]]
+control = "refine"
+candidate = "refine_continue"

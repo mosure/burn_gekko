@@ -1,0 +1,22 @@
+output = ".data/pilot-07/fusion-audit/factorial-review.json"
+
+[runs]
+control = ".data/runs/pilot-07-fusion-control"
+no-rope = ".data/runs/pilot-07-fusion-no-rope"
+guided = ".data/runs/pilot-07-fusion-guided"
+guided-no-rope = ".data/runs/pilot-07-fusion-guided-no-rope"
+
+[comparisons.rope_without_guidance]
+left = "control"
+right = "no-rope"
+changed_fields = ["cross_view_rope"]
+
+[comparisons.semantic_guidance]
+left = "control"
+right = "guided"
+changed_fields = ["fusion_auxiliary.dense_weight", "fusion_auxiliary.anchor_warm_start", "fusion_auxiliary.attention_weight"]
+
+[comparisons.rope_with_guidance]
+left = "guided"
+right = "guided-no-rope"
+changed_fields = ["cross_view_rope"]

@@ -1,0 +1,14 @@
+schema = 1
+registered = "2026-09-29"
+timing = "After random90 completed; before block90 completed, correspondence assessment, or HPatches model evaluation"
+candidates = ["random90", "block90"]
+baseline = "parent"
+selection_data = "first 16 synthetic validation rooms, common fixed random 90 percent mask"
+primary_rank = "minimum mean hidden cross-view latent MSE"
+required_reference_utility = "positive 95 percent paired room interval for monocular minus cross-view and unrelated minus related MSE"
+geometry_progress = "adapted encoder EPE improves over parent adapted encoder under identical readout; report fixed-teacher comparison separately"
+scale_condition = "positive reference utility and no more than two percent encoder EPE regression from parent"
+next_phase_if_passed = "up to 1000 exact-resume updates through the existing 2000-update learning-rate horizon"
+next_phase_if_failed = "preserve diagnostic and investigate objective/readout; do not scale on latent MSE alone"
+external_evaluation = "Only after final checkpoint selection; no checkpoint selection or additional training from HPatches scores"
+budget = "existing .data/pilot-07/budget.json, cumulative ceiling 43200 seconds"

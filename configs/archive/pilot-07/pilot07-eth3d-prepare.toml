@@ -1,0 +1,19 @@
+root = ".data/benchmarks/eth3d"
+
+[[archives]]
+file = "multi_view_training_rig.7z"
+url = "https://www.eth3d.net/data/multi_view_training_rig.7z"
+bytes = 1782852033
+sha256 = "1b3cb304e091a3ac635b7beb5127fb7001be232744dd92cfced40af932bf62f5"
+
+[[archives]]
+file = "multi_view_test_rig_undistorted.7z"
+url = "https://www.eth3d.net/data/multi_view_test_rig_undistorted.7z"
+bytes = 2047849611
+sha256 = "256047e89c05c9fa69ece9875eb65430817c79cae6be2920059025c5613a1fdf"
+
+[[archives]]
+file = "info_ETH3D_files.zip"
+url = "https://drive.google.com/uc?id=1Okqs5QYetgVu_HERS88DuvsABGak08iN"
+bytes = 274517458
+sha256 = "f432cc05c59754fde06f4dbf0731a2441beea74a5f009449b122da33d83b49a9"

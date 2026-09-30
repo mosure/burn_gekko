@@ -1,0 +1,5 @@
+candidate = "route-balanced-continue"
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+hpatches_score = ".data/pilot-07/fusion-audit/route-balanced-continuation-score.json"
+hpatches_export = ".data/pilot-07/fusion-audit/route-balanced-continuation-export"
+selection_reason = "The step-6000 exact continuation passed every registered endpoint gate."

@@ -1,0 +1,25 @@
+study = ".data/pilot-07"
+output = ".data/pilot-07/progress-report.pdf"
+review_arm = "matcher_600"
+summary = "The first 600-update explicit matching screen did not improve real-room quality: full-validation MSE increased about 3.1% and detail energy decreased. A separate projective copying curriculum is running to diagnose whether sharp reference transfer can be learned before returning to full 3D views. Neither arm is a qualified replacement."
+
+[[arms]]
+name = "parent"
+run = ".data/runs/pilot-06-refine-continue"
+
+[[arms]]
+name = "matcher_600"
+run = ".data/runs/pilot-07-match-screen"
+telemetry = ".data/pilot-07/match-screen/match-screen-gpu.jsonl"
+
+[[comparisons]]
+control = "parent"
+candidate = "matcher_600"
+
+[[live_probes]]
+name = "Explicit matcher screen"
+run = ".data/runs/pilot-07-match-screen"
+
+[[live_probes]]
+name = "Projective copying curriculum"
+run = ".data/runs/pilot-07-copy-curriculum"

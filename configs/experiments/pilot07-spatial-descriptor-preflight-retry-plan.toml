@@ -1,0 +1,11 @@
+max_command_seconds = 180
+
+[[commands]]
+name = "neutral-spatial-head"
+max_seconds = 60
+argv = [".data/pilot-07/bin/spatial_head_probe-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor-probe-small.toml", "--output", ".data/pilot-07/spatial-head-study/neutral-probe.json"]
+
+[[commands]]
+name = "spatial-descriptor-preflight"
+max_seconds = 120
+argv = [".data/pilot-07/bin/latent_pilot-native-v23", "--config", "configs/experiments/pilot07-spatial-descriptor-preflight-small.toml", "--run", ".data/runs/pilot-07-spatial-descriptor-preflight"]

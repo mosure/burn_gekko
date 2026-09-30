@@ -1,0 +1,131 @@
+schema = 1
+reviewed = "2026-09-29"
+project_task = "self-supervised multi-view latent prediction, correspondence, and co-visibility"
+claim_status = "research prototype; no state-of-the-art claim"
+weight_policy = "No noncommercial pretrained weights or teachers; audited MIT V-JEPA 2.1 and own training only"
+
+[[protocols]]
+name = "synthetic-patch-correspondence"
+implemented = true
+input_size = 256
+source = "Published Bevy Zeroverse 0.25.0 / bevy_zeroverse_burn 0.8.0 procedural rooms"
+readout = "16px patch grid; cosine NN and reciprocal head/layer-mean cross-attention"
+metrics = ["visible-query EPE", "PCK8/16/32", "mutual coverage", "mutual EPE", "grid oracle"]
+baseline = "Fixed original V-JEPA teacher; same-position predictor"
+published_number_comparability = false
+
+[[protocols]]
+name = "hpatches-240-local-readout"
+implemented = true
+source = "https://github.com/hpatches/hpatches-dataset"
+input_size = 256
+metric_size = 240
+sequences = 116
+pairs = 580
+primary_subset = "59 viewpoint sequences / 295 pairs; exactly matches ZeroCo assets/hpatches_all.csv"
+supplementary_subset = "57 illumination sequences / 285 pairs; combined 116-sequence statistics"
+evaluation_use = "Development since fusion-transfer study; prior failures informed model and readout decisions"
+readout = "Hard patch NN, bilinear displacement upsampling; all query images 2..6 to reference 1"
+metrics = ["pair-mean AEPE", "PCK1/3/5", "illumination and viewpoint subsets", "paired sequence bootstrap"]
+baseline = "Same images, resolution and readout with fixed and own student V-JEPA encoders; final layer plus preselected trained block 6"
+readout_families = "18 standard methods plus 8 fixed block-6 raw/centered/conditional teacher and student controls; no per-pair selection"
+published_number_comparability = false
+reason = "Model input and matching/refinement differ from ZeroCo; report these settings alongside any results"
+
+[[protocols]]
+name = "eth3d-interval-local-readout"
+implemented = true
+source = "https://www.eth3d.net/documentation"
+pair_source = "Official ETH3D interval bundles linked by https://github.com/cvlab-kaist/ZeroCo"
+input_size = 256
+metric_coordinates = "original image pixels"
+pairs = 3365
+unique_images = 2448
+scenes = 10
+intervals = [3, 5, 7, 9, 11, 13, 15]
+readout = "Hard patch NN and reciprocal attention; bilinear displacement resize with half-pixel coordinates"
+metrics = ["pair/scene/interval mean AEPE and PCK1/3/5", "point-weighted interval PCK", "paired scene bootstrap"]
+evaluation_use = "Independent qualification only after checksummed candidate/readout selection"
+qualification_status = "Completed for the frozen Pilot07 selection; fusion improves over its original ancestor but still trails the stronger block-6 encoder"
+selection_record = "configs/pilot07-fusion-final-selection.toml"
+score_artifact = ".data/pilot-07/fusion-audit/eth3d-score.json"
+baseline = "Final-layer and preselected block-6 fixed teacher/student encoders; equivalent reciprocal conditional normalization"
+readout_families = "All 26 predeclared methods; layer 6 selected only on HPatches development images"
+model_input = "RGB manifest only; sparse point labels loaded by a separate CPU scorer"
+published_number_comparability = false
+reason = "Complete official pairs and aggregation; local readout does not implement published refinement"
+
+[[protocols]]
+name = "fresh-four-view-latent-qualification"
+implemented = true
+input_size = 256
+rooms = 128
+captured_views = 4
+primary_target_views = 512
+primary_references = 2
+mask_ratio = 0.9
+seed = 2610010000
+evaluation_use = "Completed independent qualification after the same frozen Pilot07 selection; no accuracy retuning afterward"
+source = ".data/datasets/c203504f589b3ee32425a68039a853d500fc18e318fc6457a063e6c7251c509b"
+metrics = ["masked latent MSE", "paired room bootstrap", "monocular/unrelated/shuffled reference controls", "RI co-visibility ranking", "one/two/three reference count ablation"]
+model_input = "Sparse target and RGB references; full target only in separate RI branch and evaluation teacher"
+score_artifact = ".data/pilot-07/fusion-audit/fresh-qualification"
+published_number_comparability = false
+
+[[protocols]]
+name = "eth3d-zeroco-parity"
+implemented = false
+source = "https://github.com/cvlab-kaist/ZeroCo"
+metrics = ["full resolution AEPE by interval", "mean over datasets then intervals"]
+required = "Exact pair bundles, resizing, masks, readout/refinement and aggregation parity; official scorer fixtures"
+published_number_comparability = false
+
+[[papers]]
+name = "Gekko"
+url = "https://arxiv.org/html/2609.01530v1"
+relevance = "90 percent masking; matched architecture/data/schedule controls; correspondence and co-visibility"
+comparison_warning = "Our pretrained image encoder and synthetic data differ from their from-scratch ScanNet comparison"
+
+[[papers]]
+name = "ZeroCo"
+url = "https://openaccess.thecvf.com/content/CVPR2025/papers/An_Cross-View_Completion_Models_are_Zero-shot_Correspondence_Estimators_CVPR_2025_paper.pdf"
+code = "https://github.com/cvlab-kaist/ZeroCo"
+relevance = "Cross-attention as a correspondence readout; HPatches and ETH3D protocol"
+comparison_warning = "No upstream pretrained CroCo, DUSt3R or MASt3R weights are imported"
+
+[[papers]]
+name = "V-JEPA 2.1"
+url = "https://arxiv.org/html/2603.14482v3"
+relevance = "Hierarchical latent targets, context prediction and dense representations"
+comparison_warning = "Our fixed last-layer MSE target differs from their momentum teacher and multi-level objectives"
+
+[[papers]]
+name = "RoMa v2"
+url = "https://arxiv.org/abs/2511.15706"
+code = "https://github.com/Parskatt/RoMaV2"
+relevance = "Contemporary dense matcher; separate matching and refinement, diverse training, fine correspondence"
+comparison_warning = "Supervision, data, architecture and DINOv3 license differ; no weights imported or results reproduced"
+
+[[papers]]
+name = "RoMa-Omega"
+url = "https://arxiv.org/abs/2609.09507"
+relevance = "September 2026 analysis distinguishes raw patch matching from linear probing and trained matching heads"
+comparison_warning = "Poor zero-shot late-layer matching alone does not prove a representation is unusable; no reproduced results"
+
+[[papers]]
+name = "MV-RoMa"
+url = "https://arxiv.org/abs/2603.27542"
+relevance = "Multi-view correspondence and track reconstruction; interaction and refinement scaling"
+comparison_warning = "Different pretraining and supervision; full protocol and weight provenance review pending"
+
+[[papers]]
+name = "DPPE"
+url = "https://arxiv.org/html/2606.31585v1"
+relevance = "Decoupled camera pose encodings; separate query/key and value/output interventions"
+comparison_warning = "Current decoder has image-grid RoPE but no camera-dependent value transform; not the same failure mechanism"
+
+[[papers]]
+name = "ZipSplat"
+url = "https://arxiv.org/html/2606.05102v1"
+relevance = "Optional camera priors and selectively detached geometric guidance in Gaussian reconstruction"
+comparison_warning = "Uses a DA3-Giant multiview backbone and different targets; not a tested camera-head recipe for this latent model"

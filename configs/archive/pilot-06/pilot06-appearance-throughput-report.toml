@@ -1,0 +1,6 @@
+output = ".data/pilot-06/appearance-throughput.json"
+
+[[arms]]
+name = "appearance-b16"
+run = ".data/runs/pilot-06-appearance-throughput"
+telemetry = ".data/pilot-06/appearance-throughput/appearance-throughput-gpu.jsonl"

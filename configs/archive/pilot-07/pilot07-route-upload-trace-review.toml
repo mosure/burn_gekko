@@ -1,0 +1,10 @@
+output = ".data/pilot-07/fusion-audit/route-upload-trace-review.json"
+sqlite = ".data/pilot-07/fusion-audit/route-upload-trace.sqlite"
+replay_metrics = ".data/runs/pilot-07-route-upload-trace/metrics.jsonl"
+original_metrics = ".data/runs/pilot-07-fusion-route-balanced-continue/metrics.jsonl"
+updates = 32
+batch_size = 16
+image_size = 256
+references = 2
+first_update_index = 4
+end_update_index = 28

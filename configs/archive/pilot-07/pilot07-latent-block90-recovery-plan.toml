@@ -1,0 +1,6 @@
+max_command_seconds = 700
+
+[[commands]]
+name = "block90-resume"
+max_seconds = 680
+argv = [".data/pilot-07/bin/latent_pilot-v2", "--config", "configs/pilot07-latent-block90.toml", "--run", ".data/runs/pilot-07-latent-block90-resume", "--checkpoint", ".data/runs/pilot-07-latent-block90/checkpoint-000800"]

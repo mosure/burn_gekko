@@ -1,0 +1,11 @@
+images = ".data/benchmarks/eth3d/images.json"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+spatial_layer = 6
+evaluation_use = "development"
+selection_record = "configs/experiments/pilot07-spatial-descriptor-selection.toml"
+selection_sha256 = "36df6af99c8b3842b912775c6f56305a427769787df6cdafcef44854a6623638"
+
+[[models]]
+name = "spatial-descriptor"
+checkpoint = ".data/runs/pilot-07-spatial-descriptor/final"
+model_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"

@@ -1,0 +1,10 @@
+output = ".data/pilot-07/fusion-audit/route-preflight-review.json"
+
+[runs]
+control = ".data/runs/pilot-07-route-preflight-control"
+route = ".data/runs/pilot-07-route-preflight-l06"
+
+[comparisons.spatial_input]
+left = "control"
+right = "route"
+changed_fields = ["spatial_input_layer"]

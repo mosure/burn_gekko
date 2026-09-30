@@ -1,0 +1,7 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+output = ".data/pilot-07/fusion-audit/route-balanced-continuation-score.json"
+export = ".data/pilot-07/fusion-audit/route-balanced-continuation-export"
+models = ["continued", "spatial-l06", "route-balanced-control", "route-balanced-l06", "route-balanced-continue"]
+geometry_sha256 = "07166b74782d36d2835eecf8875d45898ad52857c500cc2ca30c9ed638bdd258"
+evaluation_use = "development"

@@ -1,0 +1,6 @@
+max_command_seconds = 9000
+
+[[commands]]
+name = "fusion-route-balanced-continue"
+max_seconds = 8970
+argv = [".data/pilot-07/bin/latent_pilot-v18", "--config", "configs/pilot07-fusion-route-balanced-continue.toml", "--run", ".data/runs/pilot-07-fusion-route-balanced-continue", "--checkpoint", ".data/runs/pilot-07-fusion-route-balanced-l06/final"]

@@ -1,0 +1,130 @@
+"output" = ".data/pilot-07/fusion-audit/fusion-transfer-final-report.pdf"
+"audit_score" = ".data/pilot-07/fusion-audit/readout-score.json"
+"hpatches_score" = ".data/pilot-07/fusion-audit/preserve-score.json"
+"candidate" = "route-balanced-continue"
+"encoder_method" = "student_l06_centered_conditional"
+"plain_encoder_method" = "student_l06_centered"
+"lineage_record" = ".data/pilot-07/fusion-audit/route-balanced-continuation-lineage.json"
+"parent" = "continued"
+"attention_method" = "reciprocal_log_probability"
+"hpatches_images" = ".data/benchmarks/hpatches/images.json"
+"hpatches_export" = ".data/pilot-07/fusion-audit/preserve-export"
+"budget_ledger" = ".data/pilot-07/budget.json"
+"conclusion" = "Independent results confirm substantial recovery, but the fusion weakness is not fully resolved. ETH3D raw decoder AEPE falls 53.76 to 39.16 pixels and attention 100.83 to 40.30. Fresh-room latent MSE falls 8.65%. All three fusion readouts still regress against the stronger preselected block-6 encoder on ETH3D. SOTA and sharp RGB completion remain unestablished."
+"transfer_diagnostics" = ".data/pilot-07/fusion-audit/preserve-diagnostics.json"
+"preservation_diagnostics" = ".data/pilot-07/fusion-audit/preserve-preservation.json"
+"encoder_audit_score" = ".data/pilot-07/fusion-audit/encoder-layer-score.json"
+"efficiency_comparison" = ".data/pilot-07/fusion-audit/upload-training-comparison.json"
+"efficiency_energy" = ".data/pilot-07/fusion-audit/upload-training-energy.json"
+"efficiency_trace" = ".data/pilot-07/fusion-audit/efficiency-trace-review.json"
+"decoder_method" = "conditional_decoder"
+"matched_input_preflight" = ".data/pilot-07/fusion-audit/route-balanced-preflight-gates.json"
+"rejected_input_preflight" = ".data/pilot-07/fusion-audit/route-preflight-gates.json"
+"preservation_decision" = ".data/pilot-07/fusion-audit/preserve-decision.json"
+"preservation_native_parity" = ".data/pilot-07/fusion-audit/preserve-default-parity-review.json"
+"shared_device_replay" = ".data/pilot-07/fusion-audit/contention-replay-review.json"
+"phase_energy" = ".data/pilot-07/fusion-audit/final-phase-energy.json"
+"current_efficiency_trace" = ".data/pilot-07/fusion-audit/route-upload-trace-review.json"
+"latent_assessment" = ".data/pilot-07/fusion-audit/fresh-qualification"
+"eth3d_score" = ".data/pilot-07/fusion-audit/eth3d-score.json"
+"eth3d_images" = ".data/benchmarks/eth3d/images.json"
+"eth3d_export" = ".data/pilot-07/fusion-audit/eth3d-export"
+
+["runs"]
+"control" = ".data/runs/pilot-07-fusion-control"
+"no-rope" = ".data/runs/pilot-07-fusion-no-rope"
+"guided" = ".data/runs/pilot-07-fusion-guided"
+"guided-no-rope" = ".data/runs/pilot-07-fusion-guided-no-rope"
+"descriptor-control" = ".data/runs/pilot-07-fusion-descriptor-control"
+"descriptor" = ".data/runs/pilot-07-fusion-descriptor"
+"refine-frozen" = ".data/runs/pilot-07-fusion-refine-frozen"
+"refine-adapt" = ".data/runs/pilot-07-fusion-refine-adapt"
+"metric-control" = ".data/runs/pilot-07-fusion-metric-control"
+"metric-strong" = ".data/runs/pilot-07-fusion-metric-strong"
+"metric-continue" = ".data/runs/pilot-07-fusion-metric-continue"
+"spatial-control" = ".data/runs/pilot-07-fusion-spatial-control"
+"spatial-l06" = ".data/runs/pilot-07-fusion-spatial-l06"
+"route-balanced-control" = ".data/runs/pilot-07-fusion-route-balanced-control"
+"route-balanced-l06" = ".data/runs/pilot-07-fusion-route-balanced-l06"
+"route-balanced-continue" = ".data/runs/pilot-07-fusion-route-balanced-continue"
+"preserve-control" = ".data/runs/pilot-07-fusion-preserve-control"
+"preserve-strong" = ".data/runs/pilot-07-fusion-preserve-strong"
+
+["telemetry"]
+"control" = ".data/pilot-07/fusion-audit/training-run/fusion-control-gpu.jsonl"
+"no-rope" = ".data/pilot-07/fusion-audit/training-run/fusion-no-rope-gpu.jsonl"
+"guided" = ".data/pilot-07/fusion-audit/training-run/fusion-guided-gpu.jsonl"
+"guided-no-rope" = ".data/pilot-07/fusion-audit/training-run/fusion-guided-no-rope-gpu.jsonl"
+"descriptor-control" = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-control-gpu.jsonl"
+"descriptor" = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-gpu.jsonl"
+"refine-frozen" = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-frozen-gpu.jsonl"
+"refine-adapt" = ".data/pilot-07/fusion-audit/refinement-run/fusion-refine-adapt-gpu.jsonl"
+"metric-control" = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-control-gpu.jsonl"
+"metric-strong" = ".data/pilot-07/fusion-audit/metric-run/fusion-metric-strong-gpu.jsonl"
+"metric-continue" = ".data/pilot-07/fusion-audit/metric-continuation-run/fusion-metric-continue-gpu.jsonl"
+"spatial-control" = ".data/pilot-07/fusion-audit/spatial-run/fusion-spatial-control-gpu.jsonl"
+"spatial-l06" = ".data/pilot-07/fusion-audit/spatial-run/fusion-spatial-l06-gpu.jsonl"
+"route-balanced-control" = ".data/pilot-07/fusion-audit/route-balanced-run/fusion-route-balanced-control-gpu.jsonl"
+"route-balanced-l06" = ".data/pilot-07/fusion-audit/route-balanced-run/fusion-route-balanced-l06-gpu.jsonl"
+"route-balanced-continue" = ".data/pilot-07/fusion-audit/route-balanced-continuation-run/fusion-route-balanced-continue-gpu.jsonl"
+"preserve-control" = ".data/pilot-07/fusion-audit/preserve-run/fusion-preserve-control-gpu.jsonl"
+"preserve-strong" = ".data/pilot-07/fusion-audit/preserve-retry-run/fusion-preserve-strong-gpu.jsonl"
+
+["convergence_groups"]
+"positional_and_guidance_screen" = ["control", "no-rope", "guided", "guided-no-rope"]
+"descriptor_alignment" = ["descriptor-control", "descriptor"]
+"encoder_adaptation" = ["refine-frozen", "refine-adapt"]
+"descriptor_strength" = ["metric-control", "metric-strong"]
+"descriptor_continuation" = ["metric-strong", "metric-continue"]
+"spatial_affinity" = ["spatial-control", "spatial-l06"]
+"spatial_input" = ["route-balanced-control", "route-balanced-l06"]
+"spatial_input_continuation" = ["route-balanced-l06", "route-balanced-continue"]
+"final_descriptor_preservation" = ["preserve-control", "preserve-strong"]
+
+["historical_scores"]
+
+["historical_scores"."screen"]
+"score" = ".data/pilot-07/fusion-audit/screen-score.json"
+"export" = ".data/pilot-07/fusion-audit/screen-export"
+
+["historical_scores"."descriptor"]
+"score" = ".data/pilot-07/fusion-audit/descriptor-score.json"
+"export" = ".data/pilot-07/fusion-audit/descriptor-export"
+
+["historical_scores"."refinement"]
+"score" = ".data/pilot-07/fusion-audit/refinement-score.json"
+"export" = ".data/pilot-07/fusion-audit/refinement-export"
+
+["historical_scores"."metric"]
+"score" = ".data/pilot-07/fusion-audit/metric-score.json"
+"export" = ".data/pilot-07/fusion-audit/metric-export"
+
+["historical_scores"."continuation"]
+"score" = ".data/pilot-07/fusion-audit/continuation-score.json"
+"export" = ".data/pilot-07/fusion-audit/continuation-export"
+
+["historical_scores"."spatial"]
+"score" = ".data/pilot-07/fusion-audit/spatial-score.json"
+"export" = ".data/pilot-07/fusion-audit/spatial-export"
+
+["historical_scores"."spatial_input"]
+"score" = ".data/pilot-07/fusion-audit/route-balanced-score.json"
+"export" = ".data/pilot-07/fusion-audit/route-balanced-export"
+
+["historical_scores"."spatial_input_continuation"]
+"score" = ".data/pilot-07/fusion-audit/route-balanced-continuation-score.json"
+"export" = ".data/pilot-07/fusion-audit/route-balanced-continuation-export"
+
+["reference_assessments"]
+"1" = ".data/pilot-07/fusion-audit/fresh-references-1"
+"2" = ".data/pilot-07/fusion-audit/fresh-references-2"
+"3" = ".data/pilot-07/fusion-audit/fresh-references-3"
+
+["extra_evidence"]
+"selection" = "configs/pilot07-fusion-final-selection.toml"
+"independent_review" = ".data/pilot-07/fusion-audit/independent-qualification-review.json"
+"fixed_controls" = ".data/pilot-07/fusion-audit/preserve-fixed-controls.json"
+"shared_gpu_activity" = ".data/pilot-07/fusion-audit/shared-gpu-activity-summary.json"
+"v20_range_change" = ".data/pilot-07/fusion-audit/v20-rust-source-diff.json"
+"recovery_registration" = "configs/pilot07-preserve-recovery.toml"
+"preservation_registration" = "configs/pilot07-fusion-preservation-screen.toml"

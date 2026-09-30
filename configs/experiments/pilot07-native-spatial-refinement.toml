@@ -1,0 +1,50 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+seed = 719
+train_rooms = 8192
+validation_rooms = 64
+export_rooms = 2
+batch_size = 16
+steps = 3000
+decay_steps = 3000
+warmup_steps = 50
+max_seconds = 2850
+eval_every = 250
+checkpoint_every = 500
+decoder_width = 384
+decoder_depth = 6
+decoder_heads = 6
+learning_rate = 0.00005
+encoder_lr_ratio = 0.01
+weight_decay = 0.05
+mask_ratio = 0.9
+train_mask = "random"
+eval_mask = "random"
+eval_mask_ratio = 0.9
+stable_attention = false
+cross_view_rope = true
+spatial_input_layer = 6
+references = 2
+visible_loss_weight = 0.1
+ri_weight = 0.1
+ri_start_step = 0
+unfreeze = true
+encoder_stage_cap = 1
+unfreeze_min_steps = 1000
+unfreeze_min_improvement = 0.002
+
+[teacher]
+kind = "burnpack"
+directory = ".data/models/vjepa2_1_base"
+
+[fusion_auxiliary]
+attention_weight = 0.1
+dense_weight = 0.1
+descriptor_weight = 1.0
+bidirectional = true
+teacher_temperature = 0.07
+anchor_warm_start = true
+teacher_layers = [6]
+
+[warm_start]
+checkpoint = ".data/runs/pilot-07-fusion-route-balanced-continue/final"
+model_sha256 = "61ecd81f7d9c4094ff1fa120e761176301db14e4a22e056cc966bf8616a81bf6"

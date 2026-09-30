@@ -1,0 +1,11 @@
+max_command_seconds = 200
+
+[[commands]]
+name = "appearance-smoke"
+max_seconds = 145
+argv = [".data/pilot-06/bin/e2e_pilot-v6", "--config", "configs/pilot06-appearance-smoke.toml", "--warm-start", ".data/runs/pilot-06-main/checkpoint-010000", "--run", ".data/runs/pilot-06-appearance-smoke"]
+
+[[commands]]
+name = "appearance-smoke-audit"
+max_seconds = 45
+argv = [".data/pilot-06/bin/e2e_diagnostics-v6", "--config", "configs/pilot06-appearance-smoke.toml", "--checkpoint", ".data/runs/pilot-06-appearance-smoke/final", "--output", ".data/pilot-06/appearance-smoke-audit", "--split", "train", "--rooms", "16", "--rgb-all"]

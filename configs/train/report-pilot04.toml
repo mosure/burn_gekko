@@ -1,0 +1,34 @@
+study = ".data/pilot-04"
+dataset = ".data/datasets/5fad342973901c9338699b842b476aad52294c729f0694a545bfb8a26ebb8b17"
+correct = ".data/pilot-04/hybrid-test"
+unrelated = ".data/pilot-04/hybrid-unrelated-test"
+baseline_evaluation = ".data/pilot-04/legacy-evaluation-run/step-009000-evaluation-test.json"
+baseline_samples = ".data/pilot-04/previous-model-test-samples"
+input_audit = ".data/pilot-04/final-input-audit.json"
+covisibility = ".data/pilot-04/hybrid-covisibility-test/report.json"
+screen_run = ".data/runs/pilot-04-hybrid-screen"
+training_run = ".data/runs/pilot-04-hybrid-detail"
+training_telemetry = ".data/pilot-04/hybrid-detail/hybrid-detail-gpu.jsonl"
+selected_config = "configs/pilot04-hybrid-detail.toml"
+selected_checkpoint = ".data/runs/pilot-04-hybrid-detail/final.mpk"
+pdf = ".data/pilot-04/burn_gekko_pilot_04_report.pdf"
+visual_review = "The pervasive blur and incoherent room-level collapse are corrected in matched before/after, fixed-crop, representative and worst-case panels. Fine textures, thin objects, ghosting and patch brightness seams remain imperfect; acceptance is limited to this procedural-room pilot."
+visual_review_passed = true
+prior_datasets = [".data/datasets/4287ae3d171d81e05febe5ad057d2ca448a03d006f0da30e018c5350e90ec149", ".data/datasets/17b85c5c498db1bec82f357ac077d993029d06913b9300753a3331cff3b46e15", ".data/datasets/730e17376a84e3294707986df36700d1311accc1e76faaca45aaebeeb0c8fb9a", ".data/datasets/b85c4bc17381421bca5acbf16d1dcad6a5b22738c3adb6a4ff811ae9d34f323f", ".data/datasets/c100955e1d3f16c4a7fb2c4b296b4967433e286b9a4f31b207cffb6a4fdee534", ".data/datasets/c2565d5eea331f4f8533d408d172239ed6a984b5efb5b59fc0e715c5faa99851", ".data/datasets/d57bf122c3d83202be50e966d3b7b0d3ec87e77bac2fbbd80e2c41442d21f91d"]
+findings = ["The previous small decoder produced smooth room-colored predictions with weak cross-view utility. Weight loading, patch layout, sparse masking, numerical parity, geometry alignment and tiny-set overfit checks had already passed. Those checks did not establish held-out reconstruction competence.", "Explicit reference transport was tried and rejected: it retained gradient energy but placed structures incorrectly (four-room edge cosine about 0.025). A released Gekko probe then supplied a positive control: strong structural recovery, but its target-statistic display was oracle-only and could not qualify as a deployable output.", "With user approval, the Burn pipeline now combines frozen released Gekko appearance features and frozen V-JEPA 2.1, a trainable semantic/RGB residual adapter, and predicted RGB patch statistics. Official-implementation parity and hidden-pixel interventions validate the imported appearance model. Training and inference run in Rust/Burn; Python provides reference checks and analysis.", "A 3,000-step, 128-room adapter/calibration stage was followed by 3,000 steps on all 512 training rooms, adapting only the last two decoder blocks. A final 1,500-step stage added a small training-only gradient-energy term. Each stage uses new AdamW state; it is a weight fine-tune, not an optimizer resume.", "Full validation selected the final contrast-preserving checkpoint: RGB MSE 0.001341, edge cosine 0.534, edge-energy ratio 0.845 and interior-only ratio 0.824 across 96 targets. The MSE-oriented checkpoint scored 0.001214, 0.588 and 0.351 respectively. The selected model trades about 10% RGB error for greater contrast; this decision was frozen before fresh capture and test.", "Co-visibility is measured from the same adapted checkpoint, with a separate dense-target forward. Validation AUROC is 0.734 versus 0.778 for the unadapted released model. Reconstruction adaptation therefore improves this project’s RGB behavior while sacrificing some inherited RI ranking performance. The study does not attribute the gain uniquely to V-JEPA."]
+limitations = ["The accepted scope, if all gates pass, is correction of severe reconstruction collapse on held-out procedural rooms from this generator. Fine textures, thin structures, patch brightness seams, disocclusion and some misplaced objects remain imperfect. The worst-case panel is intentionally included. This is not photorealistic, exact or real-world reconstruction qualification.", "The inherited Gekko checkpoint contains a much larger external appearance/reconstruction prior than the previous scratch decoder. Before/after results are an engineering comparison, not a matched-pretraining-compute test. This study bundles the extra encoder, released decoder, calibration, adapter and selective fine-tuning.", "The adapter consumes both V-JEPA semantics and observed RGB. Disabling it removes both. No isolated semantic benefit, sparse-reference speedup, joint set-attention gain, geometry recovery, calibrated co-visibility probability or real-image transfer has been demonstrated.", "One training seed, one 256px resolution and one fixed evaluation mask. The 64 fresh rooms share procedural layout/material families with training, despite disjoint seeds. Confidence intervals resample rooms and do not capture training-seed uncertainty. The extra 1/16 train/validation rooms in the fresh cache were unused.", "The final RI head is inherited and not directly retrained by this adaptation loss. Its ranking is qualified only as a synthetic-room diagnostic. Geometry labels are reserved for evaluation; RGB is the only reconstruction supervision. The RGB and dense RI APIs have separate information access.", "A paper can currently claim a validated Burn port and reproducible bounded transfer study with standalone RGB calibration and honest failure analysis. A methods claim needs separate appearance-only, semantic-only, adapter, loss and reference-set ablations; multiple seeds; sparse cost/quality curves; and external real-data evaluation. Preserve the pretrained weights’ CC-BY-NC-SA-4.0 terms."]
+
+[[training_stages]]
+label = "Adapter and calibration"
+path = ".data/runs/pilot-04-hybrid-screen"
+telemetry = ".data/pilot-04/hybrid-screen/hybrid-screen-gpu.jsonl"
+
+[[training_stages]]
+label = "Decoder adaptation"
+path = ".data/runs/pilot-04-hybrid-main"
+telemetry = ".data/pilot-04/hybrid-main/hybrid-main-gpu.jsonl"
+
+[[training_stages]]
+label = "Contrast preservation"
+path = ".data/runs/pilot-04-hybrid-detail"
+telemetry = ".data/pilot-04/hybrid-detail/hybrid-detail-gpu.jsonl"

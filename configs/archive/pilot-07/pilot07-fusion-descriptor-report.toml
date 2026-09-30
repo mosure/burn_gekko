@@ -1,0 +1,27 @@
+output = ".data/pilot-07/fusion-audit/descriptor-interim-report.pdf"
+audit_score = ".data/pilot-07/fusion-audit/readout-score.json"
+hpatches_score = ".data/pilot-07/fusion-audit/descriptor-score.json"
+candidate = "descriptor"
+parent = "continued"
+attention_method = "reciprocal_log_probability"
+hpatches_images = ".data/benchmarks/hpatches/images.json"
+hpatches_export = ".data/pilot-07/fusion-audit/descriptor-export"
+budget_ledger = ".data/pilot-07/budget.json"
+conclusion = "INTERIM: direct descriptor alignment improves both decoder and attention transfer against its matched control. The decoder still trails the unchanged encoder, and learned RI ranking regresses. Longer frozen and progressively unfrozen comparisons are running; independent qualification remains untouched."
+transfer_diagnostics = ".data/pilot-07/fusion-audit/descriptor-transfer-diagnostics.json"
+
+[runs]
+control = ".data/runs/pilot-07-fusion-control"
+no-rope = ".data/runs/pilot-07-fusion-no-rope"
+guided = ".data/runs/pilot-07-fusion-guided"
+guided-no-rope = ".data/runs/pilot-07-fusion-guided-no-rope"
+descriptor-control = ".data/runs/pilot-07-fusion-descriptor-control"
+descriptor = ".data/runs/pilot-07-fusion-descriptor"
+
+[telemetry]
+control = ".data/pilot-07/fusion-audit/training-run/fusion-control-gpu.jsonl"
+no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-no-rope-gpu.jsonl"
+guided = ".data/pilot-07/fusion-audit/training-run/fusion-guided-gpu.jsonl"
+guided-no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-guided-no-rope-gpu.jsonl"
+descriptor-control = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-control-gpu.jsonl"
+descriptor = ".data/pilot-07/fusion-audit/descriptor-run/fusion-descriptor-gpu.jsonl"

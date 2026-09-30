@@ -1,0 +1,23 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"
+
+[[models]]
+name = "metric-control"
+checkpoint = ".data/runs/pilot-07-fusion-metric-control/final"
+model_sha256 = "a2ac0944975ffd327008d88dd9d95729964a81d1de529a17e2d8d5c31fddcaed"
+
+[[models]]
+name = "metric-strong"
+checkpoint = ".data/runs/pilot-07-fusion-metric-strong/final"
+model_sha256 = "68d48234b22b941c9e5d565cb657ccb63287367a3d871d71e0beecb1ebc59ed7"
+
+[[models]]
+name = "metric-continue"
+checkpoint = ".data/runs/pilot-07-fusion-metric-continue/final"
+model_sha256 = "69ac2750c49d88265ff3718678ca5dcb922c724215fcc7e84eaea859a0f8d4c0"

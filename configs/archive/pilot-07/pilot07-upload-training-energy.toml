@@ -1,0 +1,16 @@
+output = ".data/pilot-07/fusion-audit/upload-training-energy.json"
+max_gap_seconds = 3.0
+
+[commands.before]
+ledger = ".data/pilot-07/fusion-audit/upload-training-run/ledger.json"
+command = "upload-training-before"
+telemetry = ".data/pilot-07/fusion-audit/upload-training-run/upload-training-before-gpu.jsonl"
+training = ".data/runs/pilot-07-upload-training-before"
+purpose = "Matched frozen-encoder execution preflight; all command overhead and desktop board energy retained"
+
+[commands.after]
+ledger = ".data/pilot-07/fusion-audit/upload-training-run/ledger.json"
+command = "upload-training-after"
+telemetry = ".data/pilot-07/fusion-audit/upload-training-run/upload-training-after-gpu.jsonl"
+training = ".data/runs/pilot-07-upload-training-after"
+purpose = "Matched frozen-encoder execution preflight; all command overhead and desktop board energy retained"

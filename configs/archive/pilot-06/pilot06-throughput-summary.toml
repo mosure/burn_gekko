@@ -1,0 +1,11 @@
+output = ".data/pilot-06/throughput.json"
+
+[[arms]]
+name = "B16"
+run = ".data/runs/pilot-06-throughput-b16"
+telemetry = ".data/pilot-06/throughput-b16/throughput-b16-gpu.jsonl"
+
+[[arms]]
+name = "B32"
+run = ".data/runs/pilot-06-throughput-b32"
+telemetry = ".data/pilot-06/throughput-b32/throughput-b32-gpu.jsonl"

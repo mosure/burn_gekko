@@ -1,0 +1,16 @@
+max_command_seconds = 1100
+
+[[commands]]
+name = "route-default-check"
+max_seconds = 350
+argv = [".data/pilot-07/bin/latent_pilot-v17", "--config", "configs/pilot07-upload-training-check.toml", "--run", ".data/runs/pilot-07-route-default-check"]
+
+[[commands]]
+name = "route-preflight-control"
+max_seconds = 350
+argv = [".data/pilot-07/bin/latent_pilot-v17", "--config", "configs/pilot07-route-preflight-control.toml", "--run", ".data/runs/pilot-07-route-preflight-control"]
+
+[[commands]]
+name = "route-preflight-l06"
+max_seconds = 350
+argv = [".data/pilot-07/bin/latent_pilot-v17", "--config", "configs/pilot07-route-preflight-l06.toml", "--run", ".data/runs/pilot-07-route-preflight-l06"]

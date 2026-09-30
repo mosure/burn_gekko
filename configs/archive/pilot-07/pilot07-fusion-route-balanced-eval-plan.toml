@@ -1,0 +1,6 @@
+max_command_seconds = 1300
+
+[[commands]]
+name = "hpatches-direct-spatial-screen"
+max_seconds = 1250
+argv = [".data/pilot-07/bin/hpatches_export-v18", "--config", "configs/pilot07-fusion-route-balanced-assessment.toml", "--output", ".data/pilot-07/fusion-audit/route-balanced-export"]

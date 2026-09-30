@@ -1,0 +1,6 @@
+max_command_seconds = 950
+
+[[commands]]
+name = "encoder-layer-audit"
+max_seconds = 900
+argv = [".data/pilot-07/bin/hpatches_export-v15", "--config", "configs/pilot07-encoder-layer-audit.toml", "--output", ".data/pilot-07/fusion-audit/encoder-layer-export"]

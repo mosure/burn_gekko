@@ -1,0 +1,10 @@
+runner = ".data/pilot-07/memory-audit-run"
+output = ".data/pilot-07/memory-comparison.json"
+
+[[arms]]
+name = "legacy-captures"
+output = ".data/pilot-07/memory-legacy"
+
+[[arms]]
+name = "final-only"
+output = ".data/pilot-07/memory-final-only"

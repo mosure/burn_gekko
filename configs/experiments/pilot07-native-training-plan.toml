@@ -1,0 +1,5 @@
+max_command_seconds = 3010
+[[commands]]
+name = "native-spatial-refinement"
+max_seconds = 3000
+argv = [".data/pilot-07/bin/latent_pilot-native-v21", "--config", "configs/experiments/pilot07-native-spatial-refinement.toml", "--run", ".data/runs/pilot-07-native-spatial-refinement"]

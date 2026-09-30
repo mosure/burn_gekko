@@ -1,0 +1,29 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+split = "validation"
+rooms = 16
+export_rooms = 6
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 719
+stable_attention = false
+correspondence = true
+
+[[models]]
+name = "parent"
+checkpoint = ".data/runs/pilot-07-latent-screen/final"
+model_sha256 = "de8656ebd1911a10a61b090e43a0ced1c4add9cd328373f1d03e1eb0ba72e8c8"
+
+[[models]]
+name = "random90"
+checkpoint = ".data/runs/pilot-07-latent-random90/final"
+model_sha256 = "3097ed8a139997a5cf7352f37f4e66afe3fba4872ca2fadcc5ba6eea86f02bc9"
+
+[[models]]
+name = "block90"
+checkpoint = ".data/runs/pilot-07-latent-block90-resume/final"
+model_sha256 = "37f1ab365f464b6ecbdc374c81704ec6a392106512bb3b673a1c6a8ac3ab9f4c"
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"

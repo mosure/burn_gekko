@@ -1,0 +1,15 @@
+dataset = ".data/datasets/4287ae3d171d81e05febe5ad057d2ca448a03d006f0da30e018c5350e90ec149"
+weights = ".data/pilot-04/reference/gekko/model.safetensors"
+train_rooms = 16
+batch_size = 4
+steps = 64
+max_seconds = 300
+eval_every = 64
+learning_rate = 0.001
+seed = 29
+mask_ratio = 0.75
+references = 2
+adapter_start = 32
+[encoder]
+kind = "burnpack"
+directory = ".data/models/vjepa2_1_base"

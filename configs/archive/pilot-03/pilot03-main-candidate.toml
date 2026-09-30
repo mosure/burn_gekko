@@ -1,0 +1,31 @@
+batch_size = 16
+cache_full_views = true
+fixed_example = false
+train_rooms = 512
+eval_every = 1000
+profile_phases = false
+max_seconds = 1500
+shuffle_samples = true
+[schedule]
+warmup_steps = 400
+decay_steps = 9000
+min_lr_ratio = 0.05
+[training]
+seed = 29
+steps = 9000
+learning_rate = 0.0003
+weight_decay = 0.05
+mask_ratio = 0.75
+references = 2
+decoder_width = 384
+decoder_depth = 6
+decoder_heads = 6
+mae_context_before_self = true
+global_grad_clip = 1.0
+normalize_targets = true
+predict_patch_stats = true
+image_features = "semantic_rgb"
+decoder_position = "rope2d"
+[training.encoder]
+kind = "burnpack"
+directory = ".data/models/vjepa2_1_base"

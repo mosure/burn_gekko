@@ -1,0 +1,6 @@
+max_command_seconds = 450
+
+[[commands]]
+name = "route-upload-nsight"
+max_seconds = 430
+argv = ["/usr/local/bin/nsys", "profile", "--trace=cuda,nvtx", "--sample=none", "--cpuctxsw=none", "--stats=false", "--force-overwrite=false", "--output=.data/pilot-07/fusion-audit/route-upload-trace", ".data/pilot-07/bin/latent_pilot-v18", "--config", "configs/pilot07-route-upload-trace.toml", "--run", ".data/runs/pilot-07-route-upload-trace", "--checkpoint", ".data/runs/pilot-07-fusion-route-balanced-continue/checkpoint-005000"]

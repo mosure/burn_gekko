@@ -1,0 +1,3 @@
+unrelated_references = false
+export_rooms = 4
+export_directory = ".data/pilot-02/annotations/test"

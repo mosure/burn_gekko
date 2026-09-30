@@ -1,0 +1,9 @@
+schema = 1
+frozen_utc = "2026-09-30T04:15:32.684913+00:00"
+selection = "fixed final endpoint at 3000 updates; no benchmark selection"
+evaluation_use = "development"
+spatial_layer = 6
+[[models]]
+name = "native-spatial-refinement"
+checkpoint = ".data/runs/pilot-07-native-spatial-refinement/final"
+model_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"

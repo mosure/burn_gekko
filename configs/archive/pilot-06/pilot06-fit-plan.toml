@@ -1,0 +1,11 @@
+max_command_seconds = 2760
+
+[[commands]]
+name = "direct-fit"
+max_seconds = 2580
+argv = ["target/pilot/e2e_pilot", "--config", "configs/pilot06-fit-direct.toml", "--run", ".data/runs/pilot-06-fit-direct"]
+
+[[commands]]
+name = "direct-fit-audit"
+max_seconds = 180
+argv = ["target/pilot/examples/e2e_diagnostics", "--config", "configs/pilot06-fit-direct.toml", "--checkpoint", ".data/runs/pilot-06-fit-direct/final", "--output", ".data/pilot-06/fit-direct-audit", "--split", "train", "--rooms", "16", "--rgb-all"]

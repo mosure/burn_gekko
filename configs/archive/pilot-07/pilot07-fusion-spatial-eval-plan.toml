@@ -1,0 +1,6 @@
+max_command_seconds = 1300
+
+[[commands]]
+name = "hpatches-spatial-screen"
+max_seconds = 1250
+argv = [".data/pilot-07/bin/hpatches_export-v16", "--config", "configs/pilot07-fusion-spatial-assessment.toml", "--output", ".data/pilot-07/fusion-audit/spatial-export"]

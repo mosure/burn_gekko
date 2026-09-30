@@ -1,0 +1,11 @@
+max_command_seconds = 2500
+
+[[commands]]
+name = "fresh-synthetic-test"
+max_seconds = 1500
+argv = [".data/pilot-07/bin/latent_assess-v7", "--config", "configs/pilot07-latent-fresh-test.toml", "--output", ".data/pilot-07/fresh-test-assessment"]
+
+[[commands]]
+name = "hpatches-rgb-export"
+max_seconds = 900
+argv = [".data/pilot-07/bin/hpatches_export-v7", "--config", "configs/pilot07-hpatches-assessment.toml", "--output", ".data/pilot-07/hpatches-export"]

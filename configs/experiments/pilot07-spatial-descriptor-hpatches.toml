@@ -1,0 +1,11 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+spatial_layer = 6
+evaluation_use = "development"
+diagnostic_readouts = false
+encoder_layer_audit = false
+
+[[models]]
+name = "spatial-descriptor"
+checkpoint = ".data/runs/pilot-07-spatial-descriptor/final"
+model_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"

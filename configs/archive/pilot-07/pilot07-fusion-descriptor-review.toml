@@ -1,0 +1,10 @@
+output = ".data/pilot-07/fusion-audit/descriptor-review.json"
+
+[runs]
+descriptor-control = ".data/runs/pilot-07-fusion-descriptor-control"
+descriptor = ".data/runs/pilot-07-fusion-descriptor"
+
+[comparisons.descriptor_alignment]
+left = "descriptor-control"
+right = "descriptor"
+changed_fields = ["fusion_auxiliary.descriptor_weight"]

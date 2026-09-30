@@ -1,0 +1,16 @@
+output = ".data/pilot-07/fusion-audit/route-balanced-energy.json"
+max_gap_seconds = 3.0
+
+[commands.control]
+ledger = ".data/pilot-07/fusion-audit/route-balanced-run/ledger.json"
+command = "fusion-route-balanced-control"
+telemetry = ".data/pilot-07/fusion-audit/route-balanced-run/fusion-route-balanced-control-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-route-balanced-control"
+purpose = "1000-update frozen-encoder zero middle-feature input control with matched projection shape, inclusive command and desktop board energy"
+
+[commands.block6]
+ledger = ".data/pilot-07/fusion-audit/route-balanced-run/ledger.json"
+command = "fusion-route-balanced-l06"
+telemetry = ".data/pilot-07/fusion-audit/route-balanced-run/fusion-route-balanced-l06-gpu.jsonl"
+training = ".data/runs/pilot-07-fusion-route-balanced-l06"
+purpose = "1000-update frozen-encoder direct block-6 input treatment, inclusive command and desktop board energy"

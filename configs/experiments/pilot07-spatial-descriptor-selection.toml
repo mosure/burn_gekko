@@ -1,0 +1,9 @@
+schema = 1
+frozen_utc = "2026-09-30T05:35:37.473681+00:00"
+selection = "fixed final endpoint at 3000 updates; no benchmark selection"
+evaluation_use = "development"
+spatial_layer = 6
+[[models]]
+name = "spatial-descriptor"
+checkpoint = ".data/runs/pilot-07-spatial-descriptor/final"
+model_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"

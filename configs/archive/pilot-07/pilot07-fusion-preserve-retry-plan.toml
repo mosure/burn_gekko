@@ -1,0 +1,6 @@
+max_command_seconds = 2100
+
+[[commands]]
+name = "fusion-preserve-strong"
+max_seconds = 2080
+argv = [".data/pilot-07/bin/latent_pilot-v20", "--config", "configs/pilot07-fusion-preserve-strong.toml", "--run", ".data/runs/pilot-07-fusion-preserve-strong"]

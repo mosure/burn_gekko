@@ -1,0 +1,6 @@
+max_command_seconds = 1200
+
+[[commands]]
+name = "common-assessment"
+max_seconds = 1180
+argv = [".data/pilot-07/bin/latent_assess-v6", "--config", "configs/pilot07-latent-mask-assessment.toml", "--output", ".data/pilot-07/mask-assessment"]

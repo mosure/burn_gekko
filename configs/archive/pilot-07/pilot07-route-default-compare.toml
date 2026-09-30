@@ -1,0 +1,7 @@
+before = ".data/runs/pilot-07-upload-training-after"
+after = ".data/runs/pilot-07-route-default-check"
+output = ".data/pilot-07/fusion-audit/route-default-comparison.json"
+warmup_updates = 8
+absolute_tolerance = 0.000001
+relative_tolerance = 0.00001
+validation_absolute_tolerance = 0.000001

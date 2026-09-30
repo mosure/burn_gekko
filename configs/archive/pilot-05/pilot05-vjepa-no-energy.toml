@@ -1,0 +1,29 @@
+dataset = ".data/datasets/69c9a724baf69f1a610c122d2b3b3599a8c63fca4701ccdc6bdc8e6dcbbf667e"
+seed = 79
+train_rooms = 2048
+batch_size = 8
+steps = 4000
+decay_steps = 4000
+warmup_steps = 100
+max_seconds = 1350
+eval_every = 500
+decoder_width = 384
+decoder_depth = 6
+decoder_heads = 6
+learning_rate = 0.0003
+encoder_lr_ratio = 0.1
+weight_decay = 0.05
+mask_ratio = 0.75
+references = 2
+appearance_bypass = true
+edge_loss_weight = 1.0
+gradient_energy_weight = 0.0
+unfreeze = true
+unfreeze_min_steps = 500
+unfreeze_min_improvement = 0.02
+fixed_example = false
+
+[initialization]
+kind = "vjepa21"
+directory = ".data/models/vjepa2_1_base"
+expected_encoder_id = "c408f68dd18a38824d0fa1d615e6f9f9f04f111d71a6f7c846f41dc187a8795f"

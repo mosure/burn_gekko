@@ -1,0 +1,6 @@
+max_command_seconds = 700
+
+[[commands]]
+name = "fresh-test-capture"
+max_seconds = 680
+argv = ["target/pilot/gekko", "capture", "--config", "configs/capture-pilot07-test.toml"]

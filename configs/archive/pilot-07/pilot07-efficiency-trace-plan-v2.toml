@@ -1,0 +1,6 @@
+max_command_seconds = 800
+
+[[commands]]
+name = "fusion-nsight-trace"
+max_seconds = 780
+argv = ["nsys", "profile", "--trace=cuda,nvtx", "--sample=none", "--cpuctxsw=none", "--stats=false", "--force-overwrite=false", "--output=.data/pilot-07/fusion-audit/efficiency-trace-v2", ".data/pilot-07/bin/latent_pilot-v13", "--config", "configs/pilot07-efficiency-trace.toml", "--run", ".data/runs/pilot-07-efficiency-trace", "--checkpoint", ".data/runs/pilot-07-fusion-metric-continue/checkpoint-003500"]

@@ -1,0 +1,19 @@
+dataset = ".data/datasets/c108953575b6e86ec761c998777e4a63af296999d68f117342e9e0469ac28188"
+split = "test"
+rooms = 256
+export_rooms = 6
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 719
+stable_attention = false
+correspondence = true
+
+[[models]]
+name = "parent"
+checkpoint = ".data/runs/pilot-07-latent-screen/final"
+model_sha256 = "de8656ebd1911a10a61b090e43a0ced1c4add9cd328373f1d03e1eb0ba72e8c8"
+
+[[models]]
+name = "continued"
+checkpoint = ".data/runs/pilot-07-latent-random90-continue/final"
+model_sha256 = "c83bc1fc4d6fdd7b57f63eee24d85cdd1e41e93ca377c489e122b0e65685b64b"

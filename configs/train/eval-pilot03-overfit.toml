@@ -1,0 +1,6 @@
+diagnostic_training = true
+max_rooms = 1
+target_view = 0
+mask_step = 0
+export_rooms = 1
+export_directory = ".data/pilot-03/samples/overfit"

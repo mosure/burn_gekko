@@ -1,0 +1,57 @@
+schema = 1
+id = "pilot08-equivariance"
+title = "burn_gekko: Learning Cross-View Geometric Matching"
+author = "Mitchell Mosure"
+description = "A 6,000-update training phase over 8,192 procedural rooms establishes a matching benefit from cross-image conditioning on the registered development protocols. The spatial descriptor improves over both its encoder and trained same-image controls on HPatches and ETH3D. Fresh-room references reduce latent MSE by 5.23%, while representation oversmoothing and precision limits remain. This is one checkpoint, not an established state-of-the-art model."
+architecture = "An audited MIT V-JEPA 2.1 Base encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. Sparse completion uses 256x256 images, a 90% random target mask and two reference views. Matching and RI use their separate dense-image branches. A freshly initialized matching head adds a correction bounded by 25% of the centered block-6 descriptor norm. Known RGB projective transforms supply bidirectional bilinear patch-grid correspondence labels at cosine temperature 0.07. Pair-conditioned and shared-weight same-image-conditioned objectives have equal weight, contributing 0.1 to the total objective. Latent completion and RI remain active. Training begins from the audited native-spatial parent with both optimizers reset: 2,500 updates freeze the encoder, then 3,500 adapt its last two transformer blocks and hierarchical output norms after the validation gate. Earlier transformer blocks and patch embedding remain frozen; the teacher never updates. Main peak LR is 1e-4 and encoder LR is 100 times smaller, with 100 warmup steps and a fixed 6,000-step decay. No renderer geometry, camera labels or noncommercial teacher supervises training."
+run = ".data/runs/pilot-08-equivariance"
+checkpoint = ".data/runs/pilot-08-equivariance/final"
+checkpoint_sha256 = "02b8027b41d951c60afb39fc606b210ecb44e3dec4b9d2a1d53a9ddee5a62244"
+sample_count = 6
+limitations = [
+  "All comparisons use this single final checkpoint. Encoder and trained same-image readouts are within-model controls, not separately trained model versions.",
+  "HPatches and ETH3D remain development benchmarks because earlier studies informed this project. Independent real-data confirmation and training-seed replication are still required.",
+  "The registered gate requires a positive paired AEPE-gain interval and nonnegative mean PCK3 gain against both controls on both primary protocols. All four gates pass, but ETH3D PCK3 gain over the encoder has a 95% interval of -0.0057 to +0.0724 percentage points; strict precision improvement is not established there.",
+  "Hard patch-grid correspondence at 256-pixel input does not reproduce published full-resolution refinement protocols. These values cannot establish a SOTA ranking.",
+  "The success applies to the trained spatial readout. Raw fusion decoder features still regress on HPatches viewpoint AEPE (28.35 versus encoder 25.47), and reciprocal attention trades lower AEPE for lower PCK3.",
+  "The model has no trained RGB reconstruction, camera or depth head. Held-out feature variance is 40.98% of the teacher's, so oversmoothing and the original RGB-quality question remain unresolved.",
+  "The held-out cohort has 128 newly generated rooms and four cameras per room, with disjoint seeds verified through training ancestry. It tests the same procedural generator with a wider baseline setting, not independent real-world generalization.",
+  "Reference-count controls share the first 32 held-out rooms / 128 target views and an identical mask. One, two and three references are information-set changes within the same model.",
+  "Hidden-target RGB isolation passes exactly. Strict reference-order invariance at 1e-5 fails: maximum change 0.002890 and RMS 0.0001567.",
+  "Known-transform evaluation uses 16 development validation rooms, seed 1000739 and the first four image pairs for display. It is an augmentation diagnostic, not a 3D viewpoint test.",
+  "The 6,000-update schedule completed, but continued improvement late in the run does not establish asymptotic convergence. Sampling intervals do not measure training-seed uncertainty.",
+  "Board power and utilization include shared desktop processes. They are not process-attributed energy or measurements of SM occupancy.",
+]
+
+[latent]
+directory = ".data/pilot-08/heldout/equivariance"
+metrics_sha256 = "5f512455abfcf007cf15ef8ee5f842dfdc626a99b15c12bc9daf203d93ec5096"
+provenance_sha256 = "b207606ae6d385778b46d4fd386a72859db17891f7a9e3d299fe72dac2f19828"
+evaluation_use = "held_out"
+
+[equivariance]
+path = ".data/pilot-08/warp/metrics.json"
+sha256 = "85eb565766547dddd4a69971419657ac6f3c22072bd9e8926ac9c58d1b169103"
+
+[[benchmarks]]
+path = ".data/pilot-08/hpatches-score.json"
+sha256 = "84545cf055f7b5eeab7a604e5731f07376e0e8c45cb034ecd742a649763011d9"
+
+[[benchmarks]]
+path = ".data/pilot-08/eth3d-score.json"
+sha256 = "b5e39889b0b462a2d584c803490d1ed0c39515b0c3be4a963ecc74b46ced8da9"
+
+[[heads]]
+path = ".data/pilot-08/reference-count-capability.json"
+sha256 = "ee27d1cb5a9dde514b5db362435d384038c07966f04b4fc1a4a81f23f58d88b9"
+
+[efficiency]
+command = "training"
+
+[efficiency.ledger]
+path = ".data/pilot-08/training-run/ledger.json"
+sha256 = "8e8bc96c02e7e1431da3c881b5b47db93e9e7a7475523508e63f4bb747eb55a3"
+
+[efficiency.telemetry]
+path = ".data/pilot-08/training-run/training-gpu.jsonl"
+sha256 = "16b36507eb4e88e84130fa9feec95fca4a84588d40f2e9a59205e1e5344a8901"

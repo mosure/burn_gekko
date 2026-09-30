@@ -1,0 +1,40 @@
+schema = 1
+id = "pilot07-spatial-descriptor"
+title = "burn_gekko: Sparse-View Latent Completion and Spatial Matching"
+author = "Mitchell Mosure"
+description = "Reference images improve sparse latent completion, while the tested spatial matching head fails its registered transfer gate. This page documents one fixed checkpoint, including that negative result."
+architecture = "V-JEPA 2.1 Base (12 blocks, width 768, 16-pixel patches) provides final and block-6 features to six fusion blocks of width 384 with six attention heads. The shared latent head predicts 768 channels per image-grid token; a separate full-target RI head learns reconstruction-error differences. The new dense matching head adds a zero-initialized bounded correction to centered block-6 features, with correction norm at most 25% of the base feature norm. Its RGB-only affinity targets use the frozen parent encoder at temperature 0.035, against a student temperature of 0.07. Dense matching inputs never enter sparse completion. This phase freezes the encoder and trains fusion and task heads; it uses no camera or geometric supervision."
+run = ".data/runs/pilot-07-spatial-descriptor"
+checkpoint = ".data/runs/pilot-07-spatial-descriptor/final"
+checkpoint_sha256 = "b87c11bfb8482118280a0081d80c2e9f4983860287b8a7a1480e8e0f61f41ba7"
+sample_count = 6
+limitations = ["The registered transfer gate fails on ETH3D and HPatches. ETH3D spatial-head AEPE is 37.6953 px versus 36.7477 for the same checkpoint's conditional block-6 encoder. HPatches viewpoint AEPE is 25.5399 versus 25.4874, with lower PCK3. The tested head is not an accepted transfer-quality improvement.", "One training seed, a warm-start phase and synthetic indoor training do not qualify a SOTA foundation model. The final 3000-update endpoint was selected before benchmark inference; no post-hoc readout tuning was performed.", "Latent prediction is primary. No RGB synthesis head was trained, and sharp RGB reconstruction is not established. Spatial prediction variance is 38.3% of the fixed teacher on this cohort, indicating remaining representation oversmoothing.", "ETH3D and HPatches are development benchmarks. Their local hard-patch readouts do not reproduce published full-resolution refinement pipelines or establish published leaderboard parity.", "Affinity sharpening supplies semantic pseudo-targets, not verified geometric matches. This experiment does not isolate whether the matching correction uses reference information beyond a learned single-view transform.", "Camera intrinsics/pose and depth heads are untrained. Image-grid RoPE is not a calibrated camera or 3D positional encoding.", "Hidden-target isolation passes exactly, but strict reference-permutation invariance at 1e-5 fails: maximum float32 output difference is 0.0036235 and RMS is 0.0001612.", "The new cohort was captured after checkpoint selection. Population metrics cover 128 rooms and 512 target views. Displayed latent samples are selected deterministically from the first six exported rooms; reference-count controls use the common first 32 rooms and 128 target views.", "Board energy and activity include shared desktop load. Utilization is not SM occupancy, and energy is not attributed solely to the training process. The sealed v23 run predates the selective-cache loader optimization; its timings do not qualify that optimization."]
+
+[latent]
+directory = ".data/pilot-07/spatial-head-study/heldout/spatial-descriptor"
+metrics_sha256 = "d1262656ec89ccfc3d43d9a3eb5518ffd87129a66cee3749f6d3d96cff7468a3"
+provenance_sha256 = "c667a7be8df1de03741cfeac6b13fc7da4d138d232cc7f8ea31330bac93ad51e"
+evaluation_use = "held_out"
+
+[[benchmarks]]
+path = ".data/pilot-07/spatial-head-study/eth3d-score.json"
+sha256 = "4d98b67e868e9dff26745120f9712c0608c6f85514858af42a61c36a4237b966"
+
+[[benchmarks]]
+path = ".data/pilot-07/spatial-head-study/hpatches-score.json"
+sha256 = "5e285573e47d934524eddd96b48e32662b5ddd784cec45c47b8da45d7e9c91a2"
+
+[[heads]]
+path = ".data/pilot-07/spatial-head-study/reference-count-capability.json"
+sha256 = "50b6daea479c00b3f873630d06f560c6e525e6d37b79eeb1fe51016d169f4d19"
+
+[efficiency]
+command = "spatial-descriptor"
+
+[efficiency.ledger]
+path = ".data/pilot-07/spatial-head-study/training-run/ledger.json"
+sha256 = "e24b02bb1598f4b52d9a580d5d9ed0da64d1b71b865a4c568d2526fff5ebde39"
+
+[efficiency.telemetry]
+path = ".data/pilot-07/spatial-head-study/training-run/spatial-descriptor-gpu.jsonl"
+sha256 = "61c417cc005ee6d9734b7ab24d598c48658ccde5e429cf9e4c31f0bbe973a84f"

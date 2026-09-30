@@ -1,0 +1,11 @@
+benchmark = "hpatches"
+dataset = ".data/benchmarks/hpatches"
+predictions = ".data/pilot-07/native-study/hpatches/native-spatial-refinement.jsonl"
+provenance = ".data/pilot-07/native-study/hpatches/native-spatial-refinement-provenance.json"
+checkpoint_sha256 = "f0d79d2cb53c9c3cf4ddb870efb6167898db42bb5b67e982a56ffdd5f3fa0d82"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+geometry_sha256 = "07166b74782d36d2835eecf8875d45898ad52857c500cc2ca30c9ed638bdd258"
+predictions_sha256 = "689caee9086ecdd67b6a0b693d3fc7f5d529c54f6f42d73408b0ea9a48182221"
+evaluation_use = "development"
+output = ".data/pilot-07/native-study/hpatches-score.json"
+methods = ["fused_decoder", "conditional_decoder", "reciprocal_log_probability", "student_l06_centered", "student_l06_centered_conditional"]

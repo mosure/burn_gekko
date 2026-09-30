@@ -1,0 +1,6 @@
+max_command_seconds = 330
+
+[[commands]]
+name = "match-input-audit"
+max_seconds = 310
+argv = [".data/pilot-07/bin/e2e_diagnostics-v1", "--config", "configs/pilot07-match-screen.toml", "--checkpoint", ".data/runs/pilot-07-match-screen/final", "--split", "validation", "--rooms", "16", "--output", ".data/pilot-07/match-input-audit"]

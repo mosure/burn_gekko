@@ -1,0 +1,6 @@
+max_command_seconds = 1800
+
+[[commands]]
+name = "frozen-fusion-readout-audit"
+max_seconds = 1750
+argv = [".data/pilot-07/bin/hpatches_export-v8", "--config", "configs/pilot07-fusion-readout-audit.toml", "--output", ".data/pilot-07/fusion-audit/readout-export"]

@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-08-equivariance"
+ledger = ".data/pilot-08/training-run/ledger.json"
+telemetry = ".data/pilot-08/training-run/training-gpu.jsonl"
+command = "training"
+output = ".data/pilot-08/training-summary.json"

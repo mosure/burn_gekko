@@ -1,0 +1,22 @@
+output = ".data/pilot-07/fusion-audit/factorial-interim-report.pdf"
+audit_score = ".data/pilot-07/fusion-audit/readout-score.json"
+hpatches_score = ".data/pilot-07/fusion-audit/screen-score.json"
+candidate = "guided"
+parent = "continued"
+attention_method = "reciprocal_log_probability"
+hpatches_images = ".data/benchmarks/hpatches/images.json"
+hpatches_export = ".data/pilot-07/fusion-audit/screen-export"
+budget_ledger = ".data/pilot-07/budget.json"
+conclusion = "INTERIM: semantic guidance with image RoPE substantially improves attention correspondence on development viewpoints. Decoder descriptors still regress. Independent qualification has not been run; a matched descriptor-loss experiment is in progress."
+
+[runs]
+control = ".data/runs/pilot-07-fusion-control"
+no-rope = ".data/runs/pilot-07-fusion-no-rope"
+guided = ".data/runs/pilot-07-fusion-guided"
+guided-no-rope = ".data/runs/pilot-07-fusion-guided-no-rope"
+
+[telemetry]
+control = ".data/pilot-07/fusion-audit/training-run/fusion-control-gpu.jsonl"
+no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-no-rope-gpu.jsonl"
+guided = ".data/pilot-07/fusion-audit/training-run/fusion-guided-gpu.jsonl"
+guided-no-rope = ".data/pilot-07/fusion-audit/training-run/fusion-guided-no-rope-gpu.jsonl"

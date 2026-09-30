@@ -1,0 +1,6 @@
+max_command_seconds = 400
+
+[[commands]]
+name = "stable-preflight"
+max_seconds = 380
+argv = [".data/pilot-07/bin/latent_pilot-v2", "--config", "configs/pilot07-latent-stable-preflight.toml", "--run", ".data/runs/pilot-07-latent-stable-preflight"]

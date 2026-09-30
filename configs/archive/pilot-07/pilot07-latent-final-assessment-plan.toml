@@ -1,0 +1,11 @@
+max_command_seconds = 1600
+
+[[commands]]
+name = "common-final-assessment"
+max_seconds = 900
+argv = [".data/pilot-07/bin/latent_assess-v7", "--config", "configs/pilot07-latent-final-assessment.toml", "--output", ".data/pilot-07/final-assessment"]
+
+[[commands]]
+name = "fresh-test-capture"
+max_seconds = 680
+argv = ["target/pilot/gekko", "capture", "--config", "configs/capture-pilot07-test.toml"]

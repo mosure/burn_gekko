@@ -1,0 +1,6 @@
+max_command_seconds = 2250
+
+[[commands]]
+name = "match-screen"
+max_seconds = 2220
+argv = [".data/pilot-07/bin/e2e_pilot-v1", "--config", "configs/pilot07-match-screen.toml", "--warm-start", ".data/runs/pilot-06-refine-continue/final", "--run", ".data/runs/pilot-07-match-screen"]

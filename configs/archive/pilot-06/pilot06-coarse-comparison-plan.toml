@@ -1,0 +1,11 @@
+max_command_seconds = 1810
+
+[[commands]]
+name = "coarse-control"
+max_seconds = 900
+argv = [".data/pilot-06/bin/e2e_pilot-v9", "--config", "configs/pilot06-coarse-control.toml", "--warm-start", ".data/runs/pilot-06-pyramid/final", "--run", ".data/runs/pilot-06-coarse-control"]
+
+[[commands]]
+name = "coarse-screen"
+max_seconds = 900
+argv = [".data/pilot-06/bin/e2e_pilot-v9", "--config", "configs/pilot06-coarse-screen.toml", "--warm-start", ".data/runs/pilot-06-pyramid/final", "--run", ".data/runs/pilot-06-coarse-screen"]

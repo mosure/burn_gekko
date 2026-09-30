@@ -1,0 +1,97 @@
+# Selected on validation before reserved-test inference; outcome is unqualified.
+study = ".data/pilot-06"
+selected = "refine_continue"
+sizing = ".data/pilot-06/sizing-refine-continue.json"
+appearance_geometry = ".data/pilot-06/selected-test-flow.json"
+selection = ".data/pilot-06/selection.json"
+reserved_test_ledger = ".data/pilot-06/final-evaluation/ledger.json"
+diagnostics = ".data/pilot-06/selected-test-audit/report.json"
+output = ".data/pilot-06/burn_gekko_pilot_06_report.pdf"
+summary = ".data/pilot-06/quality-summary.json"
+conclusion = "Blur is unresolved within the bounded study. Regeneration, direct RGB prediction, image-pyramid appearance transport and extended encoder training improve validation error and edge alignment. The reserved test shows a useful cross-view error reduction, but gradient energy remains far below the retained 0.5 minimum. These weights are a research diagnostic, not an accepted reconstruction model. Additional data or time alone has not been shown to solve the quality problem."
+visual_review = "Unenhanced reserved-test review fails the quality gate. Room 2609308320 has blurred chair/sofa silhouettes and missing thin structure despite clear references. Worst-error room 2609308444, view 2, misses ceiling lights and furniture details and distorts window boundaries. Observed patches are retained exactly in display panels; all reported errors and detail metrics use hidden pixels."
+visual_review_passed = false
+limitations = [
+  "One selected training lineage on one workstation; no independently repeated training runs or training-seed uncertainty estimate.",
+  "Three views at 256x256 and a dimensionless camera-baseline control of 0.25. Larger resolutions, wider baselines, and real-room transfer are not qualified.",
+  "The direct RGB head, adapted loss, capacity curriculum, dataset, and training duration changed together; this study does not isolate their individual causal contributions.",
+  "The process slows substantially during extended training. Exact restart restores throughput, but the software cause has not been profiled or fixed.",
+  "The full validation/test mask is fixed. Results do not quantify mask-seed uncertainty, and repeated adaptive decisions use one validation set.",
+  "The source mixture heavily favors generated RGB and learned flow is still inaccurate. Sharpening or stronger edge energy alone would not establish correct correspondence.",
+]
+next_steps = [
+  "Profile host scheduling, graph/cache growth and synchronization across an exact resumed run. Automate bounded process segments only after verifying checkpoint identity and optimizer continuity. The observed restart speedup is already reproducible within this study; its root cause is unresolved.",
+  "Use the small-room capacity protocol to isolate correspondence learning. Compare the current direct flow head with explicit coarse-to-fine reference matching under RGB-only photometric training. Require lower hidden-visible flow error, aligned reconstructed detail and useful reference dependence together before another large-data run. Geometry remains an evaluation-only diagnostic in the self-supervised arm.",
+  "Run a matched frozen-versus-trainable appearance-encoder ablation and a wholly random encoder control. The present study adapts the permitted V-JEPA encoder and randomly initialized reconstruction heads; it does not establish from-scratch encoder generalization or that a different open-weight encoder would fix blur.",
+  "Retain the existing acceptance thresholds and treat these reserved-test rooms as consumed. Use a fresh held-out test set for any next recipe selected after this report. Multiple training seeds, wider baselines and real images are required before a paper can claim robust multi-view completion.",
+]
+
+[[arms]]
+name = "capacity"
+label = "16-room capacity"
+run = ".data/runs/pilot-06-fit-detail-continue"
+telemetry = ".data/pilot-06/fit-detail-continue/fit-detail-continue-gpu.jsonl"
+diagnostic_only = true
+training_samples = ".data/pilot-06/fit-detail-continue-audit/rgb-all"
+
+[[arms]]
+name = "main"
+label = "8,192-room main"
+run = ".data/runs/pilot-06-main"
+telemetry = ".data/pilot-06/main/main-gpu.jsonl"
+
+[[arms]]
+name = "appearance"
+show_curves = false
+label = "Pooled-warp diagnostic"
+run = ".data/runs/pilot-06-appearance"
+telemetry = ".data/pilot-06/appearance/appearance-gpu.jsonl"
+diagnostic_only = true
+
+[[arms]]
+name = "pyramid"
+label = "Image-pyramid candidate"
+run = ".data/runs/pilot-06-pyramid"
+telemetry = ".data/pilot-06/pyramid/pyramid-gpu.jsonl"
+
+[[arms]]
+name = "coarse_control"
+show_curves = false
+label = "Curvature 0 control"
+run = ".data/runs/pilot-06-coarse-control"
+telemetry = ".data/pilot-06/coarse-comparison/coarse-control-gpu.jsonl"
+diagnostic_only = true
+
+[[arms]]
+name = "coarse_strong"
+show_curves = false
+label = "Curvature 0.01"
+run = ".data/runs/pilot-06-coarse-screen"
+telemetry = ".data/pilot-06/coarse-comparison/coarse-screen-gpu.jsonl"
+diagnostic_only = true
+
+[[arms]]
+name = "coarse_mild"
+show_curves = false
+label = "Curvature 0.0025"
+run = ".data/runs/pilot-06-coarse-mild"
+telemetry = ".data/pilot-06/coarse-mild/coarse-mild-gpu.jsonl"
+diagnostic_only = true
+
+[[arms]]
+name = "refine"
+runtime_drift = true
+label = "Extended training"
+run = ".data/runs/pilot-06-refine"
+telemetry = ".data/pilot-06/refine/refine-gpu.jsonl"
+
+[[arms]]
+name = "refine_continue"
+label = "Extended + exact resume"
+runtime_drift = true
+show_curves = false
+run = ".data/runs/pilot-06-refine-continue"
+telemetry = ".data/pilot-06/refine-continue/refine-continue-gpu.jsonl"
+test = ".data/runs/pilot-06-selected-test"
+test_unrelated = ".data/runs/pilot-06-selected-test-unrelated"
+training_samples = ".data/pilot-06/refine-training-audit/rgb-all"

@@ -1,0 +1,21 @@
+dataset = ".data/benchmarks/hpatches"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+score = ".data/pilot-07/fusion-audit/route-balanced-score.json"
+export = ".data/pilot-07/fusion-audit/route-balanced-export"
+models = ["continued", "spatial-l06", "route-balanced-control", "route-balanced-l06"]
+output = ".data/pilot-07/fusion-audit/route-balanced-preservation.json"
+
+[[comparisons]]
+name = "plain_decoder"
+baseline = "student_l06_centered"
+candidate = "fused_decoder"
+
+[[comparisons]]
+name = "conditional_decoder"
+baseline = "student_l06_centered_conditional"
+candidate = "conditional_decoder"
+
+[[comparisons]]
+name = "conditional_attention"
+baseline = "student_l06_centered_conditional"
+candidate = "reciprocal_log_probability"
