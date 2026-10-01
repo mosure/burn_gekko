@@ -204,9 +204,16 @@ pub fn load(
 }
 
 pub fn compare(candidate: &Evidence, control: &Evidence) -> Result<Value> {
+    // Each model/checkpoint binding is verified in load(). A bundle's roster is
+    // not an assessment setting; allow pinned controls from an earlier bundle.
+    let protocol = |value: &Value| -> Result<Value> {
+        let mut settings = value.as_object().context("assessment settings")?.clone();
+        settings.remove("models");
+        Ok(Value::Object(settings))
+    };
     ensure!(
         candidate.population == control.population
-            && candidate.assessment_config == control.assessment_config,
+            && protocol(&candidate.assessment_config)? == protocol(&control.assessment_config)?,
         "completion targets, teacher arrays, masks or assessment recipe differ"
     );
     let mut rooms: BTreeMap<u64, Vec<[f64; 4]>> = BTreeMap::new();
@@ -284,6 +291,17 @@ mod tests {
         assert!(compare(&candidate, &baseline).is_err());
         candidate.population = baseline.population.clone();
         candidate.population.get_mut(&(1, 0)).unwrap()["truth_sha256"] = json!("different-teacher");
+        assert!(compare(&candidate, &baseline).is_err());
+    }
+
+    #[test]
+    fn reusing_control_exports_changes_only_the_roster_not_assessment_settings() {
+        let mut baseline = fixture();
+        let mut candidate = fixture();
+        baseline.assessment_config["models"] = json!(["previous roster"]);
+        candidate.assessment_config["models"] = json!(["new candidate"]);
+        assert!(compare(&candidate, &baseline).is_ok());
+        candidate.assessment_config["seed"] = json!(999);
         assert!(compare(&candidate, &baseline).is_err());
     }
 }

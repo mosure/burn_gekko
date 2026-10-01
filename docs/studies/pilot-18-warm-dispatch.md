@@ -51,3 +51,38 @@ qualification.
 Raw traces, range exports, numerical replay and native dispatch reports belong in
 `.data/pilot-18/dispatch/`. The public single-run model page retains its own
 unprofiled training measurements.
+
+For native scoring, export with
+`nsys stats --report cuda_gpu_trace,cuda_api_trace,nvtx_pushpop_trace --format json:ts=ns:dur=ns:mem=B`.
+The explicit memory unit preserves integer byte counts. `--timeunit ns` alone
+leaves memory in rounded megabytes and the native parser rejects it. Re-exporting
+the same trace is CPU-only; preserve any failed export and do not repeat the GPU
+capture to repair an export format.
+
+## Completed diagnostic
+
+The single GPU command took **259.95 seconds** including setup, 32 updates and
+final validation/saving. All 32 replay updates matched the original preflight's
+sample/stage/gradient identities and numerical tolerances. The 22 warm updates
+span **27.99 seconds**; traced GPU events cover **63.31%** of that host interval.
+There are **711,348 kernel events**, of which **527,235** last at most 10 microseconds.
+
+| Host phase | Host seconds | GPU-event coverage | Uncovered seconds |
+|---|---:|---:|---:|
+| Data | 0.919 | 0.00% | 0.919 |
+| Frozen targets | 3.759 | 92.16% | 0.295 |
+| Forward and loss readback | 9.643 | 44.21% | 5.380 |
+| Backward and clipping | 13.494 | 73.59% | 3.564 |
+| Optimizer and synchronization | 0.173 | 36.71% | 0.110 |
+
+Forward/loss readback and backward/clipping are the useful next optimization
+targets. The observations do not establish which uncovered intervals are caused
+by dispatch, host work, competing desktop work or tracing. In particular, the
+12.92 seconds of synchronization-API overlap are not all idle GPU time. Any
+optimization must preserve every update numerically and demonstrate an improvement
+in a separate unprofiled measurement with shared-load telemetry.
+
+The first CPU export used rounded megabytes and was rejected; a second export of
+the **same** trace with integer bytes passed. No second GPU capture was needed.
+Raw failed/successful exports, replay, complete phase report and process-activity
+summary are retained under `.data/pilot-18/dispatch/`.

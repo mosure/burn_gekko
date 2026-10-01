@@ -1,0 +1,8 @@
+original = ".data/runs/pilot-18-geometry-preflight/metrics.jsonl"
+original_sha256 = "e345cf3db5982f53b0328aa78f8c0ddd8a8bc7d721d4e675f07c0cfeb3d8cf7e"
+replay = ".data/runs/pilot-18-dispatch/metrics.jsonl"
+replay_sha256 = "6dadc0b6f461419a87f19f0ebad656f8338d2c46160404fea2573741664158e5"
+prefix_updates = 32
+absolute_tolerance = 1e-6
+relative_tolerance = 1e-5
+output = ".data/pilot-18/dispatch/replay.json"

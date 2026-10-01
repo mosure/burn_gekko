@@ -1,0 +1,5 @@
+directory = ".data/pilot-18/assessment/geometry"
+metrics_sha256 = "d2a2989a43c2f76ecf2d4140161724c172db3955594e4e0297cd2f346f1dcdf0"
+provenance_sha256 = "bc99eb0c2af91bfe39f9c0dde3791358a145d8e7ffd77b9d607fe16881c7a333"
+checkpoint_sha256 = "662d2cc84248dab0c45e1a958927a84a28616b7a13db9eb617dcae80c1ab6ac5"
+output = ".data/pilot-18/geometry-detail.json"

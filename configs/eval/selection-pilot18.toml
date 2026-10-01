@@ -1,0 +1,62 @@
+parent_checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+updates = 4096
+completion_rooms = 64
+expected_weight = 0.1
+output = ".data/pilot-18/selection.json"
+
+[protocol]
+path = ".data/pilot-18/registered-protocol.md"
+sha256 = "57cff89d7dcddb42af4713a626adce512fef5fdd90f9b2e73a512a8b3abe734f"
+
+[parent.geometry]
+path = ".data/pilot-16/parent-view/metrics.json"
+sha256 = "dcee9540a8a64ca3135e5ead2a828ddba23395cf1b63c28334d6b507dde57dca"
+
+[parent.pose]
+path = ".data/pilot-16/parent-pose.json"
+sha256 = "d8c8d10bd758f9d3840b22224ed791af91fd74d86907d20f7b03bcae8312ffbb"
+
+[parent.completion.detail]
+path = ".data/pilot-18/parent-detail.json"
+sha256 = "61fb46bbe253366b96fe7a7692b371c63526a08ed5084e8c5c65469a1c723eb2"
+
+[control.registered_config]
+path = "configs/experiments/pilot18-control.toml"
+sha256 = "4d4c3862b7b787697c7b3265fa2afbe64aaf74c14b15dfb1a4117cdc3cb9c6e0"
+
+[control.summary]
+path = ".data/pilot-18/control-summary.json"
+sha256 = "f49f0fc9c3c38ecdc0a5d2fe9c1f2b17ced14b91514c733ae33a4cffa544b906"
+
+[control.evaluation.geometry]
+path = ".data/pilot-18/control-view/metrics.json"
+sha256 = "81c5ecd68670e1fe608411076eab352616a67678646aea5fa47ae2de027b115c"
+
+[control.evaluation.pose]
+path = ".data/pilot-18/control-pose.json"
+sha256 = "88611d0ea5814564e023e37225f895cd1b20cdad3dcb495a741ebc2be0290b49"
+
+[control.evaluation.completion.detail]
+path = ".data/pilot-18/control-detail.json"
+sha256 = "9c9bcdd98490421470d1314f45cad7914256274504650863461a0c66d71d1bfa"
+
+[candidate.registered_config]
+path = "configs/experiments/pilot18-geometry.toml"
+sha256 = "87b13b54066587da5839e5937279d700b37e9c61320480c04e3d10dba3f1471e"
+
+[candidate.summary]
+path = ".data/pilot-18/geometry-summary.json"
+sha256 = "cee61159386db578b51460f4de96855bcbdaee78088d65ece04785e811cff9b1"
+
+[candidate.evaluation.geometry]
+path = ".data/pilot-18/geometry-view/metrics.json"
+sha256 = "3469fca6249f911ed56ee6b7d6f2d5f4bef59f06499bf9a860300fc76a97cbaa"
+
+[candidate.evaluation.pose]
+path = ".data/pilot-18/geometry-pose.json"
+sha256 = "2314512566e8f458a4a5353fe718570e7eff2f363d43f73e1e9a77c591fa2199"
+
+[candidate.evaluation.completion.detail]
+path = ".data/pilot-18/geometry-detail.json"
+sha256 = "980101b151939b443657cf7b4f635ababf4605bc113af293d030720b68fc85ec"
+

@@ -1,0 +1,5 @@
+directory = ".data/pilot-18/assessment/control"
+metrics_sha256 = "eedd868bb5472454e4545e0da86cd1cb350dd41c10cc0e02113090ceb3bb14d5"
+provenance_sha256 = "8acba3a61706fcf4b28d19e286ce8eb9a457bb8b0cd01b9cacb4b0f6bdd1535c"
+checkpoint_sha256 = "02db25fcd1f2cb808619558ea8b9e7123d1d93bcf5b62187bc693271366299e4"
+output = ".data/pilot-18/control-detail.json"

@@ -1,0 +1,41 @@
+schema = 1
+author = "Mitchell Mosure"
+id = "pilot18-geometry"
+title = "burn_gekko: Full-Cohort Geometry Continuation"
+run = ".data/runs/pilot-18-geometry"
+checkpoint = ".data/runs/pilot-18-geometry/final"
+checkpoint_sha256 = "662d2cc84248dab0c45e1a958927a84a28616b7a13db9eb617dcae80c1ab6ac5"
+sample_count = 6
+description = "One completed 4096-update training run on 8192 procedural rooms. This candidate failed the registered synthetic retention checks and is retained only as a diagnostic. The report shows latent completion, spatial detail, actual-view matching and calibrated camera recovery for this checkpoint. These are synthetic development measurements, not independent evidence of SotA or resolved RGB blur."
+architecture = "MIT V-JEPA 2.1 Base image encoder, sparse target and two reference views, six fusion blocks of width 384 with six attention heads, 2D rotary positions and a block-6 spatial descriptor bounded to 25% residual magnitude. All 151 encoder tensors train from the first update. Images are 256 by 256, target masking is 90%, batch size is 16, seed is 853, and the fixed horizon is 4096 updates with 128 warmup updates. Trunk learning rate is 2e-5 and encoder learning rate is 4e-7. This phase begins from own Pilot 13 geometry weights and resets both AdamW optimizers. The original MIT V-JEPA supplies frozen latent targets; an own frozen Pilot 11 encoder supplies final-feature preservation at weight 4. Latent completion, relative-improvement and image-warp equivariance losses are retained. An actual-view bidirectional correspondence NLL uses renderer labels with weight 0.1 and temperature 0.07. Camera and depth labels supervise training only; encoder and fusion inference inputs are RGB."
+limitations = ["One final foundation endpoint is reported. The registered internal selection decision is documented separately; this page does not compare separately trained private model versions. Passing synthetic retention is not independent deployment or SotA qualification.", "Completion uses 64 reused validation rooms and 192 targets; geometric matching and calibrated pose use the first 32 of those rooms. All three readouts and all eight fixed solver seeds are retained. No model performance on the reserved test split is used here.", "Feature colors visualize teacher and predicted latent space with one common teacher-fitted projection. They are not RGB reconstructions. Feature signal/error in dB is not pixel PSNR. No RGB decoder or learned calibration head is trained or evaluated for this new checkpoint.", "The camera table uses known intrinsics in a calibrated eight-point solver after RGB-only correspondence inference. It reports angles and pose AUC, not predicted intrinsic accuracy. Translation direction keeps its sign; scale is not evaluated.", "Higher feature variance alone does not demonstrate correct detail. The native detail diagnostic measures centered spatial agreement and adjacent differences, with explicit teacher-assisted amplitude oracles labeled as diagnostics.", "Training data are the immutable historical Zeroverse 0.25.0 / adapter 0.8.0 cache. The newer live renderer does not alter this cache. Full-pixel camera/depth integrity passed on all rooms; that is not learned camera accuracy.", "Efficiency values describe this entire GPU training command, including startup, validation and the authorized shared desktop load. They are not process-attributed energy, kernel occupancy or profiled timing.", "No noncommercial pretrained weights or teachers enter this training lineage. Independent real-view transfer, matched public baselines, additional training seeds, reliable camera calibration and sharp RGB completion remain unqualified."]
+
+[latent]
+directory = ".data/pilot-18/assessment/geometry"
+metrics_sha256 = "d2a2989a43c2f76ecf2d4140161724c172db3955594e4e0297cd2f346f1dcdf0"
+provenance_sha256 = "bc99eb0c2af91bfe39f9c0dde3791358a145d8e7ffd77b9d607fe16881c7a333"
+evaluation_use = "development"
+
+[view_geometry]
+path = ".data/pilot-18/geometry-view/metrics.json"
+sha256 = "3469fca6249f911ed56ee6b7d6f2d5f4bef59f06499bf9a860300fc76a97cbaa"
+
+[efficiency]
+command = "geometry"
+
+[efficiency.ledger]
+path = ".data/pilot-18/geometry-run/ledger.json"
+sha256 = "5eed04fa84104c8e20a42b299fa30def0c2d4d9f61b2ae314489a6f69998787d"
+
+[efficiency.telemetry]
+path = ".data/pilot-18/geometry-run/geometry-gpu.jsonl"
+sha256 = "712496b78fa545c9442489905b709356440ae53be4df8e80988441010c6ef7bc"
+
+[[heads]]
+path = ".data/pilot-18/publication-detail.head.json"
+sha256 = "0358e8e0db293d1d4fc4b9f9fae935ad803f5f7512ee22f649cfb2c30db228b7"
+
+[[heads]]
+path = ".data/pilot-18/geometry-pose.head.json"
+sha256 = "a23c236d71098171cf14fdeffb4bda93f09b4b4c939eec24c1f6a0d4092bdd06"
+

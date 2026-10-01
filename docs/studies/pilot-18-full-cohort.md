@@ -1,6 +1,7 @@
 # Pilot 18: full-cohort geometry continuation
 
-Status: both throughput preflights passed; matched full runs active. This executes the scientific
+Status: both full runs and required evaluations completed; **candidate rejected**
+by the registered adjacent-detail gate. This executes the scientific
 proposal in [Pilot 16](pilot-16-continuation.md), under the user's new ceiling of
 **12 additional GPU-command hours**. The unused 96.281 seconds of the previous
 allowance remain separate. Capture, training and GPU evaluation command time,
@@ -43,9 +44,65 @@ exposure. These are whole-command board observations including the authorized
 desktop load, startup and validation; they are not process-attributed power or SM
 occupancy. See `.data/pilot-18/control-summary.json`.
 
-A separate [warm-update dispatch replay](pilot-18-warm-dispatch.md) is registered
-for after the quality evaluation. It cannot change model selection. Its optional
-profiling build leaves the frozen full-run trainer untouched.
+The separate [warm-update dispatch replay](pilot-18-warm-dispatch.md) completed
+after quality evaluation and passed numerical replay. It cannot change model
+selection. Its optional profiling build leaves the frozen full-run trainer
+untouched.
+
+## Final quality decision
+
+All source, initialization, sampled-target, fixed-horizon and gradient checks
+passed. Both runs covered 8,192 rooms, 24,576 unique room/view targets and 65,536
+target exposures, with 151 encoder gradient tensors on every update. The common
+assessment covers 64 rooms / 192 targets; matching and camera scoring cover 32
+rooms, with all eight solver seeds retained.
+
+| Synthetic development measure | Published parent | Matched control | Geometry candidate |
+| --- | ---: | ---: | ---: |
+| Hidden latent MSE, lower better | 0.176511 | 0.174985 | 0.176544 |
+| Centered structure MSE, lower better | 0.170802 | 0.169393 | 0.170803 |
+| Centered spatial correlation | 0.673794 | 0.677119 | 0.673772 |
+| Neighbor-difference correlation | 0.433037 | 0.438091 | 0.433042 |
+| Neighbor-difference power / teacher | 19.26% | 19.85% | 19.31% |
+| Actual-view mean pixel error | 12.181 | 15.766 | 9.294 |
+| Matches within 8 input pixels | 58.72% | 50.89% | 67.64% |
+| Mean calibrated pose AUC at 10 degrees | 21.04% | 17.16% | 24.84% |
+
+The candidate passes seven of eight quality checks. The failed check is small
+but explicit: neighbor-difference correlation falls **0.005048509** below the
+control, exceeding the registered 0.005 tolerance by **0.000048509**. Its paired
+95% room interval is [-0.005939, -0.004174]. The criterion is not rounded or
+waived after observing the result. The selected checkpoint remains Pilot 13;
+the control is not promoted automatically either.
+
+The candidate's own [17-page PDF](../../.data/publications/pilot18-geometry/paper.pdf)
+and [interactive report](../../.data/publications/pilot18-geometry/index.html)
+contain six deterministic annotated samples and complete camera readouts. Native
+validation passed for 99 hashed files, 82 images and 27 local links. Browser checks
+passed at 390, 768 and 1,440 pixels, including every sample selection. This private
+diagnostic bundle does not replace the accepted public project page or demo.
+
+Relative to the published parent, viewpoint error falls 2.886 pixels (paired
+95% room interval 2.312–3.556), while joint camera angular error falls 4.572
+degrees (1.121–8.938). Pose AUC improves in seven of eight solver seeds against
+the parent and every seed against the control. Candidate pose AUC spans
+21.60–29.43%. These are synthetic development improvements. Completion detail
+is essentially unchanged from the parent, and the control's modest detail gain
+is lost; RGB blur and real-view transfer are not resolved by this result.
+
+The geometry run takes **4,890.283 GPU-command seconds / 81.50 minutes**. Its
+warm median/p95 update is 1.100 / 1.253 seconds, peak process GPU memory is
+49,110 MiB, and peak host RSS is 21,134 MiB. Observed shared-board energy is
+565.92 Wh, or 31.09 J per target, with 99.98% telemetry coverage. Board mean
+power is 416.7 W and median device utilization is 88%; these retain the shared
+desktop scope above. The geometry auxiliary adds computation; no energy saving
+is claimed.
+
+The native selection receipt is `.data/pilot-18/selection.json`. Its source
+closure, per-room uncertainty, complete solver panel and failed gate remain
+preserved. The next controlled study halves geometry-loss weight, testing
+whether some matching benefit can coexist with the control's detail improvement.
+It uses a new preregistration and the same cumulative GPU allowance.
 
 ## Preflight outcome
 

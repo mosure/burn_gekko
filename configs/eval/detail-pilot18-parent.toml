@@ -1,0 +1,5 @@
+directory = ".data/pilot-18/assessment/parent"
+metrics_sha256 = "04a61a493021fba69e0438a7192ef28800a83747441dc85f9fe4e85098a8cfcc"
+provenance_sha256 = "84748e4f48f5cb8c2df04663863318db52afbd2dd842394bbf270125d31ffb73"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+output = ".data/pilot-18/parent-detail.json"

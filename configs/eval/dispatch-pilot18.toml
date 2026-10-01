@@ -1,0 +1,17 @@
+description = "Discarded geometry-prefix replay; 22 warm updates. Host temporal overlap is not kernel ownership or unprofiled throughput. Integer nanoseconds and bytes exported from the original trace."
+output = ".data/pilot-18/dispatch/summary.json"
+
+[gpu_trace]
+path = ".data/pilot-18/dispatch/trace-bytes_cuda_gpu_trace.json"
+sha256 = "c0d881169df62e74fdbfb71f8e525b7cebdbf588b2f24761da44f68c42a2026e"
+
+[api_trace]
+path = ".data/pilot-18/dispatch/trace-bytes_cuda_api_trace.json"
+sha256 = "7ce98fb05de4b0ec8b08769845b8b1825978dcb3554520f56130874c6abd79c9"
+
+[warm_ranges]
+expected_updates = 22
+
+[warm_ranges.trace]
+path = ".data/pilot-18/dispatch/trace-bytes_nvtx_pushpop_trace.json"
+sha256 = "3086be9b3362700edbe2d617db1b488e9c4353319dc5018b0129075172058a86"

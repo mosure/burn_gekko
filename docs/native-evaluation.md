@@ -86,7 +86,9 @@ Both dated (`-o DT`) and undated process logs are supported. A standalone `#`
 header marker is not a data column; unavailable counters remain unavailable.
 
 `gekko-eval dispatch --config <TOML>` consumes checksummed Nsight
-`cuda_gpu_trace` and `cuda_api_trace` JSON exports using `ts=ns:dur=ns` units.
+`cuda_gpu_trace` and `cuda_api_trace` JSON exports using
+`--format json:ts=ns:dur=ns:mem=B`. Explicit byte units are required; the default
+rounded megabyte values do not preserve memory-event sizes.
 The manifest supplies `description`, `output`, and `[gpu_trace]`/`[api_trace]`
 tables containing `path` and `sha256`. No new dependency or Python analysis is
 required. Exactly one traced device and API process are expected. Overlapping

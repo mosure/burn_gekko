@@ -300,7 +300,9 @@ pub fn select(c: &Config) -> Result<Value> {
         !c.output.exists()
             && c.updates == 4096
             && c.completion_rooms == 64
-            && c.expected_weight == 0.1,
+            && c.expected_weight.is_finite()
+            && c.expected_weight > 0.
+            && c.expected_weight <= 1.,
         "unregistered continuation or existing selection"
     );
     ensure!(

@@ -1,0 +1,14 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+predictions = ".data/pilot-18/geometry-view/pose-predictions.json"
+predictions_sha256 = "9136eeed30745dcd244aa3b91b1bb206b07cbf86cf97e94dcbc140f8b5b33ec0"
+checkpoint_sha256 = "662d2cc84248dab0c45e1a958927a84a28616b7a13db9eb617dcae80c1ab6ac5"
+rooms = 32
+methods = ["spatial_pair_local", "spatial_self_local", "spatial_encoder_local"]
+seeds = [871,872,873,874,875,876,877,878]
+max_trials = 2048
+min_trials = 64
+confidence = 0.999
+min_inliers = 12
+threshold_pixels = 1.5
+minimum_baseline_meters = 0.01
+output = ".data/pilot-18/geometry-pose.json"
