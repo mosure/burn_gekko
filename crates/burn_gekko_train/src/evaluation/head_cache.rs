@@ -57,8 +57,8 @@ fn save<B: Backend, const D: usize>(
 pub fn run<B: Backend>(c: &CacheConfig, out: &Path, device: &B::Device) -> Result<()> {
     ensure!(
         !out.exists()
-            && (1..=128).contains(&c.train_rooms)
-            && (1..=64).contains(&c.validation_rooms)
+            && (1..=1024).contains(&c.train_rooms)
+            && (1..=128).contains(&c.validation_rooms)
             && c.mask_ratio > 0.
             && c.mask_ratio < 1.,
         "invalid/existing head cache"

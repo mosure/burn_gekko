@@ -45,6 +45,17 @@ training loop takes 64.70 seconds (12.37 updates/second); total head command tim
 reported by the native runner is 66.44 seconds. This is small-head cached-feature
 throughput, not whole-model training throughput or GPU efficiency.
 
+The later native `head-diagnostics` audit independently reproduced all raw-output
+metrics and the training-label camera constant. Paired whole-room bootstrap
+intervals on these same eight validation rooms give an RGB reference benefit of
+**0.394 dB [0.021, 0.722]**. Rotation-error reduction versus the constant is
+**1.90 degrees [-0.16, 4.63]**, signed-direction reduction is **52.61 degrees
+[38.41, 66.76]**, and focal-error reduction is **1.29 percentage points
+[-10.68, 11.00]**. Rotation and focal improvements are uncertain on this small
+cohort. These 95% development intervals do not include training-seed variation.
+Recipe: `configs/eval/heads15-uncertainty.toml`; output:
+`.data/pilot-19/heads15-uncertainty.json`. No weights changed or GPU work was used.
+
 ## Results and remaining weaknesses
 
 | Development measure | Initialization | Final head |

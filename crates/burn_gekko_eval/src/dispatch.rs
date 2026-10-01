@@ -8,6 +8,7 @@ use std::{
     fs,
     path::PathBuf,
 };
+pub mod comparison;
 pub mod warm;
 
 #[derive(Debug, Deserialize)]

@@ -1,0 +1,9 @@
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+expected_updates = 800
+expected_training_rooms = 32
+expected_validation_rooms = 8
+output = ".data/pilot-19/heads15-uncertainty.json"
+
+[evidence]
+path = ".data/runs/head-stability-15/evidence.json"
+sha256 = "03e4f066c37aedfe05fc04329736fa6d783a8830ba7656787121811e993fe436"

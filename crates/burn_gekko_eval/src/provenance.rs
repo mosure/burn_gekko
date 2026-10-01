@@ -3,6 +3,8 @@
 #[doc(hidden)]
 pub const SOURCES: &[(&str, &str)] = &[
     ("heads.rs", include_str!("heads.rs")),
+    ("heads/audit.rs", include_str!("heads/audit.rs")),
+    ("heads/diagnostics.rs", include_str!("heads/diagnostics.rs")),
     (
         "adaptation/continuation/completion.rs",
         include_str!("adaptation/continuation/completion.rs"),
@@ -30,6 +32,10 @@ pub const SOURCES: &[(&str, &str)] = &[
     ("camera_export.rs", include_str!("camera_export.rs")),
     ("contrasts.rs", include_str!("contrasts.rs")),
     ("dispatch.rs", include_str!("dispatch.rs")),
+    (
+        "dispatch/comparison.rs",
+        include_str!("dispatch/comparison.rs"),
+    ),
     ("dispatch/warm.rs", include_str!("dispatch/warm.rs")),
     ("efficiency.rs", include_str!("efficiency.rs")),
     ("lib.rs", include_str!("lib.rs")),

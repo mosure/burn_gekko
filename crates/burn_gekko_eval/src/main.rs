@@ -9,6 +9,16 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Compare a registered A-B-B-A runtime replay with unprofiled efficiency.
+    RuntimeComparison {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Audit cached output-head predictions and room-level calibration/RGB uncertainty.
+    HeadDiagnostics {
+        #[arg(long)]
+        config: PathBuf,
+    },
     /// Select a sustained continuation only when completion, detail and camera gates all pass.
     SelectContinuation {
         #[arg(long)]
@@ -128,6 +138,18 @@ enum Command {
 }
 fn main() -> Result<()> {
     match Args::parse().command {
+        Command::RuntimeComparison { config } => {
+            let result = burn_gekko_eval::dispatch::comparison::analyze(
+                &burn_gekko_data::read_config(&config)?,
+            )?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
+        Command::HeadDiagnostics { config } => {
+            let result = burn_gekko_eval::heads::diagnostics::analyze(
+                &burn_gekko_data::read_config(&config)?,
+            )?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
         Command::SelectContinuation { config } => {
             let result = burn_gekko_eval::adaptation::continuation::select(
                 &burn_gekko_data::read_config(&config)?,

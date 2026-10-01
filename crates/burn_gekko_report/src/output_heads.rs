@@ -6,21 +6,11 @@ use crate::{
     figures::floats,
 };
 use anyhow::{Context, Result, ensure};
-use burn_gekko_data::{
-    Split,
-    head_cache::{CameraTarget, HeadCache},
-};
-use burn_gekko_eval::{
-    heads::{HeadRow, camera_score, rgb_score, summarize},
-    schema::{Capability, CapabilityStatus, Metric},
-};
+use burn_gekko_data::head_cache::CameraTarget;
+use burn_gekko_eval::schema::{Capability, CapabilityStatus, Metric};
 use image::{Rgb, RgbImage};
 use serde_json::Value;
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    fs,
-    path::Path,
-};
+use std::{collections::BTreeMap, path::Path};
 
 fn file(v: &Value) -> Result<PinnedFile> {
     Ok(serde_json::from_value(v.clone())?)
@@ -44,147 +34,31 @@ fn bound(input: &PinnedFile, sources: &mut Vec<Source>) -> Result<Value> {
     }
     Ok(v)
 }
-fn close(a: &Value, b: &Value) -> bool {
-    match (a, b) {
-        (Value::Number(a), Value::Number(b)) => a
-            .as_f64()
-            .zip(b.as_f64())
-            .is_some_and(|(a, b)| (a - b).abs() < 1e-9),
-        (Value::Object(a), Value::Object(b)) => {
-            a.len() == b.len() && a.iter().all(|(k, v)| b.get(k).is_some_and(|x| close(v, x)))
-        }
-        (Value::Array(a), Value::Array(b)) => {
-            a.len() == b.len() && a.iter().zip(b).all(|(a, b)| close(a, b))
-        }
-        _ => a == b,
-    }
-}
 pub fn load(
     input: &PinnedFile,
     checkpoint: &str,
     sources: &mut Vec<Source>,
 ) -> Result<Vec<Capability>> {
-    let v = bound(input, sources)?;
-    ensure!(
-        v["checkpoint_sha256"] == checkpoint,
-        "output heads belong to another foundation checkpoint"
-    );
-    let files = &v["files"];
-    let report = json_file(&files["report"], sources)?;
-    let meta = json_file(&files["metadata"], sources)?;
-    let provenance = json_file(&files["provenance"], sources)?;
-    let predictions = json_file(&files["predictions"], sources)?;
-    let cache: HeadCache = serde_json::from_value(json_file(&files["cache_manifest"], sources)?)?;
-    cache.validate()?;
-    for obj in [&report, &meta, &provenance, &predictions] {
+    let mut verified = BTreeMap::new();
+    let burn_gekko_eval::heads::audit::AuditedHeads {
+        cache,
+        report,
+        steps,
+        scores,
+    } = burn_gekko_eval::heads::audit::load(
+        &burn_gekko_eval::adaptation::Input {
+            path: input.path.clone(),
+            sha256: input.sha256.clone(),
+        },
+        checkpoint,
+        &mut verified,
+    )?;
+    for (path, expected) in verified {
         ensure!(
-            obj["checkpoint_sha256"] == checkpoint,
-            "mixed output-head checkpoint"
+            record(&path, sources)? == expected,
+            "head evidence changed after verification"
         );
     }
-    ensure!(
-        cache.checkpoint_sha256 == checkpoint
-            && meta["identity"] == provenance["identity"]
-            && meta["completed_steps"] == report["completed_steps"]
-            && meta["files"]["camera"] == files["camera_weights"]["sha256"]
-            && meta["files"]["rgb"] == files["rgb_weights"]["sha256"],
-        "head weights/training identity mismatch"
-    );
-    ensure!(
-        provenance["cache_sha256"] == files["cache_manifest"]["sha256"],
-        "head training cache differs"
-    );
-    let steps = fs::read_to_string(file(&files["steps"])?.path)?
-        .lines()
-        .map(|line| Ok(serde_json::from_str::<Value>(line)?))
-        .collect::<Result<Vec<_>>>()?;
-    let start = report["starting_step"].as_u64().context("head start")?;
-    ensure!(
-        steps.len() as u64 + start == report["completed_steps"].as_u64().context("head end")?,
-        "head update count differs"
-    );
-    for (i, row) in steps.iter().enumerate() {
-        ensure!(
-            row["step"] == start + i as u64 + 1,
-            "head step sequence differs"
-        );
-        for key in [
-            "camera_loss",
-            "rgb_loss",
-            "camera_gradient_norm",
-            "rgb_gradient_norm",
-            "learning_rate",
-        ] {
-            ensure!(number(row, key)? >= 0., "invalid head optimization value");
-        }
-    }
-    let expected: BTreeMap<_, _> = cache
-        .samples
-        .iter()
-        .filter(|s| s.split == Split::Validation)
-        .map(|s| ((s.room_seed, s.target_view), s))
-        .collect();
-    let mut seen = BTreeSet::new();
-    let mut rows = Vec::new();
-    for sample in predictions["samples"].as_array().context("head examples")? {
-        let id = (
-            sample["room_seed"].as_u64().context("room seed")?,
-            sample["target_view"].as_u64().context("target view")? as usize,
-        );
-        let target = expected
-            .get(&id)
-            .context("head target outside validation split")?;
-        ensure!(seen.insert(id), "duplicate output-head target");
-        let hidden: Vec<usize> = serde_json::from_value(sample["hidden_tokens"].clone())?;
-        ensure!(
-            hidden == target.hidden_tokens
-                && close(
-                    &sample["camera_target"],
-                    &serde_json::to_value(&target.camera)?
-                ),
-            "head labels/mask changed"
-        );
-        let mut arrays = Vec::new();
-        for key in ["prediction", "monocular", "target"] {
-            let p = file(&sample["files"][key])?;
-            ensure!(
-                record(&p.path, sources)? == p.sha256,
-                "head prediction changed"
-            );
-            if key == "target" {
-                ensure!(
-                    p.sha256 == target.rgb.sha256,
-                    "head target RGB differs from cache"
-                );
-            }
-            arrays.push(floats(&p.path, sources)?);
-        }
-        let cp: Vec<f32> = serde_json::from_value(sample["metrics"]["camera_prediction"].clone())?;
-        let row = HeadRow {
-            room_seed: id.0,
-            target_view: id.1,
-            reference_view: target.reference_view,
-            camera: camera_score(&cp, &target.camera)?,
-            rgb: rgb_score(&arrays[0], &arrays[2], &hidden)?,
-            monocular: rgb_score(&arrays[1], &arrays[2], &hidden)?,
-            camera_prediction: cp,
-        };
-        ensure!(
-            close(&serde_json::to_value(&row)?, &sample["metrics"]),
-            "head metrics differ from raw predictions"
-        );
-        rows.push(row);
-    }
-    ensure!(
-        seen.len() == expected.len(),
-        "incomplete output-head evaluation"
-    );
-    let scores = summarize(rows)?;
-    ensure!(
-        close(&serde_json::to_value(&scores)?, &report["validation"])
-            && close(&serde_json::to_value(&scores)?, &predictions["scores"]),
-        "head aggregate differs from observations"
-    );
     let metric = |id: &str, label: &str, value: f64, unit: &str, lower| {
         Metric{id:id.into(),label:label.into(),value,unit:unit.into(),lower_is_better:lower,samples:scores.targets,aggregation:"equal target views, all declared validation rooms; RGB scores use hidden sRGB pixels only".into()}
     };

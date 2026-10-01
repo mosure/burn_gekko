@@ -20,6 +20,7 @@ Native CPU scoring of immutable Burn prediction exports. No Python or GPU backen
   including matched source/teacher identities and frozen-anchor probes.
 - `process_activity`: shared-GPU process counters with unavailable values preserved.
 - `dispatch`: overlapping CUDA trace intervals, launch durations and API synchronization.
+- `head-diagnostics`: shared raw-output audit and room-level RGB/calibration uncertainty.
 - `schema`: extensible checkpoint-bound capability records consumed by publication.
 
 `gekko-eval score --config <TOML>` scores one checkpoint. `gekko-eval camera

@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-19-runtime-a2"
+ledger = ".data/pilot-19/runtime-policy/a2-run/ledger.json"
+telemetry = ".data/pilot-19/runtime-policy/a2-run/a2-gpu.jsonl"
+command = "a2"
+output = ".data/pilot-19/runtime-policy/a2-summary.json"

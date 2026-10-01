@@ -107,9 +107,31 @@ clipped to these scopes, including valid phases with no GPU events. Phase overla
 does not identify kernel ownership. See the
 [Pilot 18 profiling protocol](studies/pilot-18-warm-dispatch.md).
 
+`gekko-eval runtime-comparison --config <TOML>` verifies a registered A-B-B-A
+128-update performance screen against the original 64-update numerical prefix.
+All four summaries and their evidence closures are pinned. Full trajectories,
+fixed teachers, gradient stages and identical numerical recipes must agree;
+both candidate repetitions must meet the declared speed, tail-latency, board
+energy, memory and telemetry thresholds. A passing screen does not modify model
+weights or adopt a new runtime. See the
+[staged-upload study](studies/pilot-19-runtime-policy.md).
+
 `burn_gekko_train::evaluation` performs Burn inference. `burn_gekko_eval` scores immutable
 exports on CPU. Neither scoring nor publication requires Python; geometric truth
 is loaded after RGB-only inference.
+
+`gekko-eval head-diagnostics --config <TOML>` audits one completed frozen-foundation
+head run and adds uncertainty to its RGB/calibration measurements. Its input pins
+the run's `evidence.json`, foundation checksum, expected update count and expected
+training/validation room counts. Shared `heads::audit` verification is also used
+by the page/paper builder: all raw RGB predictions, masks, camera labels, model
+identities and training records must agree with the source hashes and recorded
+metrics. The calibration constant is independently recomputed from training
+labels only. Paired RGB/reference and camera/constant gains bootstrap whole rooms,
+with equal room weighting; pixels, views and solver repetitions are not treated
+as independent scenes. JSON results retain both 95% bounds and the emitted
+capability includes means and lower bounds. Perfect-image infinite PSNR is
+rejected by this finite-interval diagnostic rather than silently excluded.
 
 The actual-view exporter also preserves dense `pose-predictions.json` for the
 synthetic camera retention probe. `gekko-eval synthetic-pose --config <TOML>`
