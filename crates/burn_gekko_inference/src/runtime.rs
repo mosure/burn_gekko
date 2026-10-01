@@ -165,12 +165,13 @@ impl<B: Backend> Inference<B> {
                 .forward(Tensor::cat(vec![pool(a, grid), pool(b, grid)], 1)),
         )
         .await?;
-        let improvement = values(self.model.predict_improvement(
+        let ri_features = self.model.fusion.decoder.relative_improvement_features(
             encoded[request.target].clone(),
             refs.iter().map(|i| encoded[*i].clone()).collect(),
             grid,
-        )?)
-        .await?;
+        )?;
+        let improvement =
+            values(scalar_readout(ri_features, &self.model.fusion.improvement)).await?;
         let hidden: Vec<_> = (0..n).filter(|i| !mask.indices().contains(i)).collect();
         let truth = request.images[request.target].patches();
         Ok(InferenceOutput {
@@ -206,6 +207,19 @@ async fn values<B: Backend, const D: usize>(x: Tensor<B, D>) -> Result<Vec<f32>>
     );
     Ok(out)
 }
+
+/// Explicit scalar affine readout avoids WebGPU's distinct N=1 matmul kernel.
+/// It uses the original trained weights and bias, with no activation or refit.
+fn scalar_readout<B: Backend>(features: Tensor<B, 3>, head: &burn::nn::Linear<B>) -> Tensor<B, 3> {
+    let [width, outputs] = head.weight.dims();
+    assert_eq!(outputs, 1);
+    let value = (features * head.weight.val().reshape([1, 1, width])).sum_dim(2);
+    match &head.bias {
+        Some(bias) => value + bias.val().reshape([1, 1, 1]),
+        None => value,
+    }
+}
+
 fn pool<B: Backend>(x: Tensor<B, 3>, grid: [usize; 2]) -> Tensor<B, 3> {
     let [b, _, d] = x.dims();
     x.reshape([b, 4, grid[0] / 4, 4, grid[1] / 4, d])
@@ -246,4 +260,28 @@ fn mutual_matches(similarity: &[f32], grid: [usize; 2]) -> Vec<Match> {
     matches.sort_by(|a, b| b.cosine.total_cmp(&a.cosine));
     matches.truncate(24);
     matches
+}
+
+#[cfg(all(test, feature = "ndarray"))]
+mod tests {
+    use super::*;
+    #[test]
+    fn scalar_readout_matches_the_trained_affine_head() {
+        type B = burn::backend::NdArray<f32>;
+        let device = Default::default();
+        let head = burn::nn::LinearConfig::new(32, 1).init::<B>(&device);
+        let data = burn::tensor::TensorData::new(
+            (0..448).map(|i| (i as f32 * 0.13).sin()).collect(),
+            [2, 7, 32],
+        );
+        let x = Tensor::from_data(data, &device);
+        let expected = pollster::block_on(values(head.forward(x.clone()))).unwrap();
+        let actual = pollster::block_on(values(scalar_readout(x, &head))).unwrap();
+        assert!(
+            expected
+                .iter()
+                .zip(actual)
+                .all(|(a, b)| (a - b).abs() < 2e-5)
+        );
+    }
 }

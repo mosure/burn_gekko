@@ -12,7 +12,7 @@ use bevy_panorbit_camera::PanOrbitCamera;
 use bevy_zeroverse::{
     app::BevyZeroverseConfig,
     camera::{CaptureCameraIndex, EditorCameraMarker, ZeroverseCamera},
-    scene::{RegenerateSceneEvent, SceneLoadedEvent},
+    scene::{RegenerateSceneEvent, SceneLoadedEvent, procedural_indoor::layout::IndoorManifest},
 };
 use burn_gekko_inference::Request;
 
@@ -82,6 +82,7 @@ fn jump(camera: &Transform, transform: &mut Transform, pan: &mut PanOrbitCamera,
 pub fn scene(
     mut demo: ResMut<Demo>,
     mut config: ResMut<BevyZeroverseConfig>,
+    manifest: Option<Res<IndoorManifest>>,
     mut cameras: Query<(
         &CaptureCameraIndex,
         &mut ZeroverseCamera,
@@ -136,16 +137,19 @@ pub fn scene(
     }
     // Read editor pose before changing selection so Shift+number stores the current view.
     let pose = editor.single_mut().ok().map(|(t, _, _)| *t);
-    if let Some(index) = demo.select.take()
-        && index < cameras.iter().count()
-    {
-        demo.target = index;
-        demo.invalidate("Target changed. Press Space to infer.");
-        if !demo.place
-            && let Some((_, _, camera, _, _)) = cameras.iter().find(|(i, _, _, _, _)| i.0 == index)
-            && let Ok((mut transform, mut pan, _)) = editor.single_mut()
-        {
-            jump(camera, &mut transform, &mut pan, 2.);
+    if let Some(index) = demo.select.take() {
+        if index < cameras.iter().count() {
+            demo.target = index;
+            demo.invalidate("Target changed. Press Space to infer.");
+            if !demo.place
+                && let Some((_, _, camera, _, _)) =
+                    cameras.iter().find(|(i, _, _, _, _)| i.0 == index)
+                && let Ok((mut transform, mut pan, _)) = editor.single_mut()
+            {
+                jump(camera, &mut transform, &mut pan, 2.);
+            }
+        } else {
+            demo.place = false;
         }
     }
     if demo.place {
@@ -162,14 +166,16 @@ pub fn scene(
     }
     if demo.overview {
         demo.overview = false;
-        if let Ok((mut transform, mut pan, _)) = editor.single_mut() {
-            let center = cameras
-                .iter()
-                .map(|(_, _, t, _, _)| t.translation)
-                .sum::<Vec3>()
-                / cameras.iter().count().max(1) as f32;
-            let pose = Transform::from_translation(center + Vec3::new(4., 7., 8.))
-                .looking_at(center, Vec3::Y);
+        if let Some(manifest) = manifest.as_ref()
+            && let Some(view) = manifest.cameras.first()
+            && let Ok((mut transform, mut pan, _)) = editor.single_mut()
+        {
+            // Use Zeroverse's collision-checked interior home view. A position
+            // above the room sees the opaque roof instead of its contents.
+            let rotation = Quat::from_rotation_y(manifest.world_yaw);
+            let center = rotation * view.target;
+            let pose =
+                Transform::from_translation(rotation * view.start).looking_at(center, Vec3::Y);
             jump(
                 &pose,
                 &mut transform,

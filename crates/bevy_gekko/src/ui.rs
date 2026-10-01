@@ -98,72 +98,13 @@ pub fn panel(
             );
         });
     });
-    egui::Panel::right("gekko-controls").default_size(465.).min_size(340.).resizable(true).show_inside(&mut viewport,|ui|{
-        egui::ScrollArea::vertical().show(ui,|ui|{
-            ui.heading("Explore a scene");
-            ui.horizontal(|ui|{
-                if ui.selectable_label(demo.mode==Mode::Scene,"Zeroverse scene").clicked() && demo.mode!=Mode::Scene {demo.mode=Mode::Scene;demo.initialized=false;demo.invalidate("Scene mode. Press N if no room has been generated.");demo.images.clear();if live.is_empty(){demo.regenerate=true;}}
-                if ui.selectable_label(demo.mode==Mode::Images,"Your images").clicked() && demo.mode!=Mode::Images {demo.mode=Mode::Images;demo.invalidate("Upload two to four images of one scene.");demo.images.clear();}
-            });
-            if demo.mode==Mode::Scene {
-                ui.label("1–3: select / visit camera · 0: editor overview");
-                ui.label("Drag: orbit · right drag: pan · wheel: zoom");
-                ui.label("C or Shift+1–3: place camera at editor pose");
-                ui.horizontal(|ui|{if ui.button("New room  N").clicked(){demo.regenerate=true;}
-                if ui.button("Place target here  C").clicked(){demo.place=true;}});
-                ui.horizontal_wrapped(|ui|{
-                    let width=(ui.available_width()/3.-10.).clamp(72.,144.);
-                    for (index,id) in &live {ui.vertical(|ui|{
-                        if ui.add(egui::Button::image(egui::Image::new((*id,egui::vec2(width,width)))).selected(demo.target==*index)).clicked(){demo.select=Some(*index);}
-                        ui.label(format!("{} {}",index+1,if demo.target==*index{"target"}else{"reference"}));
-                    });}
-                });
-            } else {
-                ui.label("Two to four photographs of one scene. The first selected view is the target; use number keys to change it.");
-                if ui.add_enabled(!demo.busy,egui::Button::new("Upload images…  U")).clicked(){demo.upload=true;}
-                ui.small("PNG/JPEG · local processing · center crop to 256 × 256 · camera ground truth unavailable");
-                ui.horizontal_wrapped(|ui|{for i in 0..demo.images.len(){if ui.selectable_label(demo.target==i,format!("Target {}",i+1)).clicked(){demo.select=Some(i);}}});
-            }
-            ui.separator();
-            if !demo.model_ready {
-                if ui.add_enabled(!demo.model_loading,egui::Button::new("Load trained model (~393 MiB)  L")).clicked(){demo.load=true;}
-                ui.small("Weights stay resident for subsequent inferences. The scene works before downloading them.");
-            }
-            if ui.add_enabled(demo.model_ready&&!demo.busy,egui::Button::new("Run inference  Space / I")).clicked(){demo.request=true;}
-            if demo.busy||demo.model_loading {ui.spinner();}
-            ui.label(&demo.status);
-            ui.small(format!("Input revision {} · annotations are invalidated after edits",demo.revision));
-            if let Some(r)=&demo.result {
-                let inputs=demo.images.len();
-                ui.separator();ui.heading("Cross-view RGB completion");
-                ui.label(format!("Hidden-pixel PSNR: {:.2} dB · no references: {:.2} dB",r.rgb_score.psnr_db.unwrap_or(f64::INFINITY),r.monocular_score.psnr_db.unwrap_or(f64::INFINITY)));
-                let width=(ui.available_width()/2.-10.).min(256.);
-                ui.horizontal(|ui|{image(ui,&demo.textures[inputs],"Sparse target (10%)",width);image(ui,&demo.textures[inputs+1],"Predicted RGB",width);});
-                ui.horizontal(|ui|{image(ui,&demo.textures[r.target],"Target: score only",width);image(ui,&demo.textures[inputs+2],"References disabled",width);});
-                ui.small("Only originally hidden pixels contribute to PSNR, sRGB range 1. The reconstruction is not filled with target pixels.");
-                ui.separator();ui.heading("Predicted camera calibration");
-                ui.label(format!("Target {} relative to reference {}",r.target+1,r.reference+1));
-                ui.label(format!("Focal fx / fy: {:.1} / {:.1} px at 256 × 256",r.focal[0]*256.,r.focal[1]*256.));
-                if let Some(s)=&demo.camera_score {
-                    ui.label(format!("Rotation error {:.2}° · direction error {:.2}°",s.rotation_degrees,s.translation_degrees.unwrap_or(f64::NAN)));
-                    ui.label(format!("Focal error {:.2}%",100.*s.focal_relative_error));
-                } else {ui.label("Pose errors unavailable for uploaded photographs.");}
-                ui.small("Centered principal point. Translation direction has no metric scale. Camera prediction uses a separate dense RGB pair.");
-                camera_plot(ui,r.rotation,demo.camera_truth.as_ref().map(|t|t.rotation));
-                ui.separator();ui.heading("Coarse feature matches");
-                ui.small("Mutual nearest patch descriptors, 16-pixel grid; at most 24 lines. These are predicted matches, not known correspondences.");
-                ui.horizontal(|ui|{
-                    let a=ui.image((demo.textures[r.target].id(),egui::vec2(width,width))).rect;
-                    let b=ui.image((demo.textures[r.reference].id(),egui::vec2(width,width))).rect;
-                    for m in &r.matches {ui.painter().line_segment([a.min+egui::vec2(m.target[0],m.target[1])*width/256.,b.min+egui::vec2(m.reference[0],m.reference[1])*width/256.],egui::Stroke::new(1_f32,egui::Color32::from_rgb(30,190,155)));}
-                });
-                ui.separator();ui.heading("Relative-improvement score");
-                image(ui,&demo.textures[inputs+3],"Dark = low · yellow = high (display clamped 0–1)",width);
-                ui.small("Separate full-target RI branch. This learned visibility-related score is not a calibrated probability or geometric visibility truth.");
-            }
-            ui.separator();ui.colored_label(egui::Color32::from_rgb(224,167,78),"Research demo: RGB remains blurry and camera calibration overfits. These are live predictions, not benchmark claims.");
+    egui::Panel::right("gekko-controls")
+        .default_size(465.)
+        .min_size(340.)
+        .resizable(true)
+        .show_inside(&mut viewport, |ui| {
+            egui::ScrollArea::vertical().show(ui, |ui| controls(ui, &mut demo, &live));
         });
-    });
     if let Ok(mut camera) = editor.single_mut() {
         let rect = viewport.available_rect_before_wrap();
         let scale = ctx.pixels_per_point();
@@ -201,6 +142,204 @@ pub fn panel(
     #[cfg(target_arch = "wasm32")]
     diagnostics(&demo, live.len());
 }
+fn controls(ui: &mut egui::Ui, demo: &mut Demo, live: &[(usize, egui::TextureId)]) {
+    ui.heading("Explore a scene");
+    ui.horizontal(|ui| {
+        if ui
+            .selectable_label(demo.mode == Mode::Scene, "Zeroverse scene")
+            .clicked()
+            && demo.mode != Mode::Scene
+        {
+            demo.mode = Mode::Scene;
+            demo.initialized = false;
+            demo.invalidate("Scene mode. Press N if no room has been generated.");
+            demo.images.clear();
+            if live.is_empty() {
+                demo.regenerate = true;
+            }
+        }
+        if ui
+            .selectable_label(demo.mode == Mode::Images, "Your images")
+            .clicked()
+            && demo.mode != Mode::Images
+        {
+            demo.mode = Mode::Images;
+            demo.invalidate("Upload two to four images of one scene.");
+            demo.images.clear();
+        }
+    });
+    if demo.mode == Mode::Scene {
+        ui.label("1–3: select / visit camera · 0: editor home");
+        ui.label("Drag: orbit · right drag: pan · wheel: zoom");
+        ui.label("C or Shift+1–3: place camera at editor pose");
+        ui.horizontal(|ui| {
+            if ui.button("New room  N").clicked() {
+                demo.regenerate = true;
+            }
+            if ui.button("Place target here  C").clicked() {
+                demo.place = true;
+            }
+        });
+        ui.horizontal_wrapped(|ui| {
+            let width = (ui.available_width() / 3. - 10.).clamp(72., 144.);
+            for (index, id) in live {
+                ui.vertical(|ui| {
+                    if ui
+                        .add(
+                            egui::Button::image(egui::Image::new((*id, egui::vec2(width, width))))
+                                .selected(demo.target == *index),
+                        )
+                        .clicked()
+                    {
+                        demo.select = Some(*index);
+                    }
+                    ui.label(format!(
+                        "{} {}",
+                        index + 1,
+                        if demo.target == *index {
+                            "target"
+                        } else {
+                            "reference"
+                        }
+                    ));
+                });
+            }
+        });
+    } else {
+        ui.label("Two to four photographs of one scene. The first selected view is the target; use number keys to change it.");
+        if ui
+            .add_enabled(!demo.busy, egui::Button::new("Upload images…  U"))
+            .clicked()
+        {
+            demo.upload = true;
+        }
+        ui.small("PNG/JPEG · local processing · center crop to 256 × 256 · camera ground truth unavailable");
+        ui.horizontal_wrapped(|ui| {
+            for i in 0..demo.images.len() {
+                if ui
+                    .selectable_label(demo.target == i, format!("Target {}", i + 1))
+                    .clicked()
+                {
+                    demo.select = Some(i);
+                }
+            }
+        });
+    }
+    ui.separator();
+    if !demo.model_ready {
+        if ui
+            .add_enabled(
+                !demo.model_loading,
+                egui::Button::new("Load trained model (~393 MiB)  L"),
+            )
+            .clicked()
+        {
+            demo.load = true;
+        }
+        ui.small("Weights stay resident for subsequent inferences. The scene works before downloading them.");
+    }
+    if ui
+        .add_enabled(
+            demo.model_ready && !demo.busy,
+            egui::Button::new("Run inference  Space / I"),
+        )
+        .clicked()
+    {
+        demo.request = true;
+    }
+    if demo.busy || demo.model_loading {
+        ui.spinner();
+    }
+    ui.label(&demo.status);
+    ui.small(format!(
+        "Input revision {} · annotations are invalidated after edits",
+        demo.revision
+    ));
+    predictions(ui, demo);
+}
+
+fn predictions(ui: &mut egui::Ui, demo: &Demo) {
+    if let Some(r) = &demo.result {
+        let inputs = demo.images.len();
+        ui.separator();
+        ui.heading("Cross-view RGB completion");
+        ui.label(format!(
+            "Hidden-pixel PSNR: {:.2} dB · no references: {:.2} dB",
+            r.rgb_score.psnr_db.unwrap_or(f64::INFINITY),
+            r.monocular_score.psnr_db.unwrap_or(f64::INFINITY)
+        ));
+        let width = (ui.available_width() / 2. - 10.).min(256.);
+        ui.horizontal(|ui| {
+            image(ui, &demo.textures[inputs], "Sparse target (10%)", width);
+            image(ui, &demo.textures[inputs + 1], "Predicted RGB", width);
+        });
+        ui.horizontal(|ui| {
+            image(ui, &demo.textures[r.target], "Target: score only", width);
+            image(ui, &demo.textures[inputs + 2], "References disabled", width);
+        });
+        ui.small("Only originally hidden pixels contribute to PSNR, sRGB range 1. The reconstruction is not filled with target pixels.");
+        ui.separator();
+        ui.heading("Predicted camera calibration");
+        ui.label(format!(
+            "Target {} relative to reference {}",
+            r.target + 1,
+            r.reference + 1
+        ));
+        ui.label(format!(
+            "Focal fx / fy: {:.1} / {:.1} px at 256 × 256",
+            r.focal[0] * 256.,
+            r.focal[1] * 256.
+        ));
+        if let Some(s) = &demo.camera_score {
+            ui.label(format!(
+                "Rotation error {:.2}° · direction error {:.2}°",
+                s.rotation_degrees,
+                s.translation_degrees.unwrap_or(f64::NAN)
+            ));
+            ui.label(format!("Focal error {:.2}%", 100. * s.focal_relative_error));
+        } else {
+            ui.label("Pose errors unavailable for uploaded photographs.");
+        }
+        ui.small("Centered principal point. Translation direction has no metric scale. Camera prediction uses a separate dense RGB pair.");
+        camera_plot(
+            ui,
+            r.rotation,
+            demo.camera_truth.as_ref().map(|t| t.rotation),
+        );
+        ui.separator();
+        ui.heading("Coarse feature matches");
+        ui.small("Mutual nearest patch descriptors, 16-pixel grid; at most 24 lines. These are predicted matches, not known correspondences.");
+        ui.horizontal(|ui| {
+            let a = ui
+                .image((demo.textures[r.target].id(), egui::vec2(width, width)))
+                .rect;
+            let b = ui
+                .image((demo.textures[r.reference].id(), egui::vec2(width, width)))
+                .rect;
+            for m in &r.matches {
+                ui.painter().line_segment(
+                    [
+                        a.min + egui::vec2(m.target[0], m.target[1]) * width / 256.,
+                        b.min + egui::vec2(m.reference[0], m.reference[1]) * width / 256.,
+                    ],
+                    egui::Stroke::new(1_f32, egui::Color32::from_rgb(30, 190, 155)),
+                );
+            }
+        });
+        ui.separator();
+        ui.heading("Relative-improvement score");
+        image(
+            ui,
+            &demo.textures[inputs + 3],
+            "Dark = low · yellow = high (display clamped 0–1)",
+            width,
+        );
+        ui.small("Separate full-target RI branch. This learned visibility-related score is not a calibrated probability or geometric visibility truth.");
+    }
+    ui.separator();
+    ui.colored_label(egui::Color32::from_rgb(224,167,78),"Research demo: RGB remains blurry and camera calibration overfits. These are live predictions, not benchmark claims.");
+}
+
 fn camera_plot(ui: &mut egui::Ui, pred: Option<[[f64; 3]; 3]>, truth: Option<[[f64; 3]; 3]>) {
     let (rect, _) =
         ui.allocate_exact_size(egui::vec2(ui.available_width(), 130.), egui::Sense::hover());
@@ -224,7 +363,21 @@ fn camera_plot(ui: &mut egui::Ui, pred: Option<[[f64; 3]; 3]>, truth: Option<[[f
 #[cfg(target_arch = "wasm32")]
 fn diagnostics(demo: &Demo, cameras: usize) {
     use wasm_bindgen::JsValue;
-    let v = serde_json::json!({"status":demo.status,"revision":demo.revision,"result_revision":demo.result.as_ref().map(|r|r.revision),"target":demo.target,"model_ready":demo.model_ready,"busy":demo.busy,"mode":format!("{:?}",demo.mode),"cameras":cameras,"psnr":demo.result.as_ref().and_then(|r|r.rgb_score.psnr_db),"matches":demo.result.as_ref().map(|r|r.matches.len()),"camera":demo.result.as_ref().map(|r|r.camera.clone()),"has_camera_truth":demo.camera_truth.is_some(),"camera_signature":demo.last_signature});
+    let v = serde_json::json!({
+        "status": demo.status,
+        "revision": demo.revision,
+        "result_revision": demo.result.as_ref().map(|r| r.revision),
+        "target": demo.target,
+        "model_ready": demo.model_ready,
+        "busy": demo.busy,
+        "mode": format!("{:?}", demo.mode),
+        "cameras": cameras,
+        "psnr": demo.result.as_ref().and_then(|r| r.rgb_score.psnr_db),
+        "matches": demo.result.as_ref().map(|r| r.matches.len()),
+        "camera": demo.result.as_ref().map(|r| r.camera.clone()),
+        "has_camera_truth": demo.camera_truth.is_some(),
+        "camera_signature": demo.last_signature,
+    });
     if let Some(w) = web_sys::window()
         && let Ok(v) =
             serde::Serialize::serialize(&v, &serde_wasm_bindgen::Serializer::json_compatible())

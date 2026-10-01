@@ -24,7 +24,7 @@ WebGPU on HTTPS or localhost. The first inference also compiles GPU kernels.
 | Control | Action |
 | --- | --- |
 | `1`–`3` | Select the target camera and visit its position |
-| `0` | Return to an editor overview |
+| `0` | Return to the initial interior editor view |
 | Drag / right drag / wheel | Zeroverse editor orbit / pan / zoom |
 | `C` | Move the selected capture camera to the current editor pose |
 | `Shift` + `1`–`3` | Place that capture camera at the current editor pose |
@@ -81,6 +81,8 @@ and provenance; no inference server or cross-origin weight host is required.
 The browser explicitly uses Burn's unfused GPU backend: the fused WebGPU path
 failed completion parity for this checkpoint. Native GPU, unfused browser GPU
 and an independent NdArray CPU reference agree on the fixed uploaded inputs.
+The scalar RI readout uses an equivalent explicit reduction to avoid a second
+browser matmul discrepancy; parity checks cover every displayed prediction head.
 
 ## Verification
 
