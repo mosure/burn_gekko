@@ -20,7 +20,7 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1"
 clap = { version = "4.5", features = ["derive"] }
-burn_gekko_data = { version = "0.1.0", path = "../../crates/burn_gekko_data" }
+burn_gekko_data = { version = "0.1.1", path = "../../crates/burn_gekko_data" }
 bevy_zeroverse = "=0.25.0"
 bevy_zeroverse_burn = "=0.8.0"
 

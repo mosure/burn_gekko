@@ -72,6 +72,15 @@ CPU/workspace and CUDA Clippy pass with warnings denied; formatting and the
 original encoder-import audit pass. The pipeline integration test exercises
 cache integrity, dense export, CPU pose scoring and a tampered-prediction hash.
 
+The first packaging CI run exposed a registry dependency mismatch: workspace
+path builds saw the new evaluator export schema, while the trainer archive
+resolved published evaluator 0.1.0. Archive verification also exposed the shared
+camera-label type migration's old data-crate minimum. Data/evaluation/training/
+reporting now prepare version 0.1.1 with matching dependency minimums; root and
+standalone capture lockfiles are updated. All eight workspace archives pass
+`cargo publish --workspace --locked --dry-run`. This is release preparation,
+not a new crates.io publication or a change to the measured model.
+
 ## Motivation
 
 Pilot 13's 384-update geometry phase improved correspondence on synthetic and
