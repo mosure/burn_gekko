@@ -3,3 +3,5 @@ pub mod benchmark;
 pub mod replay;
 pub mod solver;
 pub mod stability;
+pub mod synthetic;
+pub mod synthetic_comparison;

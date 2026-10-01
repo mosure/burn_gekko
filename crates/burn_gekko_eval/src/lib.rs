@@ -22,6 +22,7 @@ pub mod refinement;
 pub mod replay;
 pub mod schema;
 pub mod statistics;
+pub mod target_audit;
 pub mod training;
 pub mod training_export;
 pub mod warp;

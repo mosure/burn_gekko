@@ -51,6 +51,8 @@ oracles and leakage/provenance contracts here when introducing new heads.
 ## Renderer-supervised screen
 
 `prepare-view-targets` runs CPU-only geometry preprocessing from a TOML config.
+`audit-view-targets` checks the immutable cache and reports room/pair coverage,
+valid-query counts and empty pairs separately for every split.
 `select-view-geometry` checks a registered 384-update matched screen, including
 recipe, sample/mask/query populations, checkpoint and anchor integrity. The
 candidate must retain latent completion within 1%, keep references useful, reduce
@@ -58,6 +60,20 @@ actual-view pixel error by at least 5%, and retain within-8-pixel accuracy. Extr
 decoder work is measured, so matched updates are not described as matched compute.
 External benchmarks are evaluated after this synthetic decision is fixed.
 ## Completion and camera diagnostics
+
+`gekko-eval synthetic-pose --config <TOML>` scores dense view-audit exports on CPU
+over a fixed solver-seed panel. All RGB mutual matches enter the solver; renderer
+visibility does not select correspondences. Each view uses its own known focal
+length, Bevy camera axes are converted explicitly, and failed fits stay in the
+denominator. This calibrated synthetic retention probe is separate from learned
+camera-head accuracy and external transfer. See the
+[continuation protocol](../../docs/studies/pilot-16-continuation.md).
+
+`compare-synthetic-pose` binds two completed reports to the same room/solver
+protocol and computes paired room-bootstrap intervals for angular error and
+recall. It averages repeated solver seeds within a room before resampling;
+solver repeats do not increase the independent sample count. Comparisons stay
+in internal study records and do not replace single-run publication metrics.
 
 `gekko-eval latent-detail --config <TOML>` reads complete, pinned latent exports
 on CPU. It separates channel-mean bias from spatial error, measures hidden-token

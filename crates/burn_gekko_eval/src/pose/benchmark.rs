@@ -103,7 +103,7 @@ pub struct PoseReport {
     pub contrasts: Vec<Value>,
     pub examples: Vec<Value>,
 }
-fn summary(rows: &[&PoseRow]) -> Result<PoseSummary> {
+pub(crate) fn summary(rows: &[&PoseRow]) -> Result<PoseSummary> {
     ensure!(!rows.is_empty(), "no pose observations");
     let mut errors = Vec::new();
     let mut translations = Vec::new();

@@ -1,0 +1,8 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+cache = ".data/view-targets/pilot16"
+rooms = 32
+temperature = 0.07
+
+[weights]
+checkpoint = ".data/runs/pilot-13-geometry/final"
+model_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"

@@ -1,0 +1,11 @@
+output = ".data/pilot-16/pose-contrast-same-image.json"
+
+[candidate]
+report = ".data/pilot-16/parent-pose.json"
+sha256 = "d8c8d10bd758f9d3840b22224ed791af91fd74d86907d20f7b03bcae8312ffbb"
+method = "spatial_pair_local"
+
+[control]
+report = ".data/pilot-16/parent-pose.json"
+sha256 = "d8c8d10bd758f9d3840b22224ed791af91fd74d86907d20f7b03bcae8312ffbb"
+method = "spatial_self_local"

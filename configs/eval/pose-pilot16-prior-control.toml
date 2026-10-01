@@ -1,0 +1,14 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+predictions = ".data/pilot-16/prior-control-view/pose-predictions.json"
+predictions_sha256 = "a68f5bb59ee20f2f2208bb2bee142fd17a3eb89b97c678ebea851669b4cc4c8b"
+checkpoint_sha256 = "ac60100b422e80b8a2084b1823fbbc754f9f0d1ce0212f975989b06cbf4aa914"
+rooms = 32
+methods = ["spatial_pair_local", "spatial_self_local", "spatial_encoder_local"]
+seeds = [871,872,873,874,875,876,877,878]
+max_trials = 2048
+min_trials = 64
+confidence = 0.999
+min_inliers = 12
+threshold_pixels = 1.5
+minimum_baseline_meters = 0.01
+output = ".data/pilot-16/prior-control-pose.json"

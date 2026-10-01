@@ -100,6 +100,19 @@ other GPU processes, CPU/JIT work or profiling overhead.
 exports on CPU. Neither scoring nor publication requires Python; geometric truth
 is loaded after RGB-only inference.
 
+The actual-view exporter also preserves dense `pose-predictions.json` for the
+synthetic camera retention probe. `gekko-eval synthetic-pose --config <TOML>`
+checks dataset/prediction identities and complete room/method populations before
+using known camera intrinsics and extrinsics on CPU. It never filters model
+matches using visibility truth. Every declared solver seed contributes, failed
+fits remain in the denominator, and low-baseline exclusions are counted. See
+[Pilot 16](studies/pilot-16-continuation.md) for the fixed thresholds and the
+distinction between this geometric probe and learned camera heads.
+
+`gekko-eval audit-view-targets --config <TOML>` verifies the training-label cache
+and reports all directed pairs, empty targets and valid-query coverage per split.
+It uses the same bilinear-label policy as training, without launching GPU work.
+
 | Capability | Contract |
 | --- | --- |
 | Latent completion | Hidden-token/channel MSE, teacher-power feature SNR, cosine and spatial variance / fixed teacher; equal target-view weighting |

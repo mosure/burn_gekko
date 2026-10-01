@@ -9,6 +9,21 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Paired room-level uncertainty across a fixed synthetic pose solver-seed panel.
+    CompareSyntheticPose {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Validate target-cache identity and coverage for every room and directed pair.
+    AuditViewTargets {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Score synthetic pose retention from unfiltered RGB matches across fixed solver seeds.
+    SyntheticPose {
+        #[arg(long)]
+        config: PathBuf,
+    },
     /// Verify a fixed latent-export prefix after exporter-only changes.
     LatentReplay {
         #[arg(long)]
@@ -92,6 +107,22 @@ enum Command {
 }
 fn main() -> Result<()> {
     match Args::parse().command {
+        Command::CompareSyntheticPose { config } => {
+            let result = burn_gekko_eval::pose::synthetic_comparison::compare(
+                &burn_gekko_data::read_config(&config)?,
+            )?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
+        Command::AuditViewTargets { config } => {
+            let result =
+                burn_gekko_eval::target_audit::audit(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
+        Command::SyntheticPose { config } => {
+            let result =
+                burn_gekko_eval::pose::synthetic::score(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&result["methods"])?);
+        }
         Command::LatentReplay { config } => {
             let result =
                 burn_gekko_eval::latent_replay::verify(&burn_gekko_data::read_config(&config)?)?;

@@ -51,6 +51,7 @@ pub fn run<B: Backend>(c: &ViewGeometryAuditConfig, out: &Path, device: &B::Devi
     fs::create_dir_all(out)?;
     write_config(&out.join("config.toml"), c)?;
     let mut records = Vec::new();
+    let mut predictions = Vec::new();
     let mut summary: BTreeMap<String, Vec<(f64, f64, f64, f64)>> = BTreeMap::new();
     for (i, entry) in selected.into_iter().enumerate() {
         let scene = load_dataset_rgb(&c.dataset, &manifest, entry)?;
@@ -95,6 +96,19 @@ pub fn run<B: Backend>(c: &ViewGeometryAuditConfig, out: &Path, device: &B::Devi
                     c.temperature,
                 )?;
                 for readout in readouts {
+                    // Preserve every RGB-derived query before visibility-based EPE scoring.
+                    // The separate CPU camera solver must not receive oracle-selected matches.
+                    if direction == 0
+                        && let Some(coordinates) = &readout.coordinates
+                    {
+                        predictions.push(burn_gekko_eval::pose::synthetic::Prediction {
+                            room_seed: entry.seed,
+                            method: readout.method.clone(),
+                            indices: readout.indices.clone(),
+                            mutual: readout.mutual.clone(),
+                            coordinates: coordinates.clone(),
+                        });
+                    }
                     let score = if let Some(coordinates) = &readout.coordinates {
                         burn_gekko_eval::warp::score_coordinates(
                             coordinates,
@@ -120,6 +134,23 @@ pub fn run<B: Backend>(c: &ViewGeometryAuditConfig, out: &Path, device: &B::Devi
         let mean=|f:fn(&(f64,f64,f64,f64))->f64| rows.iter().map(f).sum::<f64>()/rows.len() as f64;
         (name,serde_json::json!({"mean_epe":mean(|r|r.0),"pck8":mean(|r|r.1),"pck16":mean(|r|r.2),"valid_queries":rows.iter().map(|r|r.3 as usize).sum::<usize>()}))
     }).collect();
+    write_json(
+        &out.join("pose-predictions.json"),
+        &burn_gekko_eval::pose::synthetic::Export {
+            schema: 1,
+            checkpoint_sha256: c.weights.model_sha256.clone(),
+            dataset_id: manifest.dataset_id.clone(),
+            dataset_manifest_sha256: burn_gekko_data::sha256_file(
+                &c.dataset.join("manifest.json"),
+            )?,
+            source_sha256: crate::provenance::identity()?,
+            grid,
+            rooms: c.rooms,
+            target: 0,
+            reference: 1,
+            predictions,
+        },
+    )?;
     write_json(
         &out.join("metrics.json"),
         &serde_json::json!({

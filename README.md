@@ -118,6 +118,16 @@ Report generation is local and never deploys a page. Read
 [crate organization](docs/repository-plan.md) and the
 [registered spatial-head experiment](docs/spatial-descriptor-protocol.md).
 
+The latest [Pilot 16 diagnostics](docs/studies/pilot-16-continuation.md) add native
+synthetic camera retention and room-bootstrap analysis. Across 32 development
+rooms and eight solver seeds, the geometry-trained trunk reaches **21.04% pose
+AUC@10**, versus **17.20%** for its original matched control. Joint angular error
+falls **4.29°** (paired 95% room interval **1.00°–7.74°**). This synthetic benefit
+does not resolve the earlier real-view camera regression. Geometry labels now
+cover all 8,192 cached training rooms. A matched 4,096-update continuation is
+prepared; **96 seconds** remain in the old GPU allowance, so longer training
+awaits a renewed ceiling. The published model, page and paper remain Head Stability 15.
+
 The latest [output-head study](docs/studies/head-stability-15.md) trains camera and
 RGB heads for 800 CPU updates on a fixed foundation checkpoint. All bounded
 stability gates pass, including exact checkpoint replay and finite gradients.
@@ -139,8 +149,8 @@ control gates each pass 2 of 8 seeds; only one seed passes both together. These 
 not new training improvements. The [page](.data/publications/pilot14-information-diagnostics-reviewed/index.html)
 and [32-page PDF](.data/publications/pilot14-information-diagnostics-reviewed/paper.pdf)
 show one checkpoint and its own controls. All 157 workspace tests passed at that
-closeout. After the new head study, the previous GPU allowance has **2.88 minutes
-remaining**; longer training awaits a new ceiling. SOTA and resolution of the
+closeout. At the head-study closeout, the previous GPU allowance had **2.88 minutes
+remaining**; Pilot 16 above records the current balance. SOTA and resolution of the
 smoothing issue remain unestablished.
 
 The completed [Pilot 13 study](docs/studies/pilot-13-view-geometry.md) adds

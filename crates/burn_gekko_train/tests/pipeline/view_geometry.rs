@@ -26,6 +26,15 @@ pub fn verify(parent: &LatentConfig, root: &Path) {
             .is_err()
     );
     let before = sha256_file(&cache.join("targets.bin")).unwrap();
+    let audit = burn_gekko_eval::target_audit::audit(&burn_gekko_eval::target_audit::Config {
+        dataset: parent.dataset.clone(),
+        cache: cache.clone(),
+        output: root.join("targets-audit.json"),
+    })
+    .unwrap();
+    assert_eq!(audit["valid_queries"], 24);
+    assert_eq!(audit["by_split"]["Train"]["rooms"], 2);
+    assert_eq!(audit["by_split"]["Validation"]["rooms"], 1);
     let mut c = parent.clone();
     c.view_geometry = Some(ViewGeometryConfig {
         cache: cache.clone(),
@@ -122,4 +131,52 @@ pub fn verify(parent: &LatentConfig, root: &Path) {
     );
     assert!(provenance.get("geometry_training_supervision").is_none());
     fs::write(cache.join("targets.bin"), bytes).unwrap();
+    let view_export = root.join("dense-view-export");
+    burn_gekko_train::evaluation::view_geometry::run::<NdArray<f32>>(
+        &burn_gekko_train::evaluation::view_geometry::ViewGeometryAuditConfig {
+            dataset: parent.dataset.clone(),
+            cache,
+            weights: assessment.models[0].weights.clone(),
+            rooms: 1,
+            temperature: 0.07,
+        },
+        &view_export,
+        &Default::default(),
+    )
+    .unwrap();
+    let predictions = view_export.join("pose-predictions.json");
+    let mut config = burn_gekko_eval::pose::synthetic::Config {
+        dataset: parent.dataset.clone(),
+        predictions: predictions.clone(),
+        predictions_sha256: sha256_file(&predictions).unwrap(),
+        checkpoint_sha256: assessment.models[0].weights.model_sha256.clone(),
+        rooms: 1,
+        methods: vec![
+            "spatial_pair_local".into(),
+            "spatial_self_local".into(),
+            "spatial_encoder_local".into(),
+        ],
+        seeds: vec![871, 872],
+        max_trials: 64,
+        min_trials: 16,
+        confidence: 0.99,
+        min_inliers: 8,
+        threshold_pixels: 1.5,
+        minimum_baseline_meters: 0.01,
+        output: root.join("synthetic-pose.json"),
+    };
+    let pose = burn_gekko_eval::pose::synthetic::score(&config).unwrap();
+    assert_eq!(pose["rooms"], 1);
+    assert_eq!(pose["seeds"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        pose["seeds"][0]["methods"]["spatial_pair_local"]["pairs"],
+        1
+    );
+    assert_eq!(
+        pose["seeds"][0]["methods"]["spatial_pair_local"]["successes"],
+        0
+    );
+    config.output = root.join("tampered-pose.json");
+    fs::write(predictions, b"{}").unwrap();
+    assert!(burn_gekko_eval::pose::synthetic::score(&config).is_err());
 }

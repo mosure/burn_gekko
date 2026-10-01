@@ -1,0 +1,11 @@
+output = ".data/pilot-16/pose-contrast-matched.json"
+
+[candidate]
+report = ".data/pilot-16/parent-pose.json"
+sha256 = "d8c8d10bd758f9d3840b22224ed791af91fd74d86907d20f7b03bcae8312ffbb"
+method = "spatial_pair_local"
+
+[control]
+report = ".data/pilot-16/prior-control-pose.json"
+sha256 = "e1835108e616f869c5c1e5e6102621ddbdb1cf65f3ebf5f26de9ad101e5ea95c"
+method = "spatial_pair_local"
