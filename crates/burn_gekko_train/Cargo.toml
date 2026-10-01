@@ -17,6 +17,7 @@ default = ["ndarray"]
 ndarray = ["burn/ndarray", "burn_gekko/ndarray", "burn_vjepa/ndarray"]
 cuda = ["burn/cuda", "burn/fusion", "burn_gekko/cuda", "burn_vjepa/cuda"]
 wgpu = ["burn/wgpu", "burn/fusion", "burn_gekko/wgpu", "burn_vjepa/wgpu"]
+profiling = ["dep:nvtx"]
 [dependencies]
 anyhow = "1"
 burn = { version = "=0.21.0", default-features = false, features = ["std", "autodiff"] }
@@ -31,6 +32,7 @@ rand_chacha = "0.9"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 safetensors = "0.7"
+nvtx = { version = "=2.0.0", optional = true, default-features = false, features = ["std"] }
 [dev-dependencies]
 tempfile = "3"
 [[bin]]

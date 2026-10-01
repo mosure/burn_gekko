@@ -2,6 +2,7 @@
 
 #[doc(hidden)]
 pub const SOURCES: &[(&str, &str)] = &[
+    ("profiling.rs", include_str!("profiling.rs")),
     ("bin/head_pilot.rs", include_str!("bin/head_pilot.rs")),
     (
         "training/heads/mod.rs",

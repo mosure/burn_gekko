@@ -388,11 +388,17 @@ pub fn run<B: AutodiffBackend>(
         noncommercial_weight_dependencies: Vec::new(),
         weight_ancestors: weight_ancestors.clone(),
     };
+    let mut warm_training = None;
     for step in start..c.steps {
         if wall.elapsed().as_secs() >= c.max_seconds || run.join("STOP").exists() {
             break;
         }
         let tick = Instant::now();
+        if step == start + 10 {
+            warm_training = Some(crate::profiling::range(c"warm-training"));
+        }
+        let update_range = crate::profiling::range(c"update");
+        let data_range = crate::profiling::range(c"data");
         let samples: Vec<_> = (0..c.batch_size)
             .map(|j| sampler.sample(step * c.batch_size + j, false))
             .collect();
@@ -416,6 +422,8 @@ pub fn run<B: AutodiffBackend>(
         let augmentation_seconds = augmentation_start.elapsed().as_secs_f64();
         let warp_valid_fraction = warped.as_ref().map(|b| b.valid_fraction);
         let (rgb, refs) = host_batch::<B::InnerBackend>(&training, &samples, c.references, device);
+        drop(data_range);
+        let frozen_range = crate::profiling::range(c"frozen-targets");
         let preservation_targets = preservation_anchor
             .as_ref()
             .map(|anchor| anchor.targets(rgb.clone(), &refs, &mask));
@@ -465,6 +473,8 @@ pub fn run<B: AutodiffBackend>(
                 )
             }
         });
+        drop(frozen_range);
+        let forward_range = crate::profiling::range(c"forward-and-loss-readback");
         let target = Tensor::<B, 4>::from_inner(rgb);
         let references: Vec<_> = refs.into_iter().map(Tensor::<B, 4>::from_inner).collect();
         let features = model.encode_references(&references);
@@ -663,6 +673,8 @@ pub fn run<B: AutodiffBackend>(
                 }),
             )?;
         }
+        drop(forward_range);
+        let backward_range = crate::profiling::range(c"backward-and-clip");
         let mut grads = GradientsParams::from_grads(loss.total.backward(), &model);
         let norm = clip(&model, &mut grads, 1.)?;
         let encoder_grads = take_gradients(&model.encoder, &mut grads);
@@ -677,11 +689,15 @@ pub fn run<B: AutodiffBackend>(
             min_lr_ratio: 0.1,
         }
         .learning_rate(c.learning_rate, step);
+        drop(backward_range);
+        let optimizer_range = crate::profiling::range(c"optimizer-and-sync");
         if !encoder_grads.is_empty() {
             model.encoder = enc_opt.step(lr * c.encoder_lr_ratio, model.encoder, encoder_grads);
         }
         model.fusion = fusion_opt.step(lr, model.fusion, grads);
         B::sync(device).map_err(|e| anyhow::anyhow!("{e}"))?;
+        drop(optimizer_range);
+        drop(update_range);
         completed = step + 1;
         stage_steps[gate.stage] += 1;
         times.push(tick.elapsed().as_secs_f64());
@@ -742,6 +758,7 @@ pub fn run<B: AutodiffBackend>(
             )?;
         }
     }
+    drop(warm_training);
     ensure!(completed > start, "no updates completed within limit");
     save_checkpoint(
         &model,

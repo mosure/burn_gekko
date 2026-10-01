@@ -96,6 +96,15 @@ describe work and can overlap. Small-kernel counts and synchronization time
 alone do not prove dispatch limitation; uncovered trace intervals may contain
 other GPU processes, CPU/JIT work or profiling overhead.
 
+Optional `[warm_ranges]` supplies `expected_updates`, with a nested
+`[warm_ranges.trace]` pin for the `nvtx_pushpop_trace` export in the same nanosecond
+units. Native analysis requires one complete `burn_gekko:warm-training` range,
+every registered update and all five child phases. It rejects missing children,
+different processes, broken bounds and overlapping phases. GPU/API coverage is
+clipped to these scopes, including valid phases with no GPU events. Phase overlap
+does not identify kernel ownership. See the
+[Pilot 18 profiling protocol](studies/pilot-18-warm-dispatch.md).
+
 `burn_gekko_train::evaluation` performs Burn inference. `burn_gekko_eval` scores immutable
 exports on CPU. Neither scoring nor publication requires Python; geometric truth
 is loaded after RGB-only inference.

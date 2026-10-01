@@ -11,6 +11,42 @@ The original preregistration remains immutable at
 `.data/pilot-18/registered-protocol.md`. Native forecast and selection receipts,
 source pins and the cumulative ledger live alongside it.
 
+## Dataset and execution checks
+
+The full-pixel native geometry audit passed on all 8,448 rooms (including the
+reserved test rooms for coordinate integrity only; no model scores were computed
+on test data). Across 1,660,944,380 valid source pixels, the largest self-reprojection
+error was **0.008215 input pixels** and the largest self-depth error was
+**0.000180 m**. This supports camera/world/depth alignment in the frozen dataset;
+it does not establish learned correspondence or camera accuracy. The CPU-only
+audit took 217.32 seconds. Its receipt is
+`.data/pilot-18/full-pixel-geometry-audit.json`.
+
+Each full run's first 64 updates reproduced its preflight prefix, including losses,
+sample order, masks, encoder gradients and the geometry auxiliary where enabled.
+The comparison uses absolute tolerance 1e-6 plus relative tolerance 1e-5. The
+immutable prefix snapshots and native replay receipts live in `.data/pilot-18/`.
+
+The control completed all 4,096 updates and covered every one of the 8,192 training
+rooms and 24,576 room/view targets: 65,536 target exposures, or eight per room on
+average. Every update carried all 151 encoder gradient tensors; the teacher and
+preservation-anchor parameter probes stayed unchanged. Its training-time validation
+MSE moved from 0.176511 to 0.174985, a 0.865% reduction. Common standalone assessment
+is required for model selection; a reduction in feature MSE alone does not show
+that RGB reconstruction is sharp.
+
+The control took 71.79 GPU-command minutes, with a warm median update of 0.960 s
+and p95 of 1.052 s. Peak process GPU memory was 44,916 MiB and host RSS was
+20,853 MiB. Shared-board telemetry covered 99.98% of command time: median device
+utilization 89%, observed mean power 427.2 W, energy 511.0 Wh and 28.07 J per target
+exposure. These are whole-command board observations including the authorized
+desktop load, startup and validation; they are not process-attributed power or SM
+occupancy. See `.data/pilot-18/control-summary.json`.
+
+A separate [warm-update dispatch replay](pilot-18-warm-dispatch.md) is registered
+for after the quality evaluation. It cannot change model selection. Its optional
+profiling build leaves the frozen full-run trainer untouched.
+
 ## Preflight outcome
 
 Both 64-update preflights completed with all 151 encoder gradient tensors,

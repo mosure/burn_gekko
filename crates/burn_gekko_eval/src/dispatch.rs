@@ -8,6 +8,7 @@ use std::{
     fs,
     path::PathBuf,
 };
+pub mod warm;
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -22,6 +23,7 @@ pub struct DispatchConfig {
     pub api_trace: Input,
     pub output: PathBuf,
     pub description: String,
+    pub warm_ranges: Option<warm::Config>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct Span {
@@ -184,9 +186,16 @@ pub fn summarize(c: &DispatchConfig) -> Result<Value> {
         !c.description.trim().is_empty(),
         "dispatch scope description required"
     );
-    let mut result = analyze(&load(&c.gpu_trace)?, &load(&c.api_trace)?)?;
+    let gpu = load(&c.gpu_trace)?;
+    let api = load(&c.api_trace)?;
+    let mut result = analyze(&gpu, &api)?;
     result["description"] = json!(c.description);
     result["sources"] = json!({c.gpu_trace.path.display().to_string():c.gpu_trace.sha256,c.api_trace.path.display().to_string():c.api_trace.sha256});
+    if let Some(config) = &c.warm_ranges {
+        result["warm_ranges"] =
+            warm::analyze(&gpu, &api, &load(&config.trace)?, config.expected_updates)?;
+        result["sources"][config.trace.path.display().to_string()] = json!(config.trace.sha256);
+    }
     write_json(&c.output, &result)?;
     Ok(result)
 }

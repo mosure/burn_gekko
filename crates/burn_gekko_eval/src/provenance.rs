@@ -30,6 +30,7 @@ pub const SOURCES: &[(&str, &str)] = &[
     ("camera_export.rs", include_str!("camera_export.rs")),
     ("contrasts.rs", include_str!("contrasts.rs")),
     ("dispatch.rs", include_str!("dispatch.rs")),
+    ("dispatch/warm.rs", include_str!("dispatch/warm.rs")),
     ("efficiency.rs", include_str!("efficiency.rs")),
     ("lib.rs", include_str!("lib.rs")),
     ("latent_detail.rs", include_str!("latent_detail.rs")),

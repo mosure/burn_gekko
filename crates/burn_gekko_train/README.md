@@ -39,6 +39,15 @@ The `gekko` binary exposes `capture`, `verify-dataset`, `audit-geometry`,
 explicit (`--features cuda`, then `--backend cuda`); CPU is the default. Runtime
 outputs stay in `.data/`. Run commands from the workspace root.
 
+Optional `--features cuda,profiling` adds NVTX host ranges for bounded performance
+diagnostics. `warm-training@burn_gekko` starts after ten updates and closes before
+final evaluation. The five nested phases cover data, frozen targets, forward/loss
+readback, backward/clipping and optimizer/synchronization. No extra tensor work or
+synchronization is added. Disable periodic evaluation/checkpoints when isolating
+warm training, verify a numerical prefix replay, and analyze the trace with
+`gekko-eval dispatch`. An annotated build is a separately pinned executable;
+never replace a sealed accuracy-study trainer midway through its runs.
+
 Historic binary/API names remain thin compatibility entry points. Exact optimizer
 resume verifies source/config/backend and checkpoint hashes. Moving source does
 not waive those checks: use the sealed old binary, or explicitly start a weights-only

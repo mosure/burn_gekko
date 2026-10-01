@@ -66,7 +66,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: cuda
-      - run: cargo clippy -p burn_gekko_train --all-targets --features cuda --locked -- -D warnings
+      - run: cargo clippy -p burn_gekko_train --all-targets --features cuda,profiling --locked -- -D warnings
       - run: cargo check --workspace --all-features --locked
   capture:
     runs-on: ubuntu-24.04

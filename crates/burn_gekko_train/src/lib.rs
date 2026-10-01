@@ -4,6 +4,7 @@ pub mod provenance;
 pub use burn_gekko::*;
 pub mod data;
 pub mod evaluation;
+mod profiling;
 pub mod training;
 pub use data::batch;
 pub use data::encoding as encoder;
