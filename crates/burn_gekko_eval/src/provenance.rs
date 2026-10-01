@@ -3,7 +3,19 @@
 #[doc(hidden)]
 pub const SOURCES: &[(&str, &str)] = &[
     ("heads.rs", include_str!("heads.rs")),
+    (
+        "adaptation/continuation/completion.rs",
+        include_str!("adaptation/continuation/completion.rs"),
+    ),
     ("adaptation.rs", include_str!("adaptation.rs")),
+    (
+        "adaptation/continuation.rs",
+        include_str!("adaptation/continuation.rs"),
+    ),
+    (
+        "adaptation/continuation/forecast.rs",
+        include_str!("adaptation/continuation/forecast.rs"),
+    ),
     (
         "adaptation/view_geometry.rs",
         include_str!("adaptation/view_geometry.rs"),

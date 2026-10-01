@@ -1,0 +1,8 @@
+original = ".data/runs/pilot-18-control-preflight/metrics.jsonl"
+original_sha256 = "2e98201724b9a87642203a55f7a6e3705023622dc5e89536fde8c6651334f161"
+replay = ".data/pilot-18/control-first64.jsonl"
+replay_sha256 = "b4fb72eeccfe3b71d4567066f3921baca7d0e85c8b8a4f3d7ee98817c7d7d8b8"
+prefix_updates = 64
+absolute_tolerance = 1e-6
+relative_tolerance = 1e-5
+output = ".data/pilot-18/control-prefix-replay.json"

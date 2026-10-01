@@ -9,6 +9,16 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Select a sustained continuation only when completion, detail and camera gates all pass.
+    SelectContinuation {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Admit a complete continuation only if matched preflights leave the evaluation reserve.
+    ForecastContinuation {
+        #[arg(long)]
+        config: PathBuf,
+    },
     /// Diagnose hard versus subpatch localization and camera consensus on cached RGB matches.
     PoseLocalization {
         #[arg(long)]
@@ -115,6 +125,18 @@ enum Command {
 }
 fn main() -> Result<()> {
     match Args::parse().command {
+        Command::SelectContinuation { config } => {
+            let result = burn_gekko_eval::adaptation::continuation::select(
+                &burn_gekko_data::read_config(&config)?,
+            )?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
+        Command::ForecastContinuation { config } => {
+            let result = burn_gekko_eval::adaptation::continuation::forecast::analyze(
+                &burn_gekko_data::read_config(&config)?,
+            )?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
         Command::PoseLocalization {
             config,
             report_only,

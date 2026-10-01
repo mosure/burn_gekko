@@ -59,6 +59,17 @@ candidate must retain latent completion within 1%, keep references useful, reduc
 actual-view pixel error by at least 5%, and retain within-8-pixel accuracy. Extra
 decoder work is measured, so matched updates are not described as matched compute.
 External benchmarks are evaluated after this synthetic decision is fixed.
+
+`forecast-continuation` verifies matched preflights and projects the complete
+registered horizon from warm p95 update time, measured overhead and explicit
+evaluation reserves. `select-continuation` checks a separate 4,096-update contract:
+full-cohort training, common-mask completion, centered/neighbor spatial detail,
+actual-view matching and all eight synthetic camera-solver seeds. It recomputes
+aggregates, verifies input hashes and reports paired room-bootstrap intervals.
+Every retention gate must pass; otherwise the published parent remains selected.
+The historical 384-update selector keeps its original contract. See the
+[full-cohort study](../../docs/studies/pilot-18-full-cohort.md).
+
 ## Completion and camera diagnostics
 
 `gekko-eval synthetic-pose --config <TOML>` scores dense view-audit exports on CPU

@@ -118,7 +118,15 @@ Report generation is local and never deploys a page. Read
 [crate organization](docs/repository-plan.md) and the
 [registered spatial-head experiment](docs/spatial-descriptor-protocol.md).
 
-The latest [Pilot 17 diagnosis](docs/studies/pilot-17-localization.md) isolates a
+The [Pilot 18 continuation](docs/studies/pilot-18-full-cohort.md) is running under
+a new 12-hour GPU-command ceiling. Matched full-cohort preflights completed with
+151 encoder gradient tensors per update and unchanged teacher/anchor probes.
+Warm p95 updates are 1.10 seconds for the control and 1.27 seconds with actual-view
+geometry supervision. The conservative 3.80-hour forecast for both fixed
+4,096-update runs leaves a two-hour evaluation reserve. Completion, spatial detail,
+matching and camera retention must all pass before any checkpoint promotion.
+
+The [Pilot 17 diagnosis](docs/studies/pilot-17-localization.md) isolates a
 camera-solver weakness using the same frozen RGB predictions. Across all 186 TUM
 development pairs and eight seeds, native five-point fitting raises mean pose
 AUC@10 from **7.99% to 14.19%**, and lowers signed translation error from **51.71°
@@ -133,9 +141,9 @@ rooms and eight solver seeds, the geometry-trained trunk reaches **21.04% pose
 AUC@10**, versus **17.20%** for its original matched control. Joint angular error
 falls **4.29°** (paired 95% room interval **1.00°–7.74°**). This synthetic benefit
 does not resolve the earlier real-view camera regression. Geometry labels now
-cover all 8,192 cached training rooms. A matched 4,096-update continuation is
-prepared; **96 seconds** remain in the old GPU allowance, so longer training
-awaits a renewed ceiling. Published weights remain those evaluated in Head Stability 15.
+cover all 8,192 cached training rooms. Its prepared matched continuation is now
+Pilot 18; the old allowance's **96 seconds** remain separate and unspent.
+Published weights remain those evaluated in Head Stability 15.
 
 The latest [output-head study](docs/studies/head-stability-15.md) trains camera and
 RGB heads for 800 CPU updates on a fixed foundation checkpoint. All bounded

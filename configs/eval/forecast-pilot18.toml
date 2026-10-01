@@ -1,0 +1,27 @@
+updates = 4096
+preflight_updates = 64
+update_margin = 1.25
+periodic_margin_seconds = 600.0
+evaluation_reserve_seconds = 7200.0
+output = ".data/pilot-18/forecast.json"
+
+[ledger]
+path = ".data/pilot-18/budget-after-preflights.json"
+sha256 = "2a3b978dc4c7f0cce2afb778b49b24da7102ab01e39a5c62799047ec29ca7006"
+
+[[arms]]
+[arms.summary]
+path = ".data/pilot-18/control-preflight-summary.json"
+sha256 = "d625bef27de7eecbf2b2d5d7c215563a8f8aef7206f30aef34d0d167758ca81d"
+[arms.full_config]
+path = "configs/experiments/pilot18-control.toml"
+sha256 = "4d4c3862b7b787697c7b3265fa2afbe64aaf74c14b15dfb1a4117cdc3cb9c6e0"
+
+[[arms]]
+[arms.summary]
+path = ".data/pilot-18/geometry-preflight-summary.json"
+sha256 = "01057623b3bdc9f2e3a73bf055a5fd4b5aff56c9ddc5a2e987369a6dd4ebfe3e"
+[arms.full_config]
+path = "configs/experiments/pilot18-geometry.toml"
+sha256 = "87b13b54066587da5839e5937279d700b37e9c61320480c04e3d10dba3f1471e"
+

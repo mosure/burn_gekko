@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-18-control"
+ledger = ".data/pilot-18/control-run/ledger.json"
+telemetry = ".data/pilot-18/control-run/control-gpu.jsonl"
+command = "control"
+output = ".data/pilot-18/control-summary.json"

@@ -61,7 +61,18 @@ pub fn compare(a: &[Value], b: &[Value], absolute: f64, relative: f64) -> Result
             "warp_self_nll",
             "gradient_norm",
             "learning_rate",
-        ] {
+        ]
+        .into_iter()
+        .chain(
+            [
+                "encoder_preservation_mse",
+                "view_geometry_nll",
+                "view_geometry_valid_fraction",
+                "warp_valid_fraction",
+            ]
+            .into_iter()
+            .filter(|k| a.get(*k).is_some() || b.get(*k).is_some()),
+        ) {
             let x = a[key]
                 .as_f64()
                 .filter(|v| v.is_finite())
@@ -163,6 +174,15 @@ mod tests {
             false
         );
         changed["samples"] = json!([[8, 0]]);
-        assert!(compare(&[row], &[changed], 1e-6, 1e-5).is_err());
+        assert!(compare(&[row.clone()], &[changed], 1e-6, 1e-5).is_err());
+        let mut geometry = row.clone();
+        geometry["view_geometry_nll"] = json!(0.4);
+        assert!(compare(&[row], &[geometry.clone()], 1e-6, 1e-5).is_err());
+        let mut changed = geometry.clone();
+        changed["view_geometry_nll"] = json!(0.8);
+        assert_eq!(
+            compare(&[geometry], &[changed], 1e-6, 1e-5).unwrap()["passed"],
+            false
+        );
     }
 }

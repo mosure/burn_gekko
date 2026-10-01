@@ -1,0 +1,66 @@
+# Registered protocol: docs/studies/pilot-18-full-cohort.md
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+seed = 853
+train_rooms = 8192
+validation_rooms = 64
+export_rooms = 2
+batch_size = 16
+steps = 4096
+decay_steps = 4096
+warmup_steps = 128
+max_seconds = 10000
+eval_every = 512
+checkpoint_every = 1024
+decoder_width = 384
+decoder_depth = 6
+decoder_heads = 6
+learning_rate = 2e-05
+encoder_lr_ratio = 0.02
+weight_decay = 0.05
+mask_ratio = 0.9
+train_mask = "random"
+eval_mask = "random"
+eval_mask_ratio = 0.9
+stable_attention = false
+cross_view_rope = true
+spatial_input_layer = 6
+references = 2
+visible_loss_weight = 0.1
+ri_weight = 0.1
+ri_start_step = 0
+unfreeze = true
+encoder_stage_cap = 2
+initial_encoder_stage = 2
+unfreeze_min_steps = 2000
+unfreeze_min_improvement = 0.002
+
+[spatial_descriptor]
+residual_radius = 0.25
+
+[teacher]
+kind = "burnpack"
+directory = ".data/models/vjepa2_1_base"
+
+[equivariance]
+weight = 0.1
+temperature = 0.07
+self_weight = 1.0
+max_rotation_degrees = 20.0
+max_translation = 0.125
+min_scale = 0.9
+max_scale = 1.1
+max_perspective = 0.05
+brightness = 0.1
+contrast = 0.15
+min_valid_fraction = 0.4
+
+[warm_start]
+checkpoint = ".data/runs/pilot-13-geometry/final"
+model_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+
+[encoder_preservation]
+weight = 4.0
+
+[encoder_preservation.anchor]
+checkpoint = ".data/runs/pilot-11-main/final"
+model_sha256 = "bdd1bd204afc5584ce7277af40d8bea80f6987c6611937e79b7fb13074789637"

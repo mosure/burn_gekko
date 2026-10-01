@@ -25,9 +25,9 @@ pub struct Config {
     pub control: Arm,
     pub output: PathBuf,
 }
-type Population = BTreeMap<(u64, String), PoseRow>;
+pub(crate) type Population = BTreeMap<(u64, String), PoseRow>;
 
-fn load(a: &Arm) -> Result<(Value, Population)> {
+pub(crate) fn load(a: &Arm) -> Result<(Value, Population)> {
     ensure!(
         sha256_file(&a.report)? == a.sha256,
         "pose comparison hash differs"
@@ -93,7 +93,7 @@ fn load(a: &Arm) -> Result<(Value, Population)> {
     Ok((v, rows))
 }
 
-fn paired(candidate: &Population, control: &Population) -> Result<Value> {
+pub(crate) fn paired(candidate: &Population, control: &Population) -> Result<Value> {
     ensure!(
         candidate.keys().eq(control.keys()) && !candidate.is_empty(),
         "paired pose populations differ"

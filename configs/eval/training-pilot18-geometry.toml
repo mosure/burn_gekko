@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-18-geometry"
+ledger = ".data/pilot-18/geometry-run/ledger.json"
+telemetry = ".data/pilot-18/geometry-run/geometry-gpu.jsonl"
+command = "geometry"
+output = ".data/pilot-18/geometry-summary.json"
