@@ -27,6 +27,42 @@ pub struct Config {
 }
 pub(crate) type Population = BTreeMap<(u64, String), PoseRow>;
 
+fn complete_methods(
+    rows: &[PoseRow],
+    methods: &[String],
+    rooms: usize,
+) -> Result<BTreeSet<String>> {
+    let expected = methods.iter().map(String::as_str).collect::<BTreeSet<_>>();
+    ensure!(
+        rooms > 0 && !expected.is_empty() && expected.len() == methods.len(),
+        "invalid declared method panel"
+    );
+    let mut populations: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
+    for row in rows {
+        ensure!(
+            expected.contains(row.method.as_str()),
+            "undeclared pose readout"
+        );
+        ensure!(
+            populations
+                .entry(&row.method)
+                .or_default()
+                .insert(row.pair.clone()),
+            "duplicate method/room in solver panel"
+        );
+    }
+    ensure!(
+        populations.len() == expected.len(),
+        "missing declared control readout"
+    );
+    let population = populations.values().next().unwrap();
+    ensure!(
+        population.len() == rooms && populations.values().all(|v| v == population),
+        "incomplete or mismatched control room population"
+    );
+    Ok(population.clone())
+}
+
 pub(crate) fn load(a: &Arm) -> Result<(Value, Population)> {
     ensure!(
         sha256_file(&a.report)? == a.sha256,
@@ -50,10 +86,20 @@ pub(crate) fn load(a: &Arm) -> Result<(Value, Population)> {
         "pose cohort declaration differs"
     );
     let mut seen_seeds = BTreeSet::new();
+    let mut room_panel = None;
     for seed in v["seeds"].as_array().context("solver seeds")? {
         let id = seed["seed"].as_u64().context("seed identity")?;
         ensure!(seen_seeds.insert(id), "duplicate solver seed");
         let parsed: Vec<PoseRow> = serde_json::from_value(seed["rows"].clone())?;
+        let population = complete_methods(&parsed, &config.methods, config.rooms)?;
+        if let Some(expected) = &room_panel {
+            ensure!(
+                *expected == population,
+                "room population changes across solver seeds"
+            );
+        } else {
+            room_panel = Some(population);
+        }
         let selected = parsed
             .into_iter()
             .filter(|r| r.method == a.method)
@@ -235,5 +281,33 @@ mod tests {
         assert_eq!(result["room_seed_observations"], 6);
         b.remove(&(2, "1".into()));
         assert!(paired(&a, &b).is_err());
+    }
+
+    #[test]
+    fn complete_primary_readout_cannot_hide_a_missing_or_different_control() {
+        let primary = population(4.)
+            .into_iter()
+            .filter(|((seed, _), _)| *seed == 1)
+            .map(|(_, row)| row)
+            .collect::<Vec<_>>();
+        let mut rows = primary.clone();
+        rows.extend(primary.into_iter().map(|mut r| {
+            r.method = "control".into();
+            r
+        }));
+        let methods = vec!["fixture".into(), "control".into()];
+        assert_eq!(complete_methods(&rows, &methods, 3).unwrap().len(), 3);
+        let mut changed = rows.clone();
+        changed.pop();
+        assert!(complete_methods(&changed, &methods, 3).is_err());
+        changed = rows.clone();
+        changed.last_mut().unwrap().pair = "foreign-room".into();
+        assert!(complete_methods(&changed, &methods, 3).is_err());
+        changed = rows.clone();
+        changed.last_mut().unwrap().method = "undeclared".into();
+        assert!(complete_methods(&changed, &methods, 3).is_err());
+        changed = rows;
+        changed.push(changed[0].clone());
+        assert!(complete_methods(&changed, &methods, 3).is_err());
     }
 }
