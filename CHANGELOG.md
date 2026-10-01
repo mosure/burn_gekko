@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Evaluator and report package manifests advance to 0.1.2; report and trainer
+  require the new evaluator API. This prevents packaged builds from resolving
+  the previously published evaluator without the shared output-head audit.
+- Shared native raw-prediction audits, whole-room output-head uncertainty,
+  full-cohort continuation selection and numerically checked runtime comparisons.
 - Independent camera calibration and RGB reconstruction heads, with bounded
   cached-feature training, separate clipped optimizers, exact optimizer resume,
   native angular/focal/RGB PSNR evaluation and verified page/PDF visualizations.

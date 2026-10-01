@@ -936,7 +936,7 @@ dependencies = [
 
 [[package]]
 name = "burn_gekko_eval"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "burn_gekko_data",
@@ -984,7 +984,7 @@ dependencies = [
 
 [[package]]
 name = "burn_gekko_report"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "burn_gekko_data",

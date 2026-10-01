@@ -1,6 +1,6 @@
 [package]
 name = "burn_gekko_report"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 rust-version = "1.98"
 license = "MIT OR Apache-2.0"
@@ -18,7 +18,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 clap = { version = "4.5", features = ["derive"] }
 burn_gekko_data = { version = "0.1.1", path = "../burn_gekko_data" }
-burn_gekko_eval = { version = "0.1.1", path = "../burn_gekko_eval" }
+burn_gekko_eval = { version = "0.1.2", path = "../burn_gekko_eval" }
 image = { version = "0.25", default-features = false, features = ["png"] }
 [dev-dependencies]
 tempfile = "3"
