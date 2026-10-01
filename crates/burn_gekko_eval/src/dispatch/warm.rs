@@ -123,7 +123,11 @@ pub(super) fn analyze(
         "expected one complete warm-training range"
     );
     let (&root, (_, warm, parent)) = roots[0];
-    ensure!(parent.is_null(), "warm range must be outermost");
+    // Nsight's JSON formatter represents SQL NULL as an empty string.
+    ensure!(
+        parent.is_null() || *parent == "",
+        "warm range must be outermost"
+    );
     let updates: Vec<_> = ranges
         .iter()
         .filter(|(_, (n, _, _))| *n == "update")
@@ -213,6 +217,11 @@ mod tests {
             vec![json!({"Start (ns)":0,"Duration (ns)":100,"Name":"cuLaunchKernel","Pid":42})];
         let gpu = vec![json!({"Start (ns)":20,"Duration (ns)":2,"GrdX":1})];
         assert!(analyze(&gpu, &api, &rows, 1).is_ok());
+        rows[0]["ParentId"] = json!("");
+        assert!(analyze(&gpu, &api, &rows, 1).is_ok());
+        rows[0]["ParentId"] = json!(999);
+        assert!(analyze(&gpu, &api, &rows, 1).is_err());
+        rows[0]["ParentId"] = json!("");
         assert!(analyze(&gpu, &api, &rows, 2).is_err());
         rows[2]["ParentId"] = json!(1);
         assert!(analyze(&gpu, &api, &rows, 1).is_err());
