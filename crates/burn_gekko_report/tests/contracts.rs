@@ -89,7 +89,10 @@ fn fixture(root: &Path) -> Experiment {
         },
         benchmarks: vec![],
         heads: vec![],
+        output_heads: None,
         equivariance: None,
+        view_geometry: None,
+        calibrated_pose: None,
         efficiency: None,
         limitations: vec!["Fixture only".into()],
         sample_count: 1,
@@ -121,6 +124,27 @@ fn publication_rejects_mixed_checkpoints_tampering_and_second_models() {
     let mut v = serde_json::to_value(&e).unwrap();
     v["models"] = json!(["old", "new"]);
     assert!(serde_json::from_value::<Experiment>(v).is_err());
+}
+
+#[test]
+fn attached_output_heads_cannot_replace_the_selected_foundation_checkpoint() {
+    let t = tempfile::tempdir().unwrap();
+    let mut e = fixture(t.path());
+    let path = t.path().join("head-evidence.json");
+    write(
+        &path,
+        json!({"schema":1,"checkpoint_sha256":"another-model","files":{}}),
+    );
+    e.output_heads = Some(burn_gekko_report::experiment::PinnedFile {
+        sha256: burn_gekko_data::sha256_file(&path).unwrap(),
+        path,
+    });
+    assert!(
+        artifact::load(&e)
+            .unwrap_err()
+            .to_string()
+            .contains("another foundation")
+    );
 }
 #[test]
 fn report_uses_primary_population_and_phase_update_count() {
@@ -154,46 +178,56 @@ fn report_uses_primary_population_and_phase_update_count() {
 }
 
 #[test]
-fn known_transform_report_rejects_mixed_weights_and_inconsistent_means() {
-    let t = tempfile::tempdir().unwrap();
-    let mut e = fixture(t.path());
-    let path = t.path().join("warp.json");
-    let mut data = json!({"status":"development_diagnostic", "checkpoint":{"model_sha256":e.checkpoint_sha256},"rooms":1,
+fn geometric_reports_reject_mixed_weights_and_inconsistent_means() {
+    for actual_views in [false, true] {
+        let t = tempfile::tempdir().unwrap();
+        let mut e = fixture(t.path());
+        let path = t.path().join("warp.json");
+        let mut data = json!({"status":"development_diagnostic", "checkpoint":{"model_sha256":e.checkpoint_sha256},"rooms":1,
         "methods":{"spatial_pair":{"mean_epe":4.,"pck8":1.,"pck16":1.,"nll":2.}},
         "records":[{"method":"spatial_pair","nll_bidirectional":2.,"score":{"mean_epe":4.,"pck_half_patch":1.,"pck_one_patch":1.}},
                    {"method":"spatial_pair","nll_bidirectional":2.,"score":{"mean_epe":4.,"pck_half_patch":1.,"pck_one_patch":1.}}]});
-    let mut update = |data: &serde_json::Value| {
-        write(&path, data.clone());
-        e.equivariance = Some(burn_gekko_report::experiment::PinnedFile {
-            path: path.clone(),
-            sha256: burn_gekko_data::sha256_file(&path).unwrap(),
-        });
-        artifact::load(&e)
-    };
-    assert!(
-        update(&data)
-            .unwrap()
-            .capabilities
-            .iter()
-            .any(|c| c.id == "image_transform")
-    );
-    data["checkpoint"]["model_sha256"] = json!("wrong");
-    assert!(
-        update(&data)
-            .unwrap_err()
-            .to_string()
-            .contains("another checkpoint")
-    );
-    data["checkpoint"]["model_sha256"] =
-        json!(burn_gekko_data::sha256_file(&t.path().join("run/final/model.mpk")).unwrap());
-    data["methods"]["spatial_pair"]["mean_epe"] = json!(0.);
-    assert!(
-        update(&data)
-            .unwrap_err()
-            .to_string()
-            .contains("differs from rows")
-    );
+        if actual_views {
+            data["task"] = json!("renderer_viewpoint_correspondence");
+        }
+        let mut update = |data: &serde_json::Value| {
+            write(&path, data.clone());
+            let pin = Some(burn_gekko_report::experiment::PinnedFile {
+                path: path.clone(),
+                sha256: burn_gekko_data::sha256_file(&path).unwrap(),
+            });
+            if actual_views {
+                e.view_geometry = pin;
+            } else {
+                e.equivariance = pin;
+            }
+            artifact::load(&e)
+        };
+        assert!(update(&data).unwrap().capabilities.iter().any(|c| c.id
+            == if actual_views {
+                "renderer_viewpoint"
+            } else {
+                "image_transform"
+            }));
+        data["checkpoint"]["model_sha256"] = json!("wrong");
+        assert!(
+            update(&data)
+                .unwrap_err()
+                .to_string()
+                .contains("another checkpoint")
+        );
+        data["checkpoint"]["model_sha256"] =
+            json!(burn_gekko_data::sha256_file(&t.path().join("run/final/model.mpk")).unwrap());
+        data["methods"]["spatial_pair"]["mean_epe"] = json!(0.);
+        assert!(
+            update(&data)
+                .unwrap_err()
+                .to_string()
+                .contains("differs from rows")
+        );
+    }
 }
+
 #[test]
 fn build_recomputes_visual_metrics_and_keeps_capability_gaps_visible() {
     let t = tempfile::tempdir().unwrap();
@@ -205,6 +239,8 @@ fn build_recomputes_visual_metrics_and_keeps_capability_gaps_visible() {
     let html = fs::read_to_string(out.join("index.html")).unwrap();
     assert!(html.contains("Fixture &lt;test&gt;"));
     assert!(html.contains("Not trained"));
+    assert!(html.contains("How to read the numbers"));
+    assert!(html.contains("RGB PSNR (dB)"));
     assert!(!html.contains("<test>"));
     assert!(out.join("paper.tex").exists());
     assert!(out.join("bundle.json").exists());
@@ -227,5 +263,69 @@ fn build_recomputes_visual_metrics_and_keeps_capability_gaps_visible() {
             .unwrap_err()
             .to_string()
             .contains("disagree")
+    );
+}
+
+#[test]
+fn feature_db_is_verified_from_all_arrays_and_cannot_be_replaced_by_rgb_psnr() {
+    let t = tempfile::tempdir().unwrap();
+    let mut e = fixture(t.path());
+    let path = e.latent.directory.join("metrics.json");
+    let mut data: serde_json::Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+    let bytes = fs::read(e.latent.directory.join("room-1-view-0/target-latent.f32")).unwrap();
+    let target = bytes
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|x| f32::from_le_bytes(*x))
+        .collect::<Vec<_>>();
+    let pred = target.iter().map(|v| v * 0.8).collect::<Vec<_>>();
+    let measured = completion(&pred, &target, 6, &[0, 2]).unwrap();
+    for (key, value) in [
+        ("teacher_signal_power", measured.signal_power),
+        ("feature_snr_db", measured.signal_to_error_db.unwrap()),
+    ] {
+        data["rows"][0][key] = json!(value);
+        data[format!("mean_{key}")] = json!(value);
+    }
+    write(&path, data.clone());
+    e.latent.metrics_sha256 = burn_gekko_data::sha256_file(&path).unwrap();
+    let report = artifact::load(&e).unwrap();
+    let metrics = &report
+        .capabilities
+        .iter()
+        .find(|c| c.id == "latent_completion")
+        .unwrap()
+        .metrics;
+    assert_eq!(metrics[0].id, "feature_snr");
+    assert_eq!(metrics[0].unit, "dB");
+    assert!(metrics.iter().all(|m| !m.id.contains("psnr")));
+    assert_eq!(
+        report.latent["feature_metrics_array_verification"]["target_views"],
+        1
+    );
+    let groups = report.latent["visibility_strata"]["groups"]
+        .as_array()
+        .unwrap();
+    assert!(
+        groups
+            .iter()
+            .all(|g| g["hidden_tokens"] == 1 && g["target_views"] == 1)
+    );
+    let pooled = groups
+        .iter()
+        .map(|g| g["mse"].as_f64().unwrap())
+        .sum::<f64>()
+        / 2.;
+    assert!((pooled - measured.mse).abs() < 1e-12);
+    data["rows"][0]["feature_snr_db"] = json!(30.);
+    data["mean_feature_snr_db"] = json!(30.);
+    write(&path, data);
+    e.latent.metrics_sha256 = burn_gekko_data::sha256_file(&path).unwrap();
+    assert!(
+        artifact::load(&e)
+            .unwrap_err()
+            .to_string()
+            .contains("disagree with feature_snr_db")
     );
 }

@@ -40,6 +40,8 @@ struct Prediction {
     method: String,
     grid: [usize; 2],
     indices: Vec<usize>,
+    #[serde(default)]
+    coordinates: Option<Vec<[f64; 2]>>,
     pair: Option<String>,
     scene: Option<String>,
     interval: Option<u64>,
@@ -85,6 +87,35 @@ pub fn flow_at(indices: &[usize], grid: usize, xy: [f64; 2], hw: [usize; 2]) -> 
     Ok(flow_unchecked(indices, grid, xy, hw))
 }
 fn flow_unchecked(indices: &[usize], grid: usize, xy: [f64; 2], hw: [usize; 2]) -> [f64; 2] {
+    flow_values(grid, xy, hw, |i| {
+        [(indices[i] % grid) as f64, (indices[i] / grid) as f64]
+    })
+}
+/// Fractional grid coordinates use the identical half-pixel displacement protocol.
+pub fn fractional_flow_at(
+    points: &[[f64; 2]],
+    grid: usize,
+    xy: [f64; 2],
+    hw: [usize; 2],
+) -> Result<[f64; 2]> {
+    ensure!(
+        grid > 0
+            && points.len() == grid * grid
+            && hw.iter().all(|&v| v > 0)
+            && points
+                .iter()
+                .flatten()
+                .all(|&v| v.is_finite() && v >= 0. && v <= (grid - 1) as f64),
+        "invalid fractional flow grid"
+    );
+    Ok(flow_values(grid, xy, hw, |i| points[i]))
+}
+fn flow_values(
+    grid: usize,
+    xy: [f64; 2],
+    hw: [usize; 2],
+    point: impl Fn(usize) -> [f64; 2],
+) -> [f64; 2] {
     let u = (((xy[0] as f32 + 0.5) * (grid as f32 / hw[1] as f32) - 0.5) as f64)
         .clamp(0., (grid - 1) as f64);
     let v = (((xy[1] as f32 + 0.5) * (grid as f32 / hw[0] as f32) - 0.5) as f64)
@@ -99,11 +130,9 @@ fn flow_unchecked(indices: &[usize], grid: usize, xy: [f64; 2], hw: [usize; 2]) 
         (x, yy, (1. - wx) * wy),
         (xx, yy, wx * wy),
     ] {
-        let p = indices[b * grid + a];
-        flow[0] +=
-            (((p % grid) as f64 - a as f64) * (hw[1] as f64 / grid as f64)) as f32 as f64 * w;
-        flow[1] +=
-            (((p / grid) as f64 - b as f64) * (hw[0] as f64 / grid as f64)) as f32 as f64 * w;
+        let p = point(b * grid + a);
+        flow[0] += ((p[0] - a as f64) * (hw[1] as f64 / grid as f64)) as f32 as f64 * w;
+        flow[1] += ((p[1] - b as f64) * (hw[0] as f64 / grid as f64)) as f32 as f64 * w;
     }
     flow
 }
@@ -308,6 +337,7 @@ pub fn score(c: &ScoreConfig) -> Result<Value> {
     let mut examples = Vec::new();
     let mut rows = Vec::new();
     let mut seen = BTreeSet::new();
+    let mut readout_protocols = BTreeMap::new();
     for line in BufReader::new(fs::File::open(&c.predictions)?).lines() {
         let p: Prediction = serde_json::from_str(&line?)?;
         if !c.methods.contains(&p.method) {
@@ -317,13 +347,33 @@ pub fn score(c: &ScoreConfig) -> Result<Value> {
             p.grid == [16, 16] && p.indices.len() == 256 && p.indices.iter().all(|x| *x < 256),
             "invalid prediction grid"
         );
+        if let Some(points) = &p.coordinates {
+            fractional_flow_at(points, 16, [0., 0.], [256, 256])?;
+        }
+        let kind = if p.coordinates.is_some() {
+            "local_3x3_probability_centroid"
+        } else {
+            "hard_patch_index"
+        };
+        if let Some(previous) = readout_protocols.insert(p.method.clone(), kind) {
+            ensure!(
+                previous == kind,
+                "mixed coordinate protocols within a readout"
+            );
+        }
+        let flow = |xy, size| {
+            p.coordinates.as_ref().map_or_else(
+                || flow_unchecked(&p.indices, 16, xy, size),
+                |points| flow_values(16, xy, size, |i| points[i]),
+            )
+        };
         let key = if eth {
-            p.pair.context("missing pair")?
+            p.pair.clone().context("missing pair")?
         } else {
             ensure!(p.reference == Some(1), "HP reference must be 1");
             format!(
                 "{}_{}",
-                p.sequence.context("missing sequence")?,
+                p.sequence.clone().context("missing sequence")?,
                 p.target.context("missing target")?
             )
         };
@@ -342,7 +392,7 @@ pub fn score(c: &ScoreConfig) -> Result<Value> {
         let errors = truths[&key]
             .iter()
             .map(|(xy, gt)| {
-                let pred = flow_unchecked(&p.indices, 16, *xy, *size);
+                let pred = flow(*xy, *size);
                 Ok((pred[0] - gt[0]).hypot(pred[1] - gt[1]))
             })
             .collect::<Result<Vec<_>>>()?;
@@ -358,7 +408,7 @@ pub fn score(c: &ScoreConfig) -> Result<Value> {
                     i * (truth.len() - 1) / (count - 1)
                 };
                 let (xy, gt) = truth[j];
-                let flow = flow_unchecked(&p.indices, 16, xy, *size);
+                let flow = flow(xy, *size);
                 vectors.push(json!({"target":xy,"expected_reference":[xy[0]+gt[0],xy[1]+gt[1]],"predicted_reference":[xy[0]+flow[0],xy[1]+flow[1]],"error_pixels":errors[j]}));
             }
             examples.push(json!({"sample":key,"method":p.method,"metric_hw":size,"metrics":metrics,"images":images[&key],"vectors":vectors,
@@ -478,8 +528,8 @@ pub fn score(c: &ScoreConfig) -> Result<Value> {
         })
         .collect::<Result<Vec<_>>>()?;
     let report = json!({"schema":1,"checkpoint_sha256":c.checkpoint_sha256,"benchmark":c.benchmark,"evaluation_use":c.evaluation_use,"examples":examples,
-        "pairs":meta.len(),"methods":methods,"contrasts":contrasts,"rows":rows,"protocol":if eth {"original pixels; pair then scene then interval means; hard patch flow"}else{"HP-240; pair then sequence means; primary viewpoint subset; hard patch flow"},
-        "comparability":"Local hard-patch readout. No parity with published refinement or SOTA claim.","inputs":c,"provenance_sha256":sha256_file(&c.provenance)?});
+        "pairs":meta.len(),"methods":methods,"contrasts":contrasts,"rows":rows,"protocol":if eth {"original pixels; pair then scene then interval means; patch-grid displacement"}else{"HP-240; pair then sequence means; primary viewpoint subset; patch-grid displacement"},
+        "readout_protocols":readout_protocols,"comparability":"Local patch-grid readouts; optional 3x3 refinement is declared per method. No parity with published refinement or SOTA claim.","inputs":c,"provenance_sha256":sha256_file(&c.provenance)?});
     if let Some(p) = c.output.parent() {
         fs::create_dir_all(p)?;
     }
@@ -489,6 +539,33 @@ pub fn score(c: &ScoreConfig) -> Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn fractional_flow_preserves_integer_oracle_and_subpatch_units() {
+        let indices = (0..256).collect::<Vec<_>>();
+        let points = indices
+            .iter()
+            .map(|&i| [(i % 16) as f64, (i / 16) as f64])
+            .collect::<Vec<_>>();
+        for xy in [[0., 0.], [123.5, 211.], [639., 479.]] {
+            assert_eq!(
+                fractional_flow_at(&points, 16, xy, [480, 640]).unwrap(),
+                flow_at(&indices, 16, xy, [480, 640]).unwrap()
+            );
+        }
+        let moved = points
+            .iter()
+            .map(|p| [(p[0] + 0.25).min(15.), p[1]])
+            .collect::<Vec<_>>();
+        assert_eq!(
+            fractional_flow_at(&moved, 16, [100., 100.], [480, 640]).unwrap(),
+            [10., 0.]
+        );
+        assert_eq!(
+            fractional_flow_at(&moved, 16, [100., 100.], [256, 256]).unwrap(),
+            [4., 0.]
+        );
+        assert!(fractional_flow_at(&[[f64::NAN; 2]; 256], 16, [0., 0.], [256, 256]).is_err());
+    }
     #[test]
     fn identity_and_translation_flow() {
         let ids = (0..256).collect::<Vec<_>>();

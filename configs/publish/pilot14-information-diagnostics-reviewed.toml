@@ -1,0 +1,60 @@
+schema = 1
+title = "burn_gekko: Information Limits and Camera Stability"
+author = "Mitchell Mosure"
+architecture = "An audited MIT V-JEPA 2.1 Base image encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. This phase starts from the audited own Pilot 12 checkpoint, resets both AdamW optimizers, and trains all 151 encoder tensors. Images are 256 by 256, batch size is 16, two references are provided and 90% of target patches are masked. The original fixed V-JEPA supplies latent targets. A fixed own Pilot 11 encoder supplies training-only final-feature preservation with weight 4.0; it is absent from inference. The latent, RI and image-homography objectives are retained. Seed is 829, trunk learning rate is 2e-5, encoder rate is 4e-7, warmup is 32 and the cosine horizon is 384 updates. The spatial residual is bounded by 25% of the centered block-6 norm. Matching uses a fixed 3 by 3 local probability centroid, plus the retained hard readout. An additional renderer-supervised bidirectional correspondence NLL has weight 0.1 and temperature 0.07. It pairs the dense target with a rotating reference using known visible patch-center projections. Source depth discontinuities, unknown depth, occlusion, out-of-frame and descriptor-border locations are excluded. Geometry supplies detached training labels only. All inference inputs are RGB. Known intrinsics enter the calibrated CPU pose solver after inference. No noncommercial pretrained weights or teachers are used."
+run = ".data/runs/pilot-13-geometry"
+checkpoint = ".data/runs/pilot-13-geometry/final"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+sample_count = 6
+id = "pilot14-information-diagnostics-reviewed"
+description = "This report diagnoses the fixed Pilot 13 geometry checkpoint; it adds no training or new weights. The original two-reference outputs form the primary gallery. Additional analysis tests spatial structure versus feature amplitude, two versus three reference views on the same 512 masked targets, and calibrated pose sensitivity across eight fixed solver seeds. All findings belong to one training run and checkpoint. These reused cohorts are development data. Improved solver settings or extra input information are not training improvements or SOTA qualification."
+limitations = ["No new training occurred in Pilot 14. All metrics and figures use the fixed Pilot 13 geometry checkpoint and its own readout/input controls. Its 384-update training phase and audited lineage are retained below.", "All reported cohorts are reused development data in this diagnostic report, including the 128-room/512-target cohort first held out in Pilot 13. Historical evaluations retain their original classification. No new independent generalization result is claimed.", "The primary latent gallery and completion metrics use two references. The third-reference capability uses the same targets, mask seed 829, 90% random masking and checkpoint with one additional reference. Monocular independence is checked at 1e-7. There is no comparison between separately trained model versions.", "Completion detail uses hidden positions only. Teacher-assisted gain and variance-matching MSE are explanatory oracles with access to the target; they are not model predictions or inference improvements. Higher variance alone does not imply correct structure.", "The original 2048-trial camera protocol and its failed gate remain the primary pose result. Separate 2048/8192 maximum-trial sensitivity panels retain all eight seeds and every control. Seed ranges describe solver randomness, not training-seed uncertainty; there is no best-seed selection or retroactive gate change.", "The 8192-trial CPU study was registered after the 2048-trial sensitivity result. It diagnoses a solver-budget effect on frozen matches, not improved learned camera prediction or a matched-compute comparison.", "A legacy assessment provenance flag incorrectly said geometry_training_supervision=false. Immutable records remain intact. Training configuration and label-cache provenance correctly declare renderer-supervised correspondence. Future exports distinguish selected-phase training supervision from scoring-only evaluation geometry; a 32-target replay agrees exactly in latent arrays and scalar metrics.", "No noncommercial pretrained weights or teachers enter this lineage. Known intrinsics enter the calibrated pose solver after RGB inference. Camera, RGB and depth heads remain untrained. Colored latent maps and feature signal/error dB are not RGB reconstructions or RGB PSNR.", "The training-efficiency panel belongs to the recorded Pilot 13 phase. Pilot 14 ran only inference and CPU analysis. Its supported-interval process monitor was verified alive and produced counters, but missing values remain unavailable. Shared desktop activity remains included in board power; process SM counters do not measure occupancy or process-attributed energy.", "All historical matching readout restrictions, unresolved exporter/startup numerical discrepancies, strict reference-order invariance failures and single-training-seed limits remain. See the full checkpoint-bound records."]
+
+[latent]
+directory = ".data/pilot-13/fresh-latent/model"
+metrics_sha256 = "fb6baf4c9581d6042310b2dedb14f8780243ec3c3c4d9ab46ac7eec3f89878ad"
+provenance_sha256 = "0ae335f2a88c44da951c50aeb84fcbf47be10ec34ea7b4f1a6e7bbb0aff937df"
+evaluation_use = "development"
+
+[calibrated_pose]
+path = ".data/pilot-13/geometry/pose-score.json"
+sha256 = "e6ab5dd686d08decf5b5e9004ddd472dc5b631dd46e136985a4db95946bfdceb"
+
+[view_geometry]
+path = ".data/pilot-13/geometry-view-audit/metrics.json"
+sha256 = "34aabec39b5f741a73d7948c7c946c4a8249dec147c14b4ce7022d0d9aea9907"
+
+[[benchmarks]]
+path = ".data/pilot-13/geometry/hpatches-score.json"
+sha256 = "46b854493c966395cdfc177b2fa91a153e95db297a26083f473682060eab09ae"
+
+[[benchmarks]]
+path = ".data/pilot-13/geometry/eth3d-score.json"
+sha256 = "97b3f10516d8b964cdb523521cb51949d84b266399984e639beb0513e3e9f37c"
+
+[[heads]]
+path = ".data/pilot-14/detail-references-2.head.json"
+sha256 = "95394283de37b49890e772a93e07b94f47bae47354c9bfd7e543a378c7a5e8c1"
+
+[[heads]]
+path = ".data/pilot-14/reference-count-reviewed.json"
+sha256 = "c7d8b1e3eac6c7af9d097417e614bd43703fa99463cae4754e22508f9e66dc4b"
+
+[[heads]]
+path = ".data/pilot-14/pose-stability-reviewed/head.json"
+sha256 = "9699235874fe8f35557f54065a53646ede4370efb4288eb501cf0aadafd6216d"
+
+[[heads]]
+path = ".data/pilot-14/pose-stability-8192/head.json"
+sha256 = "5734a95bf1a5cf1fde35d18dfa40ccef7270d35781511eb5e4bc9474c74243c1"
+
+[efficiency]
+command = "geometry"
+
+[efficiency.ledger]
+path = ".data/pilot-13/geometry-run/ledger.json"
+sha256 = "6bc8675735300050346575a53db40c580fee8c3cc8e58e4f0bf45037935adad5"
+
+[efficiency.telemetry]
+path = ".data/pilot-13/geometry-run/geometry-gpu.jsonl"
+sha256 = "a1ac32be19637d74ead2f74504b5ccff3cfda79da557981aaa351fbe8bfa110d"

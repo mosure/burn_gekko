@@ -1,5 +1,5 @@
 schema = 1
-reviewed = "2026-09-29"
+reviewed = "2026-09-30"
 project_task = "self-supervised multi-view latent prediction, correspondence, and co-visibility"
 claim_status = "research prototype; no state-of-the-art claim"
 weight_policy = "No noncommercial pretrained weights or teachers; audited MIT V-JEPA 2.1 and own training only"
@@ -25,10 +25,10 @@ pairs = 580
 primary_subset = "59 viewpoint sequences / 295 pairs; exactly matches ZeroCo assets/hpatches_all.csv"
 supplementary_subset = "57 illumination sequences / 285 pairs; combined 116-sequence statistics"
 evaluation_use = "Development since fusion-transfer study; prior failures informed model and readout decisions"
-readout = "Hard patch NN, bilinear displacement upsampling; all query images 2..6 to reference 1"
+readout = "Hard patch NN or fixed local 3x3 probability centroid, bilinear displacement upsampling; all query images 2..6 to reference 1"
 metrics = ["pair-mean AEPE", "PCK1/3/5", "illumination and viewpoint subsets", "paired sequence bootstrap"]
 baseline = "Same images, resolution and readout with fixed and own student V-JEPA encoders; final layer plus preselected trained block 6"
-readout_families = "18 standard methods plus 8 fixed block-6 raw/centered/conditional teacher and student controls; no per-pair selection"
+readout_families = "Legacy broad export has 26 methods; focused local export has pair, same-image and block-6 controls, each hard and refined; no per-pair selection"
 published_number_comparability = false
 reason = "Model input and matching/refinement differ from ZeroCo; report these settings alongside any results"
 
@@ -43,20 +43,20 @@ pairs = 3365
 unique_images = 2448
 scenes = 10
 intervals = [3, 5, 7, 9, 11, 13, 15]
-readout = "Hard patch NN and reciprocal attention; bilinear displacement resize with half-pixel coordinates"
+readout = "Hard patch NN/reciprocal attention or fixed local 3x3 probability centroid; bilinear displacement resize with half-pixel coordinates"
 metrics = ["pair/scene/interval mean AEPE and PCK1/3/5", "point-weighted interval PCK", "paired scene bootstrap"]
-evaluation_use = "Independent qualification only after checksummed candidate/readout selection"
-qualification_status = "Completed for the frozen Pilot07 selection; fusion improves over its original ancestor but still trails the stronger block-6 encoder"
-selection_record = "configs/pilot07-fusion-final-selection.toml"
-score_artifact = ".data/pilot-07/fusion-audit/eth3d-score.json"
+evaluation_use = "Development in Pilot08/Pilot09 after repeated use; the original frozen Pilot07 assessment retains its historical qualification role"
+qualification_status = "Pilot09 passes local precision and same-operator fusion-transfer gates; paired refined PCK3 gains over encoder and same-image controls are positive; independent qualification remains open"
+selection_record = ".data/pilot-09/eth3d-selection.toml"
+score_artifact = ".data/pilot-09/eth3d-score.json"
 baseline = "Final-layer and preselected block-6 fixed teacher/student encoders; equivalent reciprocal conditional normalization"
-readout_families = "All 26 predeclared methods; layer 6 selected only on HPatches development images"
+readout_families = "Legacy broad export has 26 methods; focused local export retains three hard controls and their three refined counterparts"
 model_input = "RGB manifest only; sparse point labels loaded by a separate CPU scorer"
 published_number_comparability = false
 reason = "Complete official pairs and aggregation; local readout does not implement published refinement"
 
 [[protocols]]
-name = "fresh-four-view-latent-qualification"
+name = "pilot07-fresh-four-view-latent-qualification"
 implemented = true
 input_size = 256
 rooms = 128
@@ -71,6 +71,46 @@ metrics = ["masked latent MSE", "paired room bootstrap", "monocular/unrelated/sh
 model_input = "Sparse target and RGB references; full target only in separate RI branch and evaluation teacher"
 score_artifact = ".data/pilot-07/fusion-audit/fresh-qualification"
 published_number_comparability = false
+
+[[protocols]]
+name = "pilot09-fresh-four-view-latent-qualification"
+implemented = true
+input_size = 256
+rooms = 128
+captured_views = 4
+primary_target_views = 512
+primary_references = 2
+mask_ratio = 0.9
+seed = 2610051000
+evaluation_use = "Captured after fixed Pilot09 selection; all targets exported and native metrics reverified; future reuse must be declared as development"
+source = ".data/datasets/03cb8d426bf372dbe11d5b8db7a7462cac5ebfcdee07b98a5ccd14592b5157fa"
+metrics = ["masked latent MSE and feature signal/error dB", "paired room bootstrap", "monocular reference benefit", "teacher-relative spatial variation", "RI co-visibility ranking", "hidden-input isolation", "reference permutation sensitivity", "post-hoc majority-visibility error strata"]
+model_input = "Sparse target and RGB references; full target only in separate RI branch and evaluation teacher"
+score_artifact = ".data/pilot-09/heldout/local_readout/metrics.json"
+published_number_comparability = false
+
+[[protocols]]
+name = "tum-freiburg3-calibrated-pose"
+implemented = true
+source = "https://cvg.cit.tum.de/data/datasets/rgbd-dataset"
+input_size = 256
+original_size = [640, 480]
+pairs = 186
+sequences = 3
+proposed_pairs = 192
+association_exclusions = 6
+translation_baseline_exclusions = 1
+model_input = "RGB-only 256px; camera intrinsics enter the CPU solver after inference, ground-truth poses enter scoring only"
+readout = "Fixed reciprocal local 3x3 centroid and mutual hard-match mask for fusion, same-image and block-6 encoder controls"
+solver = "Native normalized eight-point essential RANSAC, 3 original-pixel Sampson threshold, deterministic maximum 2048 trials, signed cheirality"
+metrics = ["rotation and signed translation-direction degrees", "failure-inclusive pose AUC5/10/20 and recall", "per-sequence errors and solver success"]
+aggregation = "Equal pairs within sequence, then equal sequences"
+evaluation_use = "First frozen Pilot10 evaluation was locally independent; any later use is development; encoder-pretraining overlap unknown"
+qualification_status = "Pilot10 improves macro pose recall but fails the all-sequence AUC10 gate against its same-image control"
+selection_record = ".data/pilot-10/selection.toml"
+score_artifact = ".data/pilot-10/pose-score.json"
+published_number_comparability = false
+reason = "Small registered cohort in one environment; not official five-point pose or SLAM protocol"
 
 [[protocols]]
 name = "eth3d-zeroco-parity"

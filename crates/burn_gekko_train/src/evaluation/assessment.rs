@@ -245,7 +245,12 @@ pub fn run<B: Backend>(c: &AssessmentConfig, out: &Path, device: &B::Device) -> 
             &dest.join("provenance.json"),
             &serde_json::json!({"checkpoint":item.weights,"dataset_id":manifest.dataset_id,"teacher_id":teacher_id,
             "assessment_config_sha256":sha256_file(&out.join("config.toml"))?,"training_mean_sha256":sha256_file(&parent.join("train-position-mean.f32"))?,
-            "noncommercial_weight_dependencies":[],"geometry_training_supervision":false,"status":"diagnostic; no external benchmark claim"}),
+            "noncommercial_weight_dependencies":[],
+            "evaluation_geometry_used_for_training":false,
+            "selected_training_phase_view_geometry":config.view_geometry,
+            "training_config_sha256":sha256_file(&parent.join("config.toml"))?,
+            "geometry_supervision_scope":"Selected training phase only; earlier supervision remains recorded in checkpoint ancestry. Evaluation geometry is scoring-only and never a model input.",
+            "status":"diagnostic; no external benchmark claim"}),
         )?;
     }
     Ok(())

@@ -1,0 +1,14 @@
+coordinate_tolerance = 0.00001
+output = ".data/pilot-11/pose-replay.json"
+
+[original]
+predictions = ".data/pilot-10/predictions/predictions.jsonl"
+predictions_sha256 = "3d3e954a2f8da9c7cd96af370fed8035196aff1d22d2226c7ccda09c4fbfbd43"
+provenance = ".data/pilot-10/predictions/provenance.json"
+provenance_sha256 = "d5ffc230719b0461defc9e6621cd7736d3c4cf80fe695212ba95b9670553e5ce"
+
+[replay]
+predictions = ".data/pilot-11/pose-export-replay/predictions.jsonl"
+predictions_sha256 = "3d3e954a2f8da9c7cd96af370fed8035196aff1d22d2226c7ccda09c4fbfbd43"
+provenance = ".data/pilot-11/pose-export-replay/provenance.json"
+provenance_sha256 = "87b14df853f653d04b191b2fd47ef6d48a22f0b9e6d3e8ce8f8c83d5825f1c1a"

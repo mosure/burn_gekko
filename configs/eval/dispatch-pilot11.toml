@@ -1,0 +1,10 @@
+description = "Whole discarded 64-update replay of main training prefix, including preparation and final evaluation. Native numerical-replay receipt determines qualification; profiler overhead is not main-run throughput."
+output = ".data/pilot-11/dispatch-summary.json"
+
+[gpu_trace]
+path = ".data/pilot-11/dispatch-trace_cuda_gpu_trace.json"
+sha256 = "0aea3a3c44c5cf77a900501ed43199a5e5524367ba404e2226f3f434fcc30e94"
+
+[api_trace]
+path = ".data/pilot-11/dispatch-trace_cuda_api_trace.json"
+sha256 = "91e2772fe644c1aec0469302df10fc124f627efed56fa53a3ad703d4362c1ca9"

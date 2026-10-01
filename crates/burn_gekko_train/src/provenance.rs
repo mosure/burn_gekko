@@ -2,8 +2,42 @@
 
 #[doc(hidden)]
 pub const SOURCES: &[(&str, &str)] = &[
+    ("bin/head_pilot.rs", include_str!("bin/head_pilot.rs")),
+    (
+        "training/heads/mod.rs",
+        include_str!("training/heads/mod.rs"),
+    ),
+    (
+        "training/heads/config.rs",
+        include_str!("training/heads/config.rs"),
+    ),
+    (
+        "training/heads/data.rs",
+        include_str!("training/heads/data.rs"),
+    ),
+    (
+        "training/heads/evaluation.rs",
+        include_str!("training/heads/evaluation.rs"),
+    ),
+    (
+        "training/heads/runner.rs",
+        include_str!("training/heads/runner.rs"),
+    ),
+    (
+        "evaluation/head_cache.rs",
+        include_str!("evaluation/head_cache.rs"),
+    ),
+    ("bin/head_cache.rs", include_str!("bin/head_cache.rs")),
+    (
+        "evaluation/refinement.rs",
+        include_str!("evaluation/refinement.rs"),
+    ),
     ("bin/e2e_pilot.rs", include_str!("bin/e2e_pilot.rs")),
     ("bin/eth3d_export.rs", include_str!("bin/eth3d_export.rs")),
+    (
+        "bin/real_pose_export.rs",
+        include_str!("bin/real_pose_export.rs"),
+    ),
     (
         "bin/hpatches_export.rs",
         include_str!("bin/hpatches_export.rs"),
@@ -40,6 +74,10 @@ pub const SOURCES: &[(&str, &str)] = &[
         include_str!("evaluation/equivariance.rs"),
     ),
     ("evaluation/eth3d.rs", include_str!("evaluation/eth3d.rs")),
+    (
+        "evaluation/eth3d/canonical.rs",
+        include_str!("evaluation/eth3d/canonical.rs"),
+    ),
     ("evaluation/fusion.rs", include_str!("evaluation/fusion.rs")),
     (
         "evaluation/hpatches.rs",
@@ -48,6 +86,18 @@ pub const SOURCES: &[(&str, &str)] = &[
     ("evaluation/latent.rs", include_str!("evaluation/latent.rs")),
     ("evaluation/mod.rs", include_str!("evaluation/mod.rs")),
     ("evaluation/rgb.rs", include_str!("evaluation/rgb.rs")),
+    (
+        "evaluation/real_pose.rs",
+        include_str!("evaluation/real_pose.rs"),
+    ),
+    (
+        "evaluation/view_geometry.rs",
+        include_str!("evaluation/view_geometry.rs"),
+    ),
+    (
+        "bin/view_geometry_export.rs",
+        include_str!("bin/view_geometry_export.rs"),
+    ),
     ("lib.rs", include_str!("lib.rs")),
     ("main.rs", include_str!("main.rs")),
     ("provenance.rs", include_str!("provenance.rs")),
@@ -61,6 +111,14 @@ pub const SOURCES: &[(&str, &str)] = &[
         include_str!("training/latent/equivariance.rs"),
     ),
     ("training/latent.rs", include_str!("training/latent.rs")),
+    (
+        "training/latent/view_geometry.rs",
+        include_str!("training/latent/view_geometry.rs"),
+    ),
+    (
+        "training/latent/preservation.rs",
+        include_str!("training/latent/preservation.rs"),
+    ),
     ("training/mod.rs", include_str!("training/mod.rs")),
     ("training/pilot.rs", include_str!("training/pilot.rs")),
     (

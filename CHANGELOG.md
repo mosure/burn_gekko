@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased
+
+- Independent camera calibration and RGB reconstruction heads, with bounded
+  cached-feature training, separate clipped optimizers, exact optimizer resume,
+  native angular/focal/RGB PSNR evaluation and verified page/PDF visualizations.
+- Pilot 12--14 feature preservation, renderer-supervised viewpoint training,
+  spatial-detail decomposition, reference-count uncertainty and camera solver
+  seed diagnostics. Failed accuracy and numerical qualification gates are retained.
+- Fixed local correspondence readout, retaining hard-index controls and adding
+  fractional coordinates for HPatches, ETH3D and known-transform evaluation.
+- Native paired transfer/precision gates and teacher-power feature SNR in dB.
+- Shared page/PDF metric explanations, percentage labels and complete-array
+  verification of feature SNR. RGB PSNR remains specific to actual RGB outputs.
+- A bounded Pilot 09 continuation using the unspent Pilot 08 command allowance.
+- Native TUM RGB preparation and calibrated camera-motion evaluation, with
+  deterministic essential RANSAC, explicit failed fits, per-sequence metrics and
+  annotated pose-probe panels kept separate from learned camera heads.
+- Registered Pilot 11 full-versus-tail encoder adaptation under a new, explicitly
+  authorized 12-hour GPU-command ceiling; results remain separate from planned gates.
+- Explicit TUM input grids through 512px, with unchanged original-pixel camera
+  calibration and a native correspondence-replay qualification contract.
+- Native training-prefix checks, matched continuation-parent validation and CUDA
+  trace interval analysis; process trace coverage is not presented as SM occupancy.
+- Shared selected-phase training/validation curves for the page and vector PDF,
+  excluding parent and post-checkpoint updates.
+
 ## 0.1.0
 
 Initial research release of `burn_gekko`, `burn_vjepa`, `burn_gekko_data`,

@@ -1,0 +1,7 @@
+original = ".data/runs/pilot-11-full-preflight/metrics.jsonl"
+original_sha256 = "b2d4942035a7e63cd2d05c46394235bfdf638dc5ae87aeb5412e3701dfc22d56"
+replay = ".data/runs/pilot-11-full-preflight-retry/metrics.jsonl"
+replay_sha256 = "b5387906123f6f914fee0157ed625a0a5c4db84117ca52e39143bb099b217a5c"
+absolute_tolerance = 0.000001
+relative_tolerance = 0.00001
+output = ".data/pilot-11/preflight-replay.json"

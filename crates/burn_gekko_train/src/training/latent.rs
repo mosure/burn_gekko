@@ -32,8 +32,12 @@ use std::{
 
 mod config;
 mod equivariance;
+mod preservation;
+mod view_geometry;
 pub use config::{LatentConfig, WeightAncestor};
 pub(crate) use config::{Snapshot, audited_checkpoint};
+pub use preservation::EncoderPreservationConfig;
+pub use view_geometry::ViewGeometryConfig;
 
 fn save_checkpoint<
     B: AutodiffBackend,
@@ -117,6 +121,18 @@ pub fn run<B: AutodiffBackend>(
     };
     let (training, train_entries) = load(Split::Train, c.train_rooms)?;
     let (validation, val_entries) = load(Split::Validation, c.validation_rooms)?;
+    let geometry_targets = view_geometry::Targets::load(c, &train_entries)?;
+    if let Some(config) = &c.view_geometry {
+        write_json(
+            &run.join("view-geometry-provenance.json"),
+            &serde_json::json!({
+                "supervision":"renderer geometry; training labels only; RGB-only inference",
+                "config":config,"cache_manifest_sha256":sha256_file(&config.cache.join("manifest.json"))?,
+                "policy":burn_gekko_data::view_targets::POLICY,
+                "reference_schedule":"step modulo reference count, plus one cyclic view offset; bidirectional; excludes nonvisible and border rows"
+            }),
+        )?;
+    }
     let (teacher, ec, teacher_id) = load_encoder::<B::InnerBackend>(&c.teacher, c.seed, device)?;
     let affinity_layers: Vec<_> = c
         .fusion_auxiliary
@@ -251,6 +267,14 @@ pub fn run<B: AutodiffBackend>(
     } else {
         None
     };
+    // Re-load this fixed source on exact resume; never anchor to the resumed student.
+    let preservation_anchor = c
+        .encoder_preservation
+        .as_ref()
+        .map(|config| {
+            preservation::FrozenEncoder::<B::InnerBackend>::load(config, &teacher_id, device)
+        })
+        .transpose()?;
     let grid = [manifest.config.height / 16, manifest.config.width / 16];
     // Position-conditioned constant predictor fitted exclusively on the first 16 training rooms.
     let mut train_mean =
@@ -279,9 +303,10 @@ pub fn run<B: AutodiffBackend>(
     } else {
         "same package as teacher; random fusion and prediction heads"
     };
+    let source_sha256 = crate::provenance::identity()?;
     write_json(
         &run.join("provenance.json"),
-        &serde_json::json!({"task":"fixed_vjepa21_latent_prediction","identity":identity,"dataset_id":manifest.dataset_id,"teacher_id":teacher_id,"backend":backend,"student_initialization":student_initialization,"warm_start":c.warm_start,"teacher_update":"never","dense_teacher_input":"loss only","feature_cache":"none; online teacher and student forwards","rgb_source":"immutable disk capture; selected RGB resident on host","noncommercial_weight_dependencies":[],"mean_baseline_training_rooms":mean_rooms,"resume":resume,"training_room_seeds":train_entries.iter().map(|e|e.seed).collect::<Vec<_>>(),"validation_room_seeds":val_entries.iter().map(|e|e.seed).collect::<Vec<_>>()}),
+        &serde_json::json!({"task":"fixed_vjepa21_latent_prediction","identity":identity,"source_sha256":source_sha256,"dataset_id":manifest.dataset_id,"teacher_id":teacher_id,"backend":backend,"student_initialization":student_initialization,"warm_start":c.warm_start,"encoder_preservation":c.encoder_preservation,"preservation_protocol":"training-only frozen ancestor; raw final-feature MSE divided by per-image anchor energy, floor 1e-6; equal sparse-target/full-target/reference route weight; intermediate spatial features have no direct preservation target","teacher_update":"never","dense_teacher_input":"loss only","feature_cache":"none; online teacher and student forwards","rgb_source":"immutable disk capture; selected RGB resident on host","noncommercial_weight_dependencies":[],"mean_baseline_training_rooms":mean_rooms,"resume":resume,"training_room_seeds":train_entries.iter().map(|e|e.seed).collect::<Vec<_>>(),"validation_room_seeds":val_entries.iter().map(|e|e.seed).collect::<Vec<_>>()}),
     )?;
     eprintln!("initial latent validation");
     let initial = evaluate(
@@ -311,6 +336,20 @@ pub fn run<B: AutodiffBackend>(
     };
     let depth = model.encoder.blocks.len();
     model = model.train_encoder(blocks(gate.stage, depth));
+    let preservation_initial_parameters = if start == 0
+        && c.encoder_preservation
+            .as_ref()
+            .is_some_and(|p| c.warm_start.as_ref() == Some(&p.anchor))
+    {
+        Some(
+            preservation_anchor
+                .as_ref()
+                .unwrap()
+                .initial_parameter_check(&model.encoder.valid())?,
+        )
+    } else {
+        None
+    };
     let first_before = model.encoder.blocks[0].attn.qkv.weight.val().detach();
     let last_before = model.encoder.blocks[depth - 1]
         .attn
@@ -330,6 +369,12 @@ pub fn run<B: AutodiffBackend>(
     let mut times = Vec::new();
     let mut stage_steps = [0usize; 3];
     let prepare_seconds = wall.elapsed().as_secs_f64();
+    let mut weight_ancestors = c.warm_start.iter().cloned().collect::<Vec<_>>();
+    if let Some(config) = &c.encoder_preservation
+        && !weight_ancestors.contains(&config.anchor)
+    {
+        weight_ancestors.push(config.anchor.clone());
+    }
     let metadata = |step, gate: UnfreezeGate| Snapshot {
         identity: identity.clone(),
         dataset_id: manifest.dataset_id.clone(),
@@ -341,7 +386,7 @@ pub fn run<B: AutodiffBackend>(
         encoder_optimizer_sha256: String::new(),
         fusion_optimizer_sha256: String::new(),
         noncommercial_weight_dependencies: Vec::new(),
-        weight_ancestors: c.warm_start.iter().cloned().collect(),
+        weight_ancestors: weight_ancestors.clone(),
     };
     for step in start..c.steps {
         if wall.elapsed().as_secs() >= c.max_seconds || run.join("STOP").exists() {
@@ -371,6 +416,9 @@ pub fn run<B: AutodiffBackend>(
         let augmentation_seconds = augmentation_start.elapsed().as_secs_f64();
         let warp_valid_fraction = warped.as_ref().map(|b| b.valid_fraction);
         let (rgb, refs) = host_batch::<B::InnerBackend>(&training, &samples, c.references, device);
+        let preservation_targets = preservation_anchor
+            .as_ref()
+            .map(|anchor| anchor.targets(rgb.clone(), &refs, &mask));
         let targets = teacher
             .forward_image(normalize(rgb.clone(), &ec), None)
             .tokens;
@@ -420,16 +468,27 @@ pub fn run<B: AutodiffBackend>(
         let target = Tensor::<B, 4>::from_inner(rgb);
         let references: Vec<_> = refs.into_iter().map(Tensor::<B, 4>::from_inner).collect();
         let features = model.encode_references(&references);
-        let prediction = model.predict_encoded(
-            model.encode(target.clone(), Some(&mask)),
-            features.clone(),
-            &mask,
-            grid,
-        )?;
+        let sparse_target = model.encode(target.clone(), Some(&mask));
+        let prediction =
+            model.predict_encoded(sparse_target.clone(), features.clone(), &mask, grid)?;
         let dense_target = (c.fusion_auxiliary.enabled()
+            || c.view_geometry.is_some()
+            || c.encoder_preservation.is_some()
             || c.equivariance.is_some()
             || (c.ri_weight > 0. && step >= c.ri_start_step))
             .then(|| model.encode(target, None));
+        let preservation_routes = preservation_targets
+            .map(|targets| {
+                preservation::route_losses(
+                    &model,
+                    sparse_target,
+                    dense_target.as_ref().unwrap().clone(),
+                    &features,
+                    targets,
+                )
+            })
+            .unwrap_or_else(|| Tensor::zeros([1], device));
+        let preservation_loss = preservation_routes.clone().mean();
         let (aux_attention, aux_dense, aux_descriptor) =
             if let Some((target_teacher, reference_teacher, hierarchy)) = auxiliary_teacher {
                 let pair = model.fusion.decoder.pair_training(
@@ -532,6 +591,18 @@ pub fn run<B: AutodiffBackend>(
         } else {
             (Tensor::zeros([1], device), Tensor::zeros([1], device))
         };
+        let (geometry_nll, geometry_valid_fraction) = if let Some(targets) = &geometry_targets {
+            targets.loss(
+                &model,
+                dense_target.as_ref().unwrap().clone(),
+                features[auxiliary_reference].clone(),
+                &samples,
+                auxiliary_reference + 1,
+                c.view_geometry.as_ref().unwrap(),
+            )?
+        } else {
+            (Tensor::zeros([1], device), 0.)
+        };
         let ri = if c.ri_weight > 0. && step >= c.ri_start_step {
             Some(model.predict_improvement(dense_target.unwrap(), features, grid)?)
         } else {
@@ -554,6 +625,12 @@ pub fn run<B: AutodiffBackend>(
                 + (warp_pair.clone() + warp_self.clone() * config.self_weight)
                     * (config.weight / (1. + config.self_weight));
         }
+        if let Some(config) = &c.encoder_preservation {
+            loss.total = loss.total + preservation_loss.clone() * config.weight;
+        }
+        if let Some(config) = &c.view_geometry {
+            loss.total = loss.total + geometry_nll.clone() * config.weight;
+        }
         // Logging must not build an unused differentiable branch from the loss.
         let readings = values(Tensor::<B::InnerBackend, 1>::cat(
             vec![
@@ -567,9 +644,25 @@ pub fn run<B: AutodiffBackend>(
                 aux_descriptor.inner(),
                 warp_pair.inner(),
                 warp_self.inner(),
+                preservation_loss.inner(),
+                geometry_nll.inner(),
             ],
             0,
         ))?;
+        if step == 0
+            && let Some(parameters) = &preservation_initial_parameters
+        {
+            write_json(
+                &run.join("preservation-startup.json"),
+                &serde_json::json!({
+                    "schema":1,"parameters":parameters,
+                    "route_relative_mse":values(preservation_routes.inner())?,
+                    "mean_relative_mse":readings[10],
+                    "route_order":"sparse target, full target, full references in input order",
+                    "scope":"Common-parent startup, before any optimizer update. Recorded forward discrepancies include backend numerics."
+                }),
+            )?;
+        }
         let mut grads = GradientsParams::from_grads(loss.total.backward(), &model);
         let norm = clip(&model, &mut grads, 1.)?;
         let encoder_grads = take_gradients(&model.encoder, &mut grads);
@@ -595,7 +688,7 @@ pub fn run<B: AutodiffBackend>(
         writeln!(
             log,
             "{}",
-            serde_json::json!({"step":completed,"total":readings[0],"cross":readings[1],"monocular":readings[2],"visible":readings[3],"ri":readings[4],"attention_kl":readings[5],"dense_latent_mse":readings[6],"descriptor_kl":readings[7],"warp_pair_nll":readings[8],"warp_self_nll":readings[9],"warp_valid_fraction":warp_valid_fraction,"augmentation_seconds":augmentation_seconds,"gradient_norm":norm,"learning_rate":lr,"encoder_gradient_tensors":encoder_gradient_tensors,"stage":gate.stage,"seconds":times.last(),"samples":samples.iter().map(|&(s,v)|(training[s].seed,v)).collect::<Vec<_>>()})
+            serde_json::json!({"step":completed,"total":readings[0],"cross":readings[1],"monocular":readings[2],"visible":readings[3],"ri":readings[4],"attention_kl":readings[5],"dense_latent_mse":readings[6],"descriptor_kl":readings[7],"warp_pair_nll":readings[8],"warp_self_nll":readings[9],"encoder_preservation_mse":readings[10],"view_geometry_nll":readings[11],"view_geometry_valid_fraction":geometry_valid_fraction,"warp_valid_fraction":warp_valid_fraction,"augmentation_seconds":augmentation_seconds,"gradient_norm":norm,"learning_rate":lr,"encoder_gradient_tensors":encoder_gradient_tensors,"stage":gate.stage,"seconds":times.last(),"samples":samples.iter().map(|&(s,v)|(training[s].seed,v)).collect::<Vec<_>>()})
         )?;
         log.flush()?;
         if completed.is_multiple_of(50) {
@@ -686,6 +779,14 @@ pub fn run<B: AutodiffBackend>(
             .max(),
     )?;
     ensure!(teacher_delta == 0., "teacher changed");
+    let preservation_deltas = preservation_anchor
+        .as_ref()
+        .map(|a| a.probe_deltas())
+        .transpose()?;
+    ensure!(
+        preservation_deltas.is_none_or(|d| d == [0., 0.]),
+        "preservation anchor changed"
+    );
     let mut warm = times
         .iter()
         .skip(10.min(times.len() / 2))
@@ -701,7 +802,7 @@ pub fn run<B: AutodiffBackend>(
     ensure!(head_delta > 0., "latent head did not update");
     write_json(
         &run.join("report.json"),
-        &serde_json::json!({"schema":1,"status":"completed_diagnostic","task":"fixed_vjepa21_latent_prediction","rgb_blur_resolved":false,"completed_steps":completed,"starting_step":start,"stop_reason":if completed==c.steps{"step_limit"}else if run.join("STOP").exists(){"stop_file"}else{"wall_limit"},"prepare_seconds":prepare_seconds,"run_seconds":wall.elapsed().as_secs_f64(),"median_update_seconds":median,"warm_targets_per_second":c.batch_size as f64/median,"stage_steps":stage_steps,"teacher_max_abs_delta":teacher_delta,"prediction_head_max_abs_delta":head_delta,"first_encoder_max_abs_delta":scalar((model.encoder.blocks[0].attn.qkv.weight.val().detach()-first_before).abs().max())?,"last_encoder_max_abs_delta":scalar((model.encoder.blocks[depth-1].attn.qkv.weight.val().detach()-last_before).abs().max())?,"initial_validation_cross_mse":initial_mse,"final_validation":final_eval,"training_probe":train_eval,"probes":probes}),
+        &serde_json::json!({"schema":1,"status":"completed_diagnostic","task":"fixed_vjepa21_latent_prediction","rgb_blur_resolved":false,"completed_steps":completed,"starting_step":start,"stop_reason":if completed==c.steps{"step_limit"}else if run.join("STOP").exists(){"stop_file"}else{"wall_limit"},"prepare_seconds":prepare_seconds,"run_seconds":wall.elapsed().as_secs_f64(),"median_update_seconds":median,"warm_targets_per_second":c.batch_size as f64/median,"stage_steps":stage_steps,"teacher_max_abs_delta":teacher_delta,"preservation_anchor_qkv_max_abs_delta":preservation_deltas,"prediction_head_max_abs_delta":head_delta,"first_encoder_max_abs_delta":scalar((model.encoder.blocks[0].attn.qkv.weight.val().detach()-first_before).abs().max())?,"last_encoder_max_abs_delta":scalar((model.encoder.blocks[depth-1].attn.qkv.weight.val().detach()-last_before).abs().max())?,"initial_validation_cross_mse":initial_mse,"final_validation":final_eval,"training_probe":train_eval,"probes":probes}),
     )?;
     Ok(())
 }

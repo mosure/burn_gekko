@@ -60,11 +60,16 @@ pub fn build(
             .unwrap();
             image::imageops::replace(&mut image, &tile, offset as i64, 0);
         }
+        let method = if data["methods"].get("spatial_pair_local").is_some() {
+            "spatial_pair_local"
+        } else {
+            "spatial_pair"
+        };
         let row = data["records"]
             .as_array()
             .context("warp records")?
             .iter()
-            .find(|r| r["sample"] == id && r["direction"] == 0 && r["method"] == "spatial_pair")
+            .find(|r| r["sample"] == id && r["direction"] == 0 && r["method"] == method)
             .context("missing pair descriptor predictions")?;
         let points = row["score"]["points"].as_array().context("warp points")?;
         ensure!(!points.is_empty(), "no drawable correspondences");
@@ -98,7 +103,7 @@ pub fn build(
         let file = format!("media/known-warp-{id}.png");
         image.save(out.join(&file))?;
         figures.push(CorrespondenceFigure {title:format!("Known image transform / room {}",sample["room_seed"]),file,
-            caption:format!("Original RGB left; transformed RGB right. Blue lines connect source queries to known green target locations; orange marks model predictions, with yellow error segments. Pair-conditioned descriptor, mean endpoint error {:.2} input pixels. First four validation rooms, eight evenly spaced valid queries per image. This is an augmentation diagnostic, not a real viewpoint benchmark.",row["score"]["mean_epe"].as_f64().context("warp AEPE")?) });
+            caption:format!("Original RGB left; transformed RGB right. Blue lines connect source queries to known green target locations; orange marks model predictions, with yellow error segments. {}, mean endpoint error {:.2} input pixels. First four validation rooms, eight evenly spaced valid queries per image. This is an augmentation diagnostic, not a real viewpoint benchmark.",crate::display::readout(method),row["score"]["mean_epe"].as_f64().context("warp AEPE")?) });
     }
     Ok(figures)
 }

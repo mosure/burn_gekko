@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-12-preserved-screen"
+ledger = ".data/pilot-12/preserved-screen-run/ledger.json"
+telemetry = ".data/pilot-12/preserved-screen-run/preserved-screen-gpu.jsonl"
+command = "preserved-screen"
+output = ".data/pilot-12/preserved-screen-summary.json"

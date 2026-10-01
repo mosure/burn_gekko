@@ -25,6 +25,8 @@ pub struct EquivarianceAuditConfig {
     pub rooms: usize,
     pub seed: u64,
     pub augmentation: EquivarianceConfig,
+    #[serde(default)]
+    pub local_refinement: bool,
 }
 
 pub fn run<B: Backend>(c: &EquivarianceAuditConfig, out: &Path, device: &B::Device) -> Result<()> {
@@ -115,15 +117,48 @@ pub fn run<B: Backend>(c: &EquivarianceAuditConfig, out: &Path, device: &B::Devi
                     c.augmentation.temperature,
                 ))?;
             for (direction, (a, b)) in [(a.clone(), b.clone()), (b, a)].into_iter().enumerate() {
-                let (indices, _) = conditional_matches(a, b, c.augmentation.temperature)?;
-                let score = burn_gekko_eval::warp::score(&indices, &labels[direction], grid, 16)?;
-                summary.entry(name.into()).or_default().push((
-                    score.mean_epe,
-                    score.pck_half_patch,
-                    score.pck_one_patch,
-                    nll,
-                ));
-                records.push(serde_json::json!({"room_seed":scene.seed,"sample":i,"method":name,"direction":direction,"nll_bidirectional":nll,"score":score}));
+                let readouts = if c.local_refinement {
+                    crate::evaluation::refinement::descriptor_readouts(
+                        name,
+                        a,
+                        b,
+                        grid,
+                        c.augmentation.temperature,
+                    )?
+                    .to_vec()
+                } else {
+                    let (indices, mutual) = conditional_matches(a, b, c.augmentation.temperature)?;
+                    vec![crate::evaluation::refinement::Readout {
+                        method: name.into(),
+                        indices,
+                        mutual,
+                        coordinates: None,
+                    }]
+                };
+                for readout in readouts {
+                    let score = if let Some(coordinates) = &readout.coordinates {
+                        burn_gekko_eval::warp::score_coordinates(
+                            coordinates,
+                            &labels[direction],
+                            grid,
+                            16,
+                        )?
+                    } else {
+                        burn_gekko_eval::warp::score(
+                            &readout.indices,
+                            &labels[direction],
+                            grid,
+                            16,
+                        )?
+                    };
+                    summary.entry(readout.method.clone()).or_default().push((
+                        score.mean_epe,
+                        score.pck_half_patch,
+                        score.pck_one_patch,
+                        nll,
+                    ));
+                    records.push(serde_json::json!({"room_seed":scene.seed,"sample":i,"method":readout.method,"direction":direction,"nll_bidirectional":nll,"score":score}));
+                }
             }
         }
         if i < 4 {

@@ -1,0 +1,5 @@
+directory = ".data/pilot-14/references-3/model"
+metrics_sha256 = "5ef41aea25ad2427a09dc2ca7dcf8c1c466fa4422d185c1a43420c440a829c8c"
+provenance_sha256 = "deb925638d1280d2a3745a4732b90bb66746f7b556e4d988c8eaf6e97182b895"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+output = ".data/pilot-14/detail-references-3-reviewed.json"

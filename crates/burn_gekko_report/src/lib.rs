@@ -5,9 +5,14 @@ mod display;
 mod equivariance;
 pub mod experiment;
 mod figures;
+mod latent_metrics;
+mod learning;
+mod output_heads;
 mod page;
 mod paper;
+mod pose;
 pub mod validate;
+mod view_geometry;
 use anyhow::{Result, ensure};
 use std::{fs, path::Path};
 
@@ -27,8 +32,29 @@ pub fn build(spec: &Path, output: &Path, pdf: bool) -> Result<()> {
         output,
         &mut additional_sources,
     )?);
+    correspondence.extend(view_geometry::build(
+        &experiment,
+        output,
+        &mut additional_sources,
+    )?);
+    if let Some(pose) = &report.calibrated_pose {
+        correspondence.extend(pose::build(pose, output, &mut additional_sources)?);
+    }
+    if let Some(heads) = &experiment.output_heads {
+        correspondence.extend(output_heads::figures(
+            heads,
+            output,
+            &mut additional_sources,
+        )?);
+    }
     report.sources.extend(additional_sources);
-    figures::training_curve(&experiment.run, output, &mut report.sources)?;
+    learning::write(
+        &experiment.run,
+        report.training["starting_step"].as_u64().unwrap(),
+        report.training["checkpoint_step"].as_u64().unwrap(),
+        output,
+        &mut report.sources,
+    )?;
     page::write(&experiment, &report, &samples, &correspondence, output, pdf)?;
     paper::write(&experiment, &report, &samples, &correspondence, output, pdf)?;
     fs::copy(spec, output.join("experiment.toml"))?;
@@ -51,7 +77,7 @@ pub fn build(spec: &Path, output: &Path, pdf: bool) -> Result<()> {
     visit(output, output, &mut files)?;
     burn_gekko_data::write_json(
         &output.join("bundle.json"),
-        &serde_json::json!({"schema":1,"experiment_id":experiment.id,"checkpoint_sha256":experiment.checkpoint_sha256,"publication_status":"private draft; not committed, pushed or deployed","files":files}),
+        &serde_json::json!({"schema":1,"experiment_id":experiment.id,"checkpoint_sha256":experiment.checkpoint_sha256,"publication_status":"prepared research bundle; deployment is managed separately","files":files}),
     )?;
     Ok(())
 }

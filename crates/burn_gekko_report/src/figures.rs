@@ -10,11 +10,7 @@ use image::{
 };
 use serde::Serialize;
 use serde_json::Value;
-use std::{
-    fs,
-    io::{BufRead, BufReader},
-    path::Path,
-};
+use std::{fs, path::Path};
 
 pub fn floats(path: &Path, sources: &mut Vec<Source>) -> Result<Vec<f32>> {
     record(path, sources)?;
@@ -74,6 +70,7 @@ pub struct Sample {
     pub target_view: usize,
     pub mse: f64,
     pub cosine: f64,
+    pub feature_snr_db: Option<f64>,
     pub panels: Vec<(String, String)>,
     pub contact_sheet: String,
 }
@@ -406,6 +403,7 @@ pub fn build_samples(e: &Experiment, out: &Path, sources: &mut Vec<Source>) -> R
             target_view: view,
             mse: check.mse,
             cosine: check.cosine.unwrap_or(0.),
+            feature_snr_db: check.signal_to_error_db,
             panels,
             contact_sheet,
         });
@@ -418,72 +416,4 @@ pub fn build_samples(e: &Experiment, out: &Path, sources: &mut Vec<Source>) -> R
     );
     burn_gekko_data::write_json(&out.join("media/samples.json"), &samples)?;
     Ok(samples)
-}
-pub fn training_curve(run: &Path, out: &Path, sources: &mut Vec<Source>) -> Result<()> {
-    let file = run.join("metrics.jsonl");
-    record(&file, sources)?;
-    let rows = BufReader::new(fs::File::open(&file)?)
-        .lines()
-        .map(|line| Ok(serde_json::from_str::<Value>(&line?)?))
-        .collect::<Result<Vec<_>>>()?;
-    ensure!(!rows.is_empty(), "training log is empty");
-    let mut points = Vec::new();
-    for chunk in rows.chunks(50) {
-        let mean = |key: &str| -> Result<f64> {
-            Ok(chunk
-                .iter()
-                .map(|r| {
-                    r[key]
-                        .as_f64()
-                        .filter(|v| v.is_finite())
-                        .context("invalid training metric")
-                })
-                .collect::<Result<Vec<_>>>()?
-                .iter()
-                .sum::<f64>()
-                / chunk.len() as f64)
-        };
-        points.push((
-            chunk.last().unwrap()["step"]
-                .as_u64()
-                .context("training step")? as f64,
-            mean("cross")?,
-            mean("monocular")?,
-        ));
-    }
-    let lo = points
-        .iter()
-        .map(|r| r.1.min(r.2))
-        .fold(f64::INFINITY, f64::min)
-        * 0.95;
-    let hi = points
-        .iter()
-        .map(|r| r.1.max(r.2))
-        .fold(f64::NEG_INFINITY, f64::max)
-        * 1.05;
-    let xmin = points[0].0;
-    let xmax = points.last().unwrap().0.max(xmin + 1.);
-    let coord = |x: f64, y: f64| {
-        (
-            70. + (x - xmin) / (xmax - xmin) * 770.,
-            280. - (y - lo) / (hi - lo).max(1e-12) * 220.,
-        )
-    };
-    let mut paths = [String::new(), String::new()];
-    for (j, path) in paths.iter_mut().enumerate() {
-        for (i, p) in points.iter().enumerate() {
-            let (x, y) = coord(p.0, if j == 0 { p.1 } else { p.2 });
-            path.push_str(&format!(
-                "{} {x:.2} {y:.2} ",
-                if i == 0 { "M" } else { "L" }
-            ));
-        }
-    }
-    let svg = format!(
-        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 350' role='img' aria-label='Training latent MSE'><rect width='900' height='350' fill='#fff'/><g font-family='sans-serif' font-size='16' fill='#25354b'><text x='70' y='28'>Training latent MSE · 50-update means · one run</text><path d='M70 55V280H840' fill='none' stroke='#8997ab'/><text x='12' y='65'>{hi:.3}</text><text x='12' y='280'>{lo:.3}</text><text x='70' y='305'>{xmin:.0}</text><text x='780' y='305'>{xmax:.0}</text><text x='350' y='335'>Optimizer update</text><text x='540' y='28' fill='#148c78'>Cross-view</text><text x='690' y='28' fill='#db7957'>Monocular</text></g><path d='{}' stroke='#148c78' stroke-width='3' fill='none'/><path d='{}' stroke='#db7957' stroke-width='3' fill='none'/></svg>",
-        paths[0], paths[1]
-    );
-    fs::write(out.join("media/training.svg"), svg)?;
-    burn_gekko_data::write_json(&out.join("media/training.json"), &points)?;
-    Ok(())
 }

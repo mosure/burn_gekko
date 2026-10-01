@@ -1,0 +1,21 @@
+images = ".data/benchmarks/tum-rgbd/pilot10/images.json"
+images_sha256 = "4786b4eca81a7d5c25eb4e1416e1b7a60cb5a3159523728165d26d3b3e69f554"
+labels = ".data/benchmarks/tum-rgbd/pilot10/labels.json"
+labels_sha256 = "24559d68d700b597858a45dcb87ea4c3275bb58f0a5a41d35ac0171a74122e2b"
+predictions = ".data/pilot-10/predictions/predictions.jsonl"
+predictions_sha256 = "3d3e954a2f8da9c7cd96af370fed8035196aff1d22d2226c7ccda09c4fbfbd43"
+provenance = ".data/pilot-10/predictions/provenance.json"
+provenance_sha256 = "d5ffc230719b0461defc9e6621cd7736d3c4cf80fe695212ba95b9670553e5ce"
+checkpoint_sha256 = "a02277687d0f10cebd7bfe9e487facc6c24d461ea67a377e29b8f04b495d7185"
+methods = ["spatial_residual_conditional_local", "spatial_self_conditional_local", "student_l06_centered_conditional_local"]
+threshold_original_pixels = 3.0
+minimum_baseline_meters = 0.01
+output = ".data/pilot-10/pose-score.json"
+
+[solver]
+max_trials = 2048
+min_trials = 64
+confidence = 0.999
+threshold = 0.005583472920156337
+min_inliers = 12
+seed = 781

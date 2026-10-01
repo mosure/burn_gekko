@@ -1,0 +1,11 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+spatial_layer = 6
+self_conditioned_readouts = true
+local_refinement = true
+
+[[models]]
+name = "model"
+checkpoint = ".data/runs/pilot-12-tail-screen/final"
+model_sha256 = "d6508b27e661be35d82294c75d9a8196949a76450576e774b8270244670e884e"

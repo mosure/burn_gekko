@@ -1,0 +1,10 @@
+images = ".data/pilot-11/tum-development/images.json"
+images_sha256 = "c11287f1d44ca7cc4be8a1732125b415fdf9851539218dcf9c91f4a90f88a24d"
+spatial_layer = 6
+selection = ".data/pilot-12/tail-screen/pose-selection.toml"
+selection_sha256 = "9091dab6ec8403e45dd71bfeddd454b9d172da4acb90c01d7863664396a770be"
+
+[model]
+name = "model"
+checkpoint = ".data/runs/pilot-12-tail-screen/final"
+model_sha256 = "d6508b27e661be35d82294c75d9a8196949a76450576e774b8270244670e884e"

@@ -1,0 +1,15 @@
+dataset = ".data/datasets/03cb8d426bf372dbe11d5b8db7a7462cac5ebfcdee07b98a5ccd14592b5157fa"
+split = "test"
+rooms = 128
+export_rooms = 128
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 751
+stable_attention = false
+correspondence = false
+references = 2
+
+[[models]]
+name = "local_readout"
+checkpoint = ".data/runs/pilot-09-local-readout/final"
+model_sha256 = "a02277687d0f10cebd7bfe9e487facc6c24d461ea67a377e29b8f04b495d7185"

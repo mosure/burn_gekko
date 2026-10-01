@@ -1,0 +1,7 @@
+original = ".data/runs/pilot-11-batch-a-before/metrics.jsonl"
+original_sha256 = "de940c789c67f63e09db29b7590db544ca6d5495ce43c8202a29b21ef6373b97"
+replay = ".data/runs/pilot-11-batch-a-after/metrics.jsonl"
+replay_sha256 = "a9d713eada09b694c9aa22200fbc6da25bddcdf13fa7b2e9c51d7f1656f4a25c"
+absolute_tolerance = 0.000001
+relative_tolerance = 0.00001
+output = ".data/pilot-11/batch-probe/replay.json"

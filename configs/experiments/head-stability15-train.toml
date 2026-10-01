@@ -1,0 +1,13 @@
+cache = ".data/head-stability-15/cache"
+cache_sha256 = "b3b0a24e70f195c5bbf50a8185e2ef1b9125ec7a0a25f144a49914456daba60f"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+seed = 857
+steps = 800
+warmup_steps = 32
+width = 64
+rgb_batch = 128
+camera_batch = 8
+learning_rate = 0.001
+weight_decay = 0.001
+max_seconds = 1200
+eval_every = 200

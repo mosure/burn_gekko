@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-11-batch-a-before"
+ledger = ".data/pilot-11/batch-probe/a-before-run/ledger.json"
+telemetry = ".data/pilot-11/batch-probe/a-before-run/a-before-gpu.jsonl"
+command = "a-before"
+output = ".data/pilot-11/batch-probe/a-before-summary.json"

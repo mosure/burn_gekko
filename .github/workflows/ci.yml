@@ -34,6 +34,8 @@ jobs:
       - run: rustfmt --edition 2024 --check crates/burn_vjepa/src/provenance.rs
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - run: cargo test --workspace --locked
+      - name: Validate project page and paper
+        run: cargo run --locked -p burn_gekko_report --bin gekko-report -- validate --bundle www/project
       - run: cargo doc --workspace --no-deps --locked
         env:
           RUSTDOCFLAGS: -D warnings

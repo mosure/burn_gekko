@@ -1,0 +1,5 @@
+directory = ".data/pilot-13/fresh-latent/model"
+metrics_sha256 = "fb6baf4c9581d6042310b2dedb14f8780243ec3c3c4d9ab46ac7eec3f89878ad"
+provenance_sha256 = "0ae335f2a88c44da951c50aeb84fcbf47be10ec34ea7b4f1a6e7bbb0aff937df"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+output = ".data/pilot-14/detail-references-2.json"

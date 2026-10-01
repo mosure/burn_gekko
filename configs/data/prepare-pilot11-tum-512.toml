@@ -1,0 +1,24 @@
+output = ".data/benchmarks/tum-rgbd/pilot11-512"
+anchors_per_sequence = 32
+frame_intervals = [15, 60]
+max_association_seconds = 0.02
+evaluation_use = "development"
+image_size = 512
+
+[[sequences]]
+name = "long_office_household"
+directory = ".data/benchmarks/tum-rgbd/raw/rgbd_dataset_freiburg3_long_office_household"
+archive = ".data/benchmarks/tum-rgbd/archives/long_office_household.tgz"
+archive_sha256 = "c7cd8e1afb87c80e5744a356214819b110fa09b4744fa4ba0cc2382f9ba59e9c"
+
+[[sequences]]
+name = "structure_texture_far"
+directory = ".data/benchmarks/tum-rgbd/raw/rgbd_dataset_freiburg3_structure_texture_far"
+archive = ".data/benchmarks/tum-rgbd/archives/structure_texture_far.tgz"
+archive_sha256 = "3f58c707f54c93b68fecd77293630e96a76d7b0f2703eb8ad9cff45ba4bbb81a"
+
+[[sequences]]
+name = "structure_texture_near"
+directory = ".data/benchmarks/tum-rgbd/raw/rgbd_dataset_freiburg3_structure_texture_near"
+archive = ".data/benchmarks/tum-rgbd/archives/structure_texture_near.tgz"
+archive_sha256 = "c7dfd479b6bf84d87848882d8dfa93715bfa55f4f45d4adc072a67d2f0363df9"

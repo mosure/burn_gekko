@@ -36,6 +36,15 @@ tempfile = "3"
 name = "gekko"
 path = "src/main.rs"
 
+[[bin]]
+name = "head_pilot"
+path = "src/bin/head_pilot.rs"
+required-features = ["ndarray"]
+
+[[test]]
+name = "head_training"
+required-features = ["ndarray"]
+
 [[test]]
 name = "e2e_contracts"
 required-features = ["ndarray"]

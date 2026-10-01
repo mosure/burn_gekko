@@ -1,0 +1,3 @@
+# Run only after the read-only process monitor has stopped.
+input = ".data/pilot-11/shared-gpu-pmon.log"
+output = ".data/pilot-11/shared-gpu-activity.json"

@@ -1,0 +1,57 @@
+schema = 1
+id = "pilot09-local-readout"
+title = "burn_gekko: Refining Multi-View Correspondence"
+author = "Mitchell Mosure"
+description = "A completed 2,700-update continuation over 8,192 procedural rooms qualifies a fixed local correspondence readout. Within this checkpoint, matching accuracy within three pixels rises from 13.26% to 19.69% on HPatches and from 2.33% to 4.19% on ETH3D. Mean match error also decreases, and the refined pair descriptor beats equally refined encoder and trained same-image controls. Fresh-room latent prediction reaches 7.30 dB feature signal/error with about 6% error reduction from reference views. This is a positive development result, not an established state-of-the-art ranking."
+architecture = "An audited MIT V-JEPA 2.1 Base encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. Sparse completion uses 256 by 256 images, a 90% random target mask and two references. The spatial descriptor adds a learned correction bounded by 25% of the centered block-6 descriptor norm. Known RGB projective transforms supervise both pair-conditioned and shared-weight same-image descriptors at temperature 0.07; their combined loss has weight 0.1 alongside latent prediction and RI. This phase starts from an audited own checkpoint, resets both optimizers, and adapts the last two encoder blocks and hierarchical output norms from the first update. Earlier blocks, patch embedding and the teacher stay frozen. Trunk LR is 5e-5, encoder LR 1e-6, with 100 warmup steps and a fixed 2,700-step cosine horizon. The new inference operator preserves the hard match and computes a probability centroid in its fixed 3 by 3 neighborhood. Pair, same-image and encoder controls receive the same operator. No camera, renderer geometry or correspondence label enters inference. Pretrained weights are restricted to audited MIT V-JEPA and own checkpoints."
+run = ".data/runs/pilot-09-local-readout"
+checkpoint = ".data/runs/pilot-09-local-readout/final"
+checkpoint_sha256 = "a02277687d0f10cebd7bfe9e487facc6c24d461ea67a377e29b8f04b495d7185"
+sample_count = 6
+limitations = [
+  "All registered local-precision and same-operator fusion-transfer gates pass on both complete development protocols. Hard-readout ETH3D precision over the encoder still has an interval crossing zero; the refined comparison has a positive interval.",
+  "Hidden-target RGB perturbation has exactly zero effect. Strict reference-order invariance at 1e-5 fails: maximum feature change 0.004225, RMS 0.0001800.",
+  "Only 42.27% of teacher spatial feature variation is retained. The completion-by-visibility breakdown is explicitly post-hoc, uses majority labels and makes no causal claim about smoothing.",
+  "The held-out completion results condition on one fixed random mask; mask-seed and training-seed replication are not included.",
+  "The completed study uses 39.10 GPU-command minutes from the 48.04 minutes left by Pilot 08. Main training covers all 8,192 rooms and all 24,576 distinct room/view combinations, with 43,200 target exposures.",
+  "All reported comparisons use one checkpoint. Hard and fractional readouts are operator controls, and encoder/same-image descriptors are information controls within that checkpoint.",
+  "HPatches and ETH3D are development benchmarks after repeated prior use. Independent real-data confirmation, training-seed replication and protocol-matched public baselines remain necessary for a SOTA claim.",
+  "HPatches distances use a 240 by 240 scoring frame; ETH3D uses original image pixels. A three-pixel threshold has different relative size across these protocols. Model input is 256 by 256 in both.",
+  "This fixed local centroid does not reproduce published full-resolution refinement. The local-precision gate requires an entirely positive paired PCK3-gain interval and no mean AEPE regression against the hard pair readout.",
+  "The separate fusion-transfer gate requires an entirely positive paired AEPE-gain interval and no mean PCK3 regression against same-operator encoder and trained same-image controls. The intervals measure scene/sequence sampling, not training-seed uncertainty.",
+  "The fresh cohort contains 128 new test rooms with four cameras each, using a predeclared seed and wider camera baseline. It tests the same procedural generator and is not an independent real-world completion benchmark.",
+  "Feature signal/error is measured from teacher feature power and latent prediction error. It is not RGB PSNR. The checkpoint has no trained RGB reconstruction, camera or depth head, and this experiment cannot establish resolution of RGB blur.",
+  "The matching measurements concern the trained spatial descriptor. Raw decoder and attention matching are not evaluated in this focused study.",
+  "Known-transform evaluation is a 16-room development diagnostic with seed 1000751. Image homographies do not test nonplanar 3D parallax, disocclusion or camera recovery.",
+  "The 64-update preflight is qualification only and supplies no main-run weights. Its measured throughput reduced the registered main schedule from 2,800 to 2,700 updates before launch; the command ceiling was unchanged.",
+  "Power and GPU activity include shared desktop work. They are not process-attributed energy or SM occupancy. The study consumes only the unspent Pilot 08 GPU-command allowance.",
+]
+
+[latent]
+directory = ".data/pilot-09/heldout/local_readout"
+metrics_sha256 = "ac5eb305ccfdbf628367da229ef14edb152c612aa71488b80637f63c0c626cf4"
+provenance_sha256 = "81cb6c88e45443e3191e820cbdb64ad76d45a5df0f1ffa546f66c145605291bd"
+evaluation_use = "held_out"
+
+[equivariance]
+path = ".data/pilot-09/warp/metrics.json"
+sha256 = "643dd818d138c3447dc7bbe214fc92418544e14a184ab525c9d9a02c92d0221d"
+
+[[benchmarks]]
+path = ".data/pilot-09/hpatches-score.json"
+sha256 = "331bffc2f55f605c8b85185b954d3acc7aad26e4ac3173898eb58bb6bbc6b198"
+
+[[benchmarks]]
+path = ".data/pilot-09/eth3d-score.json"
+sha256 = "870507b210b02d5a24751591dd0714dae284e1fa8c072d4badde85fb1eed4c83"
+
+[efficiency]
+command = "training"
+
+[efficiency.ledger]
+path = ".data/pilot-09/training-run/ledger.json"
+sha256 = "f72153e1ac8be38968fc6df0e8defdd55973c6afd3bef6a69a3cf91e3ca8c042"
+
+[efficiency.telemetry]
+path = ".data/pilot-09/training-run/training-gpu.jsonl"
+sha256 = "ca39558e637558ac61b5fda22bf5aeb1cbcf1924d9b353738ca8bb3a91e59170"

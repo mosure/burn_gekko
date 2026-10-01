@@ -1,9 +1,13 @@
-# Prepared publishing destination
+# Project page and paper
 
-No deployment is enabled. The native generator prepares complete private bundles
-under `.data/publications/`. After approval, copy the reviewed bundle to
-`www/project/` and review/enable `.github/workflows/project-page.yml.disabled`.
-The workflow validates static artifacts and never starts training or data generation.
+`project/` contains the latest verified single-experiment bundle, including
+annotated RGB predictions, camera diagrams, metrics, source identities and PDF.
+Generate it with the native Rust reporter from
+`configs/publish/head-stability15.toml`. Open `project/index.html` locally or
+serve this folder using any static server.
 
-See [the publication guide](../docs/publication.md). No commit/push is performed
-as part of preparation.
+The deployment workflow remains disabled; committing the reviewed bundle does
+not enable GitHub Pages. CI validates the committed output hashes, images and
+local links without starting training or requiring local `.data/` inputs.
+
+See [the publication guide](../docs/publication.md).

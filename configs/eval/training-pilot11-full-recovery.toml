@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-11-full-recovery"
+ledger = ".data/pilot-11/recovery/main-training-run/ledger.json"
+telemetry = ".data/pilot-11/recovery/main-training-run/main-training-gpu.jsonl"
+command = "main-training"
+output = ".data/pilot-11/recovery/main-training-summary.json"

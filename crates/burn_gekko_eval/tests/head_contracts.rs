@@ -41,6 +41,36 @@ fn reference_counts_bind_weights_masks_actual_counts_and_monocular_isolation() {
     assert!(score(&c).unwrap_err().to_string().contains("count label"));
 }
 #[test]
+fn reference_uncertainty_pairs_rooms_with_unequal_view_counts() {
+    let t = tempfile::tempdir().unwrap();
+    let mut evaluations = vec![
+        assessment(t.path(), 3, 0.1, 0.8),
+        assessment(t.path(), 1, 0.4, 0.8),
+    ];
+    for e in &mut evaluations {
+        let path = e.directory.join("metrics.json");
+        let mut data: serde_json::Value =
+            serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+        data["rows"] = json!([(1,0,0.2),(1,1,0.),(2,0,0.6)].into_iter().map(|(seed,view,cross)|json!({"room_seed":seed,"target_view":view,"cross_mse":if e.references==1 {0.4} else {cross},"monocular_mse":0.8})).collect::<Vec<_>>());
+        burn_gekko_data::write_json(&path, &data).unwrap();
+        e.metrics_sha256 = burn_gekko_data::sha256_file(&path).unwrap();
+    }
+    let config = Config {
+        checkpoint_sha256: "a".repeat(64),
+        evaluations,
+        output: t.path().join("result.json"),
+    };
+    score(&config).unwrap();
+    let result: serde_json::Value =
+        serde_json::from_slice(&fs::read(config.output.with_extension("provenance.json")).unwrap())
+            .unwrap();
+    let contrast = &result["contrasts"][0];
+    assert_eq!(contrast["baseline_references"], 1);
+    let interval = &contrast["paired_room_mse_reduction"];
+    assert_eq!(interval["clusters"], 2);
+    assert!((interval["mean"].as_f64().unwrap() - 0.05).abs() < 1e-12);
+}
+#[test]
 fn camera_export_reports_valid_baselines_and_binds_its_input_contract() {
     use burn_gekko_eval::camera_export::{CameraScoreConfig, score};
     let t = tempfile::tempdir().unwrap();

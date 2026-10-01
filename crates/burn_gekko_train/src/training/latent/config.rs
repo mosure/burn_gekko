@@ -50,6 +50,12 @@ pub struct LatentConfig {
     pub spatial_descriptor: Option<burn_gekko::heads::spatial::SpatialDescriptorConfig>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub equivariance: Option<crate::data::augmentation::EquivarianceConfig>,
+    /// Training-only final-feature anchor, with its own audited immutable source.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub encoder_preservation: Option<super::preservation::EncoderPreservationConfig>,
+    /// Explicit renderer-supervised auxiliary; geometry never enters RGB inference.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub view_geometry: Option<super::view_geometry::ViewGeometryConfig>,
     /// Audited weights-only new phase; both optimizers and the gate restart.
     #[serde(default)]
     pub warm_start: Option<WeightAncestor>,
@@ -85,6 +91,20 @@ fn is_default_spatial_input_scale(value: &f64) -> bool {
 }
 impl LatentConfig {
     pub fn validate(&self) -> Result<()> {
+        if let Some(config) = &self.view_geometry {
+            config.validate()?;
+            ensure!(
+                self.spatial_descriptor.is_some(),
+                "geometry objective requires a spatial descriptor"
+            );
+        }
+        if let Some(preservation) = &self.encoder_preservation {
+            preservation.validate()?;
+            ensure!(
+                self.unfreeze && self.encoder_stage_cap > 0,
+                "preservation requires encoder adaptation"
+            );
+        }
         self.fusion_auxiliary.validate()?;
         if let Some(head) = &self.spatial_descriptor {
             head.validate()?;
@@ -93,7 +113,9 @@ impl LatentConfig {
                 "spatial descriptor requires the full spatial route"
             );
             ensure!(
-                self.fusion_auxiliary.descriptor_weight > 0. || self.equivariance.is_some(),
+                self.fusion_auxiliary.descriptor_weight > 0.
+                    || self.equivariance.is_some()
+                    || self.view_geometry.is_some(),
                 "spatial head requires descriptor training"
             );
         }
@@ -200,11 +222,19 @@ impl LatentConfig {
         c.max_seconds = 1;
         c.checkpoint_every = 0;
         // Probe cadence is part of the unfreezing decision and cannot change on resume.
-        fingerprint(&(c, crate::provenance::identity()?))
+        if let Some(config) = &self.view_geometry {
+            fingerprint(&(
+                c,
+                crate::provenance::identity()?,
+                sha256_file(&config.cache.join("manifest.json"))?,
+            ))
+        } else {
+            fingerprint(&(c, crate::provenance::identity()?))
+        }
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct WeightAncestor {
     pub checkpoint: PathBuf,

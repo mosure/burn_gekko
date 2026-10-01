@@ -1,0 +1,16 @@
+images = ".data/benchmarks/eth3d/images.json"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+selection_record = ".data/pilot-12/preserved-screen/eth3d-selection-canonical.toml"
+selection_sha256 = "bbad1db929db3f2857f4f842c6e3d6c957d61926d787a72870089fb4359bb488"
+max_seconds = 570
+evaluation_use = "development"
+spatial_layer = 6
+self_conditioned_readouts = true
+local_refinement = true
+focused_spatial_readouts = true
+canonical_spatial_readouts = true
+
+[[models]]
+name = "model"
+checkpoint = ".data/runs/pilot-12-preserved-screen/final"
+model_sha256 = "6d163190fd85c033693221265dea6dc429ca013d75c6bd240394542400341259"

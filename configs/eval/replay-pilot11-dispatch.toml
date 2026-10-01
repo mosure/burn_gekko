@@ -1,0 +1,8 @@
+original = ".data/runs/pilot-11-main/metrics.jsonl"
+original_sha256 = "63362ff46ae373834c750ecaec286eaad7baf56e67d81cb76e3c62275a4c9a37"
+replay = ".data/runs/pilot-11-main-profile-replay/metrics.jsonl"
+replay_sha256 = "5d038027689b21a57265e01f3c2a5f98c97fec2bb9b2de6345896d4cb7014674"
+absolute_tolerance = 0.000001
+relative_tolerance = 0.00001
+prefix_updates = 64
+output = ".data/pilot-11/dispatch-replay.json"

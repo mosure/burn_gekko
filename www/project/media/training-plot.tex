@@ -1,0 +1,11 @@
+\pgfplotsset{xmin=0,xmax=384,xtick={0,96,192,288,384}}
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth,height=65mm,xlabel={Optimizer update},ylabel={Latent MSE},grid=major,scaled x ticks=false,legend style={at={(0.5,1.03)},anchor=south,legend columns=3,font=\scriptsize},tick label style={font=\small}]
+\addplot[color=teal,mark=none,thick] table[x=step,y=cross,col sep=comma]{media/training.csv};
+\addlegendentry{Cross-view train}
+\addplot[color=orange,mark=none,thick] table[x=step,y=monocular,col sep=comma]{media/training.csv};
+\addlegendentry{Monocular train}
+\addplot[color=blue,dashed,mark=*,mark size=1.5pt] table[x=step,y=cross,col sep=comma]{media/validation.csv};
+\addlegendentry{Validation cross}
+\end{axis}
+\end{tikzpicture}

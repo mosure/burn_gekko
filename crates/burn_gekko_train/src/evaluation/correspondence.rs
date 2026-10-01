@@ -12,6 +12,11 @@ use burn_gekko_data::{
 use burn_vjepa::{VJepaConfig, VJepaEncoder};
 use std::{collections::BTreeMap, path::Path};
 
+pub(crate) struct ScoredReadouts<S> {
+    pub readouts: Vec<crate::fusion_audit::NamedMatches>,
+    pub scores: S,
+}
+
 /// Deterministic nearest-neighbour readout; ties select the lowest index.
 pub fn nearest(scores: &[f32], n: usize) -> (Vec<usize>, Vec<bool>) {
     assert_eq!(scores.len(), n * n);
@@ -50,9 +55,17 @@ pub(crate) fn conditional_matches<B: Backend>(
     temperature: f64,
 ) -> Result<(Vec<usize>, Vec<bool>)> {
     let n = a.dims()[1];
+    nearest_checked(&conditional_score_values(a, b, temperature)?, n)
+}
+
+pub(crate) fn conditional_score_values<B: Backend>(
+    a: Tensor<B, 3>,
+    b: Tensor<B, 3>,
+    temperature: f64,
+) -> Result<Vec<f32>> {
     let scores = cosine_scores(a, b) / temperature;
     let reciprocal = reciprocal_conditionals(vec![scores.clone()], vec![scores.swap_dims(1, 2)]);
-    nearest_checked(&values(reciprocal)?, n)
+    values(reciprocal)
 }
 
 /// Shared trained trunk/head, with only the same image available as context.
@@ -75,13 +88,26 @@ pub fn self_conditioned_readouts<B: Backend>(
     a: Tensor<B, 3>,
     b: Tensor<B, 3>,
 ) -> Result<Vec<crate::fusion_audit::NamedMatches>> {
-    Ok(vec![
-        ("spatial_self".into(), matches(a.clone(), b.clone())?),
-        (
-            "spatial_self_conditional".into(),
-            conditional_matches(a, b, 0.07)?,
-        ),
-    ])
+    Ok(self_conditioned_readouts_with_scores(a, b)?.readouts)
+}
+
+pub(crate) fn self_conditioned_readouts_with_scores<B: Backend>(
+    a: Tensor<B, 3>,
+    b: Tensor<B, 3>,
+) -> Result<ScoredReadouts<Vec<f32>>> {
+    let n = a.dims()[1];
+    let raw = matches(a.clone(), b.clone())?;
+    let scores = conditional_score_values(a, b, 0.07)?;
+    Ok(ScoredReadouts {
+        readouts: vec![
+            ("spatial_self".into(), raw),
+            (
+                "spatial_self_conditional".into(),
+                nearest_checked(&scores, n)?,
+            ),
+        ],
+        scores,
+    })
 }
 
 /// Compute only the three registered spatial readouts. Reuse the intermediate
@@ -196,6 +222,19 @@ pub fn standard_readouts<B: Backend>(
     teacher_b: Tensor<B, 3>,
     grid: [usize; 2],
 ) -> Result<Vec<crate::fusion_audit::NamedMatches>> {
+    Ok(standard_readouts_with_spatial_scores(model, a, b, teacher_a, teacher_b, grid)?.readouts)
+}
+
+/// Retain the canonical spatial scores after their original device readback.
+/// This permits local refinement without rerunning a numerically different forward.
+pub(crate) fn standard_readouts_with_spatial_scores<B: Backend>(
+    model: &LatentModel<B>,
+    a: Tensor<B, 3>,
+    b: Tensor<B, 3>,
+    teacher_a: Tensor<B, 3>,
+    teacher_b: Tensor<B, 3>,
+    grid: [usize; 2],
+) -> Result<ScoredReadouts<Option<Vec<f32>>>> {
     let forward = model
         .fusion
         .decoder
@@ -289,17 +328,20 @@ pub fn standard_readouts<B: Backend>(
         ),
         ("same_position", ((0..n).collect(), vec![true; n])),
     ];
+    let mut spatial_scores = None;
     if let Some((a, b)) = spatial {
         result.push(("spatial_residual", matches(a.clone(), b.clone())?));
-        result.push((
-            "spatial_residual_conditional",
-            conditional_matches(a, b, temperature)?,
-        ));
+        let scores = conditional_score_values(a, b, temperature)?;
+        result.push(("spatial_residual_conditional", nearest_checked(&scores, n)?));
+        spatial_scores = Some(scores);
     }
-    Ok(result
-        .into_iter()
-        .map(|(name, prediction)| (name.to_owned(), prediction))
-        .collect())
+    Ok(ScoredReadouts {
+        readouts: result
+            .into_iter()
+            .map(|(name, prediction)| (name.to_owned(), prediction))
+            .collect(),
+        scores: spatial_scores,
+    })
 }
 /// A row-softmax objective cannot identify additive row offsets. Normalize
 /// before reciprocity so those offsets cannot become column preferences.

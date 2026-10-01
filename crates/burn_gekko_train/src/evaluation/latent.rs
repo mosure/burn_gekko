@@ -196,7 +196,16 @@ pub fn evaluate<B: Backend>(
             }
             let target_variance = spatial_variance(&tv, &hidden, d);
             let predicted_variance = spatial_variance(&pv, &hidden, d);
+            let signal_power = hidden
+                .iter()
+                .flat_map(|&i| &tv[i * d..(i + 1) * d])
+                .map(|x| (*x as f64).powi(2))
+                .sum::<f64>()
+                / (hidden.len() * d) as f64;
+            let feature_snr_db =
+                burn_gekko_eval::metrics::signal_to_error_db(signal_power, mean(&cross, &hidden))?;
             rows.push(serde_json::json!({"room_seed":scene.seed,"target_view":v,
+                "teacher_signal_power":signal_power,"feature_snr_db":feature_snr_db,
                 "cross_mse":mean(&cross,&hidden),"monocular_mse":mean(&mono,&hidden),
                 "cross_cosine":mean(&cosine,&hidden),"monocular_cosine":mean(&mono_cosine,&hidden),
                 "train_position_mean_mse":mean(&constant,&hidden),"unrelated_mse":unrelated,
@@ -238,6 +247,8 @@ pub fn evaluate<B: Backend>(
     let result = serde_json::json!({"schema":1,"task":"fixed_vjepa21_latent_prediction",
         "split":entries[0].split,"diagnostic_only":true,"target_views":rows.len(),"rows":rows,
         "mean_cross_mse":mean_key("cross_mse"),"mean_monocular_mse":mean_key("monocular_mse"),
+        "mean_teacher_signal_power":mean_key("teacher_signal_power"),"mean_feature_snr_db":mean_key("feature_snr_db"),
+        "feature_snr_protocol":"equal target-view mean of 10 log10(mean masked teacher squared amplitude / masked prediction MSE); not RGB PSNR",
         "mean_cross_cosine":mean_key("cross_cosine"),"mean_monocular_cosine":mean_key("monocular_cosine"),
         "mean_train_position_mean_mse":mean_key("train_position_mean_mse"),"mean_unrelated_mse":mean_key("unrelated_mse"),
         "mean_spatially_shuffled_mse":mean_key("spatially_shuffled_mse"),

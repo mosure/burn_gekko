@@ -28,6 +28,8 @@ pub struct HpatchesConfig {
     #[serde(default)]
     pub self_conditioned_readouts: bool,
     #[serde(default)]
+    pub local_refinement: bool,
+    #[serde(default)]
     pub evaluation_use: EvaluationUse,
 }
 
@@ -56,6 +58,14 @@ struct View {
 
 pub fn run<B: Backend>(c: &HpatchesConfig, out: &Path, device: &B::Device) -> Result<()> {
     ensure!(!out.exists(), "output exists");
+    ensure!(
+        !c.local_refinement
+            || (c.self_conditioned_readouts
+                && c.spatial_layer.is_some()
+                && !c.diagnostic_readouts
+                && !c.encoder_layer_audit),
+        "local readout requires fixed spatial and same-image controls"
+    );
     ensure!(
         fs::canonicalize(out.ancestors().find(|p| p.exists()).unwrap())?
             .starts_with(fs::canonicalize(".data")?),
@@ -93,6 +103,12 @@ pub fn run<B: Backend>(c: &HpatchesConfig, out: &Path, device: &B::Device) -> Re
         );
         let loaded = load_assessed_model::<B>(&item.weights, device)?;
         let (model, teacher) = (loaded.model, loaded.teacher);
+        ensure!(
+            !c.local_refinement
+                || (loaded.config.spatial_input_layer == c.spatial_layer
+                    && loaded.config.spatial_input_scale == 1.),
+            "refined encoder route differs from checkpoint"
+        );
         let file = out.join(format!("{}.jsonl", item.name));
         let mut log = fs::OpenOptions::new()
             .write(true)
@@ -145,36 +161,57 @@ pub fn run<B: Backend>(c: &HpatchesConfig, out: &Path, device: &B::Device) -> Re
                         .collect::<Result<Vec<_>>>()
                 })
                 .transpose()?;
-            let frozen = fixed_views(&teacher, &model.encoder_config, &rgb);
-            let hierarchy = if c.encoder_layer_audit || c.spatial_layer.is_some() {
-                let layers = c.spatial_layer.map_or_else(
-                    || model.encoder_config.encoder.hierarchical_layers(),
-                    |x| vec![x - 1],
-                );
-                Some((
-                    crate::encoder_audit::capture_view_layers(
-                        &model.encoder,
-                        &model.encoder_config,
-                        &rgb,
-                        &layers,
-                    )?,
-                    crate::encoder_audit::capture_view_layers(
-                        &teacher,
-                        &model.encoder_config,
-                        &rgb,
-                        &layers,
-                    )?,
-                ))
-            } else {
-                None
-            };
+            let frozen =
+                (!c.local_refinement).then(|| fixed_views(&teacher, &model.encoder_config, &rgb));
+            let hierarchy =
+                if !c.local_refinement && (c.encoder_layer_audit || c.spatial_layer.is_some()) {
+                    let layers = c.spatial_layer.map_or_else(
+                        || model.encoder_config.encoder.hierarchical_layers(),
+                        |x| vec![x - 1],
+                    );
+                    Some((
+                        crate::encoder_audit::capture_view_layers(
+                            &model.encoder,
+                            &model.encoder_config,
+                            &rgb,
+                            &layers,
+                        )?,
+                        crate::encoder_audit::capture_view_layers(
+                            &teacher,
+                            &model.encoder_config,
+                            &rgb,
+                            &layers,
+                        )?,
+                    ))
+                } else {
+                    None
+                };
             for target in 1..6 {
+                if c.local_refinement {
+                    let features = independent.as_ref().unwrap();
+                    let readouts = crate::evaluation::refinement::spatial_readouts(
+                        &model,
+                        student[target].clone(),
+                        student[0].clone(),
+                        [16, 16],
+                        c.spatial_layer.unwrap(),
+                        Some((features[target].clone(), features[0].clone())),
+                    )?;
+                    for r in readouts {
+                        writeln!(
+                            log,
+                            "{}",
+                            serde_json::json!({"sequence":seq.name,"target":target+1,"reference":1,"method":r.method,"grid":[16,16],"model_image_size":256,"indices":r.indices,"mutual":r.mutual,"coordinates":r.coordinates})
+                        )?;
+                    }
+                    continue;
+                }
                 let mut readouts = standard_readouts(
                     &model,
                     student[target].clone(),
                     student[0].clone(),
-                    frozen[target].clone(),
-                    frozen[0].clone(),
+                    frozen.as_ref().unwrap()[target].clone(),
+                    frozen.as_ref().unwrap()[0].clone(),
                     [16, 16],
                 )?;
                 if let Some(features) = &independent {
@@ -217,11 +254,11 @@ pub fn run<B: Backend>(c: &HpatchesConfig, out: &Path, device: &B::Device) -> Re
             &out.join(format!("{}-provenance.json", item.name)),
             &serde_json::json!({"checkpoint":item.weights,
             "teacher_id":loaded.teacher_id,"image_manifest_sha256":c.images_sha256,"sequences":116,"pairs":580,
-            "input":"RGB only; no homographies, depth or camera inputs", "readout":"hard nearest neighbour, final feature cosine or head/layer-mean reciprocal cross-attention",
+            "input":"RGB only; no homographies, depth or camera inputs", "readout":if c.local_refinement { "reciprocal conditional descriptors, hard indices and fixed local 3x3 probability centroid" } else { "hard nearest neighbour, final feature cosine or head/layer-mean reciprocal cross-attention" },
             "noncommercial_weight_dependencies":[],"evaluation_use":c.evaluation_use,
             "diagnostic_readouts":c.diagnostic_readouts,
             "encoder_layer_audit":c.encoder_layer_audit,
-            "spatial_layer":c.spatial_layer,
+            "spatial_layer":c.spatial_layer,"local_refinement":c.local_refinement,"refinement":"optional 3x3 reciprocal probability centroid, temperature 0.07, no labels",
             "checkpoint_selection":"see experiment protocol; development readout screening is not held-out qualification"}),
         )?;
     }

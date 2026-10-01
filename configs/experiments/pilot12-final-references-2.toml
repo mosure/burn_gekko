@@ -1,0 +1,15 @@
+dataset = ".data/datasets/4876de809caa13a55bf254dc7996704aed8c7bd4cfc874a51510449195fea978"
+split = "test"
+rooms = 128
+export_rooms = 128
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 827
+stable_attention = false
+correspondence = false
+references = 2
+
+[[models]]
+name = "model"
+checkpoint = ".data/runs/pilot-12-main/final"
+model_sha256 = "b8e5d38c3a62eefd2b2d7ebc89e5b2d47b6ee91ac844d7e3d6eb257ae487aad8"

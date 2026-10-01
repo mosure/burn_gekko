@@ -1,0 +1,34 @@
+updates = 12000
+output = ".data/pilot-11/recovery/selection.json"
+
+[tail.summary]
+path = ".data/pilot-11/main-training-summary.json"
+sha256 = "b87d6f92275a7e431da9c8e5f708991b072ea4076573e1ae86608255f7fc0a3f"
+
+[tail.warp]
+path = ".data/pilot-11/warp/metrics.json"
+sha256 = "306eec733a7d699c1cd8d53a2bbf801ff2243b1a31bbc4198f626924c33344d1"
+
+[full.summary]
+path = ".data/pilot-11/recovery/main-training-summary.json"
+sha256 = "c48c9b36e6b475ed439c8f1a9f7d7b90a662de10467dba5973ba0d0a06a6b5fa"
+
+[full.warp]
+path = ".data/pilot-11/recovery/warp/metrics.json"
+sha256 = "a2cdf6010ab422572d229630f94999d685faf65d978dd9995ff27e94d15e8162"
+
+[parents.tail.summary]
+path = ".data/pilot-11/tail-screen-summary.json"
+sha256 = "0af6f599171922f4ae6ca0613f7f96cfe808786408bae4282a03f1b3dc96707a"
+
+[parents.tail.warp]
+path = ".data/pilot-11/tail-warp/metrics.json"
+sha256 = "cf29a74d7ab47282050dc6ca7b38147d9696b9e990ea42c8d6e8d685635407fb"
+
+[parents.full.summary]
+path = ".data/pilot-11/full-screen-summary.json"
+sha256 = "30ab13fc4b1428dbb1a506fc6cc27d3f8dbf9f1a6402a6bc08608cd9d4769aae"
+
+[parents.full.warp]
+path = ".data/pilot-11/full-warp/metrics.json"
+sha256 = "3b3de0a5ef0c26e30405912d68f5d210ecc8255c268b39226077a3de5947a766"

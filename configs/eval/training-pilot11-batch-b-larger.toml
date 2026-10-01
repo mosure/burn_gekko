@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-11-batch-b-larger"
+ledger = ".data/pilot-11/batch-probe/b-larger-run/ledger.json"
+telemetry = ".data/pilot-11/batch-probe/b-larger-run/b-larger-gpu.jsonl"
+command = "b-larger"
+output = ".data/pilot-11/batch-probe/b-larger-summary.json"

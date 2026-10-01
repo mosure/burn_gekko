@@ -20,6 +20,7 @@ toml = "1.1"
 sha2 = "0.10"
 safetensors = "0.7"
 zstd = "0.13"
+image = { version = "0.25", default-features = false, features = ["png"] }
 
 [dev-dependencies]
 tempfile = "3"

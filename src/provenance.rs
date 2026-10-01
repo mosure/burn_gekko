@@ -9,6 +9,11 @@ pub const SOURCES: &[(&str, &str)] = &[
     ("fusion/rotary.rs", include_str!("fusion/rotary.rs")),
     ("fusion/tests.rs", include_str!("fusion/tests.rs")),
     ("heads/appearance.rs", include_str!("heads/appearance.rs")),
+    ("heads/calibration.rs", include_str!("heads/calibration.rs")),
+    (
+        "heads/reconstruction.rs",
+        include_str!("heads/reconstruction.rs"),
+    ),
     ("heads/matching.rs", include_str!("heads/matching.rs")),
     ("heads/mod.rs", include_str!("heads/mod.rs")),
     ("heads/spatial.rs", include_str!("heads/spatial.rs")),
@@ -34,6 +39,10 @@ pub const SOURCES: &[(&str, &str)] = &[
     ),
     ("objectives/fusion.rs", include_str!("objectives/fusion.rs")),
     ("objectives/mod.rs", include_str!("objectives/mod.rs")),
+    (
+        "objectives/preservation.rs",
+        include_str!("objectives/preservation.rs"),
+    ),
     ("objectives/rgb.rs", include_str!("objectives/rgb.rs")),
     ("provenance.rs", include_str!("provenance.rs")),
     ("sparse/curriculum.rs", include_str!("sparse/curriculum.rs")),

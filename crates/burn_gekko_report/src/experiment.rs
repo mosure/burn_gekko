@@ -41,9 +41,18 @@ pub struct Experiment {
     /// Future heads use the same schema and must bind to this checkpoint.
     #[serde(default)]
     pub heads: Vec<PinnedFile>,
+    /// One attached output-head training phase, including weights and raw predictions.
+    #[serde(default)]
+    pub output_heads: Option<PinnedFile>,
     /// Optional RGB-transform diagnostic with its own geometric visualizations.
     #[serde(default)]
     pub equivariance: Option<PinnedFile>,
+    /// Renderer-supervised validation across actual camera views.
+    #[serde(default)]
+    pub view_geometry: Option<PinnedFile>,
+    /// Calibrated geometric probe; does not mark the learned camera head trained.
+    #[serde(default)]
+    pub calibrated_pose: Option<PinnedFile>,
     pub efficiency: Option<EfficiencyEvidence>,
     pub limitations: Vec<String>,
     /// Deterministic first/middle/last exported samples, never chosen by quality.

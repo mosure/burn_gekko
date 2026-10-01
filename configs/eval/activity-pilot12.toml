@@ -1,0 +1,3 @@
+# Run after the study-owned process monitor has stopped.
+input = ".data/pilot-12/shared-gpu-pmon.log"
+output = ".data/pilot-12/shared-gpu-activity.json"

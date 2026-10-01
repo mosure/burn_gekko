@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-11-full-preflight-retry"
+ledger = ".data/pilot-11/preflight-retry-run/ledger.json"
+telemetry = ".data/pilot-11/preflight-retry-run/full-preflight-retry-gpu.jsonl"
+command = "full-preflight-retry"
+output = ".data/pilot-11/full-preflight-retry-summary.json"

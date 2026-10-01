@@ -61,3 +61,7 @@ required-features = ["ndarray"]
 [[test]]
 name = "spatial_record"
 required-features = ["ndarray"]
+
+[[test]]
+name = "output_heads"
+required-features = ["ndarray"]

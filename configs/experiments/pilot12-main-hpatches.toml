@@ -1,0 +1,11 @@
+images = ".data/benchmarks/hpatches/images.json"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+evaluation_use = "development"
+spatial_layer = 6
+self_conditioned_readouts = true
+local_refinement = true
+
+[[models]]
+name = "model"
+checkpoint = ".data/runs/pilot-12-main/final"
+model_sha256 = "b8e5d38c3a62eefd2b2d7ebc89e5b2d47b6ee91ac844d7e3d6eb257ae487aad8"

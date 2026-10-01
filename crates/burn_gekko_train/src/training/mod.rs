@@ -1,3 +1,4 @@
+pub mod heads;
 pub mod hybrid;
 pub mod latent;
 pub mod pilot;

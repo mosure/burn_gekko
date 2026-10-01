@@ -1,0 +1,21 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+rooms = 32
+seed = 1000771
+local_refinement = true
+
+[weights]
+checkpoint = ".data/runs/pilot-11-tail-screen/final"
+model_sha256 = "813f84f03e617fb5e27e7841ff4e6247755b743f37fcba96bb2b358a329bab37"
+
+[augmentation]
+weight = 0.1
+temperature = 0.07
+self_weight = 1.0
+max_rotation_degrees = 20.0
+max_translation = 0.125
+min_scale = 0.9
+max_scale = 1.1
+max_perspective = 0.05
+brightness = 0.1
+contrast = 0.15
+min_valid_fraction = 0.4

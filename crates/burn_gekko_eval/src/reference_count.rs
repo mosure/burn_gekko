@@ -137,7 +137,33 @@ pub fn score(c: &Config) -> Result<()> {
         });
     }
     metrics.sort_by(|a, b| a.id.cmp(&b.id));
-    let capability=Capability {id:"reference_count".into(),label:"Multi-view information sensitivity".into(),status:CapabilityStatus::Evaluated,protocol:"One checkpoint, same data/mask/target identities; only reference count changes. Monocular isolation verified at 1e-7.".into(),limitations:vec!["These are within-model information-set controls, not separately trained model versions.".into()],metrics};
+    // Pair rooms before bootstrapping; correlated views must not count as
+    // independent uncertainty observations. Use the smallest reference set as
+    // the declared information baseline, independently of config order.
+    tables.sort_by_key(|(references, _)| *references);
+    let (baseline_count, baseline) = &tables[0];
+    let mut contrasts = Vec::new();
+    let mut limitations = vec![
+        "These are within-model information-set controls, not separately trained model versions."
+            .into(),
+    ];
+    for (references, candidate) in &tables[1..] {
+        let mut rooms: BTreeMap<u64, Vec<f64>> = BTreeMap::new();
+        for key in &common {
+            rooms
+                .entry(key.0)
+                .or_default()
+                .push(baseline[key].0 - candidate[key].0);
+        }
+        let gains = rooms
+            .values()
+            .map(|v| v.iter().sum::<f64>() / v.len() as f64)
+            .collect::<Vec<_>>();
+        let interval = crate::statistics::bootstrap_mean(&gains, 0x5245464552454e43)?;
+        limitations.push(format!("{references} versus {baseline_count} references: paired room-mean MSE reduction {:.6}, 95% room-bootstrap interval [{:.6}, {:.6}] over {} rooms. Positive favors more references; this is scene-sampling uncertainty, not training-seed uncertainty.",interval.mean,interval.low,interval.high,interval.clusters));
+        contrasts.push(json!({"baseline_references":baseline_count,"candidate_references":references,"paired_room_mse_reduction":interval}));
+    }
+    let capability=Capability {id:"reference_count".into(),label:"Multi-view information sensitivity".into(),status:CapabilityStatus::Evaluated,protocol:"One checkpoint, same data/mask/target identities; only reference count changes. Monocular isolation verified at 1e-7.".into(),limitations,metrics};
     capability.validate()?;
     if let Some(parent) = c.output.parent() {
         fs::create_dir_all(parent)?;
@@ -148,7 +174,7 @@ pub fn score(c: &Config) -> Result<()> {
     )?;
     burn_gekko_data::write_json(
         &c.output.with_extension("provenance.json"),
-        &json!({"config":c,"shared_targets":common,"input_signature":signature}),
+        &json!({"config":c,"shared_targets":common,"input_signature":signature,"contrasts":contrasts}),
     )?;
     Ok(())
 }

@@ -9,6 +9,66 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Verify a fixed latent-export prefix after exporter-only changes.
+    LatentReplay {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Repeat frozen pose predictions under declared solver seeds on CPU.
+    PoseStability {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Diagnose completion amplitude, spatial structure and reference gains on CPU.
+    LatentDetail {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Select a fixed renderer-supervised auxiliary screen using synthetic validation only.
+    SelectViewGeometry {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Cache renderer-supervised cross-view targets on CPU, separate from RGB inputs.
+    PrepareViewTargets {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Select a registered final-feature preservation screen against matched controls.
+    SelectPreservation {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Analyze pinned Nsight GPU/API traces without inferring SM occupancy.
+    Dispatch {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Check correspondence preservation after exporter engineering.
+    PoseReplay {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Select between matched encoder adaptation screens using validation only.
+    SelectAdaptation {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Check numerical preservation of a fixed training-update prefix.
+    Replay {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Cache a fixed TUM Freiburg 3 RGB cohort with separate camera labels.
+    PrepareTum {
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Fit calibrated poses after RGB inference; failures remain in the metrics.
+    Pose {
+        #[arg(long)]
+        config: PathBuf,
+    },
     Activity {
         #[arg(long)]
         config: PathBuf,
@@ -32,6 +92,59 @@ enum Command {
 }
 fn main() -> Result<()> {
     match Args::parse().command {
+        Command::LatentReplay { config } => {
+            let result =
+                burn_gekko_eval::latent_replay::verify(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
+        Command::PoseStability { config } => {
+            let result =
+                burn_gekko_eval::pose::stability::analyze(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&result["contrasts"])?);
+        }
+        Command::LatentDetail { config } => {
+            let result =
+                burn_gekko_eval::latent_detail::analyze(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&result["methods"])?);
+        }
+        Command::SelectViewGeometry { config } => {
+            let result = burn_gekko_eval::adaptation::view_geometry::select(
+                &burn_gekko_data::read_config(&config)?,
+            )?;
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
+        Command::PrepareViewTargets { config } => {
+            burn_gekko_data::view_targets::prepare(&burn_gekko_data::read_config(&config)?)?;
+        }
+        Command::SelectPreservation { config } => {
+            let r = burn_gekko_eval::adaptation::preservation::select(
+                &burn_gekko_data::read_config(&config)?,
+            )?;
+            println!("{}", serde_json::to_string_pretty(&r)?);
+        }
+        Command::Dispatch { config } => {
+            burn_gekko_eval::dispatch::summarize(&burn_gekko_data::read_config(&config)?)?;
+        }
+        Command::PoseReplay { config } => {
+            let r = burn_gekko_eval::pose::replay::verify(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&r)?);
+        }
+        Command::SelectAdaptation { config } => {
+            let r = burn_gekko_eval::adaptation::select(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&r)?);
+        }
+        Command::Replay { config } => {
+            let r = burn_gekko_eval::replay::verify(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&r)?);
+        }
+        Command::PrepareTum { config } => {
+            burn_gekko_data::tum::prepare(&burn_gekko_data::read_config(&config)?)?;
+        }
+        Command::Pose { config } => {
+            let r =
+                burn_gekko_eval::pose::benchmark::score(&burn_gekko_data::read_config(&config)?)?;
+            println!("{}", serde_json::to_string_pretty(&r.methods)?);
+        }
         Command::Activity { config } => {
             burn_gekko_eval::process_activity::summarize(&burn_gekko_data::read_config(&config)?)?;
         }

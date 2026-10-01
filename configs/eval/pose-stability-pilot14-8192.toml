@@ -1,0 +1,4 @@
+original = ".data/pilot-14/pose-8192-original.json"
+original_sha256 = "505897b6664a4169f2092f9d5f0602efe9342a4e980dbfcf4113b1b90f8dc25c"
+seeds = [781, 782, 783, 784, 785, 786, 787, 788]
+output = ".data/pilot-14/pose-stability-8192"

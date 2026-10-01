@@ -1,0 +1,10 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+train_rooms = 32
+validation_rooms = 8
+seed = 857
+mask_ratio = 0.9
+references = 2
+
+[weights]
+checkpoint = ".data/runs/pilot-13-geometry/final"
+model_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"

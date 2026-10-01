@@ -1,0 +1,21 @@
+images = ".data/pilot-11/tum-development/images.json"
+images_sha256 = "c11287f1d44ca7cc4be8a1732125b415fdf9851539218dcf9c91f4a90f88a24d"
+labels = ".data/pilot-11/tum-development/labels.json"
+labels_sha256 = "9952995b2fc71a722141f54f5dbf4e87fe9b112f4b30c652b68f9cbcb795f580"
+predictions = ".data/pilot-12/tail-screen/pose/predictions.jsonl"
+predictions_sha256 = "35a7d57505292b854e13f529fa62d6ccf9fbe48c45d43166c21a7f3dae5d7ae1"
+provenance = ".data/pilot-12/tail-screen/pose/provenance.json"
+provenance_sha256 = "f21c608831380dc3e71f1b22d4128a2eeac6580789173da4a078e35e3f204cb1"
+checkpoint_sha256 = "d6508b27e661be35d82294c75d9a8196949a76450576e774b8270244670e884e"
+methods = ["spatial_residual_conditional_local", "spatial_self_conditional_local", "student_l06_centered_conditional_local"]
+threshold_original_pixels = 3.0
+minimum_baseline_meters = 0.01
+output = ".data/pilot-12/tail-screen/pose-score.json"
+
+[solver]
+max_trials = 2048
+min_trials = 64
+confidence = 0.999
+threshold = 0.005583472920156337
+min_inliers = 12
+seed = 781

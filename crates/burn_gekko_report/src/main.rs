@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 #[derive(Parser)]
-#[command(about = "Build one private project page and paper from one verified experiment")]
+#[command(about = "Build a project page and paper from one verified experiment")]
 struct Args {
     #[command(subcommand)]
     command: Command,

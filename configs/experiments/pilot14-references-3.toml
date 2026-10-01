@@ -1,0 +1,15 @@
+dataset = ".data/datasets/082691156085c5210b08f8974bec58dd5af0424920952281d6c4313ebd6f59d6"
+split = "test"
+rooms = 128
+export_rooms = 128
+mask_ratio = 0.9
+mask_pattern = "random"
+seed = 829
+stable_attention = false
+correspondence = false
+references = 3
+
+[[models]]
+name = "model"
+checkpoint = ".data/runs/pilot-13-geometry/final"
+model_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"

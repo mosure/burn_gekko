@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-12-disabled-replay-v2"
+ledger = ".data/pilot-12/disabled-replay-v2-run/ledger.json"
+telemetry = ".data/pilot-12/disabled-replay-v2-run/disabled-replay-v2-gpu.jsonl"
+command = "disabled-replay-v2"
+output = ".data/pilot-12/disabled-replay-v2-summary.json"

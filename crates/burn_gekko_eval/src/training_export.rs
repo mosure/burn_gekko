@@ -32,11 +32,24 @@ pub fn summarize(c: &TrainingSummaryConfig) -> Result<Value> {
         }
     };
     let config = load(c.run.join("config.toml"), false)?;
+    let provenance = load(c.run.join("provenance.json"), false)?;
     let report = load(c.run.join("report.json"), false)?;
     let metadata = load(c.run.join("final/metadata.json"), false)?;
     let steps = load(c.run.join("metrics.jsonl"), true)?;
     let ledger = load(c.ledger.clone(), false)?;
     let telemetry = load(c.telemetry.clone(), true)?;
+    let startup_path = c.run.join("preservation-startup.json");
+    let preservation_startup = if startup_path.exists() {
+        load(startup_path, false)?
+    } else {
+        Value::Null
+    };
+    let geometry_path = c.run.join("view-geometry-provenance.json");
+    let view_geometry = if geometry_path.exists() {
+        load(geometry_path, false)?
+    } else {
+        Value::Null
+    };
     let start = report["starting_step"].as_u64().context("starting step")?;
     let end = metadata["completed_steps"].as_u64().context("final step")?;
     ensure!(
@@ -89,14 +102,19 @@ pub fn summarize(c: &TrainingSummaryConfig) -> Result<Value> {
     )?;
     let result = json!({
         "schema":1, "run":c.run, "checkpoint_sha256":sha,
+        "source_sha256":provenance["source_sha256"], "teacher_id":provenance["teacher_id"],
+        "encoder_preservation":provenance["encoder_preservation"],
+        "preservation_startup":preservation_startup,
+        "view_geometry":view_geometry,
         "stop_reason":report["stop_reason"], "coverage":coverage,
         "encoder_stages":crate::training::encoder_stages(steps,start,end)?,
         "scalar_windows":crate::training::scalar_windows(steps,start,end,
-            &["cross","monocular","warp_pair_nll","warp_self_nll","augmentation_seconds","gradient_norm"],32)?,
+            &["cross","monocular","warp_pair_nll","warp_self_nll","encoder_preservation_mse","view_geometry_nll","view_geometry_valid_fraction","augmentation_seconds","gradient_norm"],32)?,
         "efficiency":crate::efficiency::evaluate(steps,telemetry,
             command["elapsed_seconds"].as_f64().context("command duration")?)?,
         "parameter_probes":{
             "teacher_qkv_max_abs_delta":report["teacher_max_abs_delta"],
+            "preservation_anchor_qkv_max_abs_delta":report["preservation_anchor_qkv_max_abs_delta"],
             "first_encoder_qkv_max_abs_delta":report["first_encoder_max_abs_delta"],
             "last_encoder_qkv_max_abs_delta":report["last_encoder_max_abs_delta"],
             "prediction_head_max_abs_delta":report["prediction_head_max_abs_delta"]
@@ -129,6 +147,10 @@ mod tests {
             json!({"starting_step":0,"completed_steps":2,"stop_reason":"step_limit"}),
         );
         fs::write(run.join("config.toml"), "batch_size = 1\ntrain_rooms = 1\n").unwrap();
+        write(
+            run.join("provenance.json"),
+            json!({"source_sha256":"fixture-source","teacher_id":"fixture-teacher"}),
+        );
         let rows = [
             json!({"step":1,"samples":[[1,0]],"stage":0,"encoder_gradient_tensors":0,"seconds":0.5,"cross":0.2}),
             json!({"step":2,"samples":[[1,1]],"stage":1,"encoder_gradient_tensors":28,"seconds":0.6,"cross":0.1}),

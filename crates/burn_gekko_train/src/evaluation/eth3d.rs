@@ -14,6 +14,7 @@ use std::{
     io::Write,
     path::{Path, PathBuf},
 };
+mod canonical;
 
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -30,6 +31,13 @@ pub struct Eth3dConfig {
     /// Only the three registered spatial readouts, with live parity checks.
     #[serde(default)]
     pub focused_spatial_readouts: bool,
+    /// Emit the same focused family from the full canonical computations.
+    /// Hard and local coordinates share score arrays; no optimized-path parity is assumed.
+    #[serde(default)]
+    pub canonical_spatial_readouts: bool,
+    /// Also export fixed 3x3 probability centroids from the same score matrices.
+    #[serde(default)]
+    pub local_refinement: bool,
     /// Fail after throughput qualification if the complete protocol cannot fit.
     #[serde(default)]
     pub max_seconds: Option<u64>,
@@ -64,6 +72,10 @@ struct SealedModels {
     self_conditioned_readouts: bool,
     #[serde(default)]
     focused_spatial_readouts: bool,
+    #[serde(default)]
+    canonical_spatial_readouts: bool,
+    #[serde(default)]
+    local_refinement: bool,
 }
 
 /// Bind actual inference inputs to the sealed record before loading any model.
@@ -77,7 +89,9 @@ fn verify_selection(c: &Eth3dConfig) -> Result<()> {
     ensure!(
         selection.spatial_layer == c.spatial_layer
             && selection.self_conditioned_readouts == c.self_conditioned_readouts
-            && selection.focused_spatial_readouts == c.focused_spatial_readouts,
+            && selection.focused_spatial_readouts == c.focused_spatial_readouts
+            && selection.canonical_spatial_readouts == c.canonical_spatial_readouts
+            && selection.local_refinement == c.local_refinement,
         "spatial control differs from sealed selection"
     );
     let names = |models: &[AssessmentModel]| {
@@ -135,6 +149,14 @@ fn rgb<B: Backend>(v: &View, device: &B::Device) -> Result<Tensor<B, 4>> {
 
 pub fn run<B: Backend>(c: &Eth3dConfig, out: &Path, device: &B::Device) -> Result<()> {
     let wall = std::time::Instant::now();
+    ensure!(
+        !c.canonical_spatial_readouts || (c.focused_spatial_readouts && c.local_refinement),
+        "canonical spatial export requires the focused family and local refinement"
+    );
+    ensure!(
+        !c.local_refinement || c.focused_spatial_readouts,
+        "local readout requires focused controls"
+    );
     ensure!(
         !c.focused_spatial_readouts
             || (c.self_conditioned_readouts && c.spatial_layer.is_some() && c.models.len() == 1),
@@ -200,7 +222,37 @@ pub fn run<B: Backend>(c: &Eth3dConfig, out: &Path, device: &B::Device) -> Resul
                 rgb::<B>(&manifest.images[&pair.reference], device)?,
             ];
             let student = model.encode_references(&views);
-            let focused = if c.focused_spatial_readouts {
+            let refined = if c.canonical_spatial_readouts {
+                Some(canonical::readouts(
+                    &model,
+                    &loaded.teacher,
+                    &views,
+                    &student,
+                    c.spatial_layer.unwrap(),
+                )?)
+            } else {
+                c.local_refinement
+                    .then(|| {
+                        crate::evaluation::refinement::spatial_readouts(
+                            &model,
+                            student[0].clone(),
+                            student[1].clone(),
+                            [16, 16],
+                            c.spatial_layer.unwrap(),
+                            None,
+                        )
+                    })
+                    .transpose()?
+            };
+            let focused = if let Some(refined) = &refined {
+                Some(
+                    refined
+                        .iter()
+                        .filter(|r| r.coordinates.is_none())
+                        .map(|r| (r.method.clone(), (r.indices.clone(), r.mutual.clone())))
+                        .collect::<Vec<_>>(),
+                )
+            } else if c.focused_spatial_readouts {
                 Some(crate::correspondence::focused_spatial_readouts(
                     &model,
                     student[0].clone(),
@@ -216,7 +268,7 @@ pub fn run<B: Backend>(c: &Eth3dConfig, out: &Path, device: &B::Device) -> Resul
             }
             // First eight pairs qualify exact native-backend indices AND mutual
             // flags against the original implementation, without reading labels.
-            let audit = !c.focused_spatial_readouts || i < 8;
+            let audit = !c.canonical_spatial_readouts && (!c.focused_spatial_readouts || i < 8);
             let mut readouts = if audit {
                 let teacher = fixed_views(&loaded.teacher, &model.encoder_config, &views);
                 standard_readouts(
@@ -273,7 +325,7 @@ pub fn run<B: Backend>(c: &Eth3dConfig, out: &Path, device: &B::Device) -> Resul
                         + 2.;
                     write_json(
                         &out.join("focused-qualification.json"),
-                        &serde_json::json!({"parity_pairs":8,"parity_indices_and_mutual_flags":"exact","qualification_pairs":64,"p95_pair_seconds":p95,"estimated_total_seconds_with_15_percent_margin":estimate,"ceiling_seconds":c.max_seconds,"backend":std::any::type_name::<B>()}),
+                        &serde_json::json!({"parity_pairs":if c.canonical_spatial_readouts {0}else{8},"parity_indices_and_mutual_flags":if c.canonical_spatial_readouts {"shared canonical score arrays; checked for every pair"}else{"exact"},"canonical_spatial_readouts":c.canonical_spatial_readouts,"qualification_pairs":64,"p95_pair_seconds":p95,"estimated_total_seconds_with_15_percent_margin":estimate,"ceiling_seconds":c.max_seconds,"backend":std::any::type_name::<B>()}),
                     )?;
                     ensure!(
                         c.max_seconds.is_none_or(|s| estimate < s as f64),
@@ -288,6 +340,15 @@ pub fn run<B: Backend>(c: &Eth3dConfig, out: &Path, device: &B::Device) -> Resul
                     serde_json::json!({"pair":pair.id,"scene":pair.scene,"interval":pair.interval,"method":method,"grid":[16,16],"model_image_size":256,"indices":indices,"mutual":mutual})
                 )?;
             }
+            if let Some(refined) = refined {
+                for r in refined.into_iter().filter(|r| r.coordinates.is_some()) {
+                    writeln!(
+                        log,
+                        "{}",
+                        serde_json::json!({"pair":pair.id,"scene":pair.scene,"interval":pair.interval,"method":r.method,"grid":[16,16],"model_image_size":256,"indices":r.indices,"mutual":r.mutual,"coordinates":r.coordinates})
+                    )?;
+                }
+            }
             if (i + 1) % 100 == 0 {
                 log.flush()?;
                 eprintln!("ETH3D {} pair {}/3365", item.name, i + 1);
@@ -295,7 +356,7 @@ pub fn run<B: Backend>(c: &Eth3dConfig, out: &Path, device: &B::Device) -> Resul
         }
         write_json(
             &out.join(format!("{}-provenance.json", item.name)),
-            &serde_json::json!({"checkpoint":item.weights,"teacher_id":loaded.teacher_id,"image_manifest_sha256":c.images_sha256,"selection_sha256":c.selection_sha256,"spatial_layer":c.spatial_layer,"pairs":3365,"input":"RGB only; no points, depth, homographies or cameras","evaluation_use":c.evaluation_use,"noncommercial_weight_dependencies":[]}),
+            &serde_json::json!({"checkpoint":item.weights,"teacher_id":loaded.teacher_id,"image_manifest_sha256":c.images_sha256,"selection_sha256":c.selection_sha256,"spatial_layer":c.spatial_layer,"pairs":3365,"input":"RGB only; no points, depth, homographies or cameras","evaluation_use":c.evaluation_use,"local_refinement":c.local_refinement,"canonical_spatial_readouts":c.canonical_spatial_readouts,"refinement":"3x3 reciprocal probability centroid, temperature 0.07, no labels","noncommercial_weight_dependencies":[]}),
         )?;
     }
     Ok(())
@@ -341,9 +402,17 @@ mod tests {
             spatial_layer: Some(6),
             self_conditioned_readouts: false,
             focused_spatial_readouts: false,
+            canonical_spatial_readouts: false,
+            local_refinement: false,
             max_seconds: None,
         };
         verify_selection(&config)?;
+        config.canonical_spatial_readouts = true;
+        assert!(verify_selection(&config).is_err());
+        config.canonical_spatial_readouts = false;
+        config.local_refinement = true;
+        assert!(verify_selection(&config).is_err());
+        config.local_refinement = false;
         config.self_conditioned_readouts = true;
         assert!(verify_selection(&config).is_err());
         config.self_conditioned_readouts = false;

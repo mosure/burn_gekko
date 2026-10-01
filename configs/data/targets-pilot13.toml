@@ -1,0 +1,4 @@
+dataset = ".data/datasets/e54ba670d6087c445d1d04c7c3ba1742d0e610d08533690921ac655f1f66f05b"
+output = ".data/view-targets/pilot13"
+rooms_per_split = [2048, 32, 0]
+patch = 16

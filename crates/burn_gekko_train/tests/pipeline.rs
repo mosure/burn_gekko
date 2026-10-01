@@ -11,6 +11,12 @@ use std::{fs, path::Path};
 
 // NdArray seeds its process-global RNG; seeded training runs must not overlap.
 static TRAINING_RNG: std::sync::Mutex<()> = std::sync::Mutex::new(());
+// Concurrent child launches can inherit another test's still-writable helper
+// descriptor until exec, causing ETXTBSY. Serialize executable fixture writes
+// and launches; production capture errors must remain visible to callers.
+static CAPTURE_FIXTURES: std::sync::Mutex<()> = std::sync::Mutex::new(());
+#[path = "pipeline/view_geometry.rs"]
+mod view_geometry;
 
 fn temp() -> tempfile::TempDir {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join(".data/test-tmp");
@@ -490,6 +496,96 @@ fn latent_resume_preserves_teacher_two_optimizers_and_sampling() {
     let warp_report = json(&warp_full.join("report.json"));
     assert_eq!(warp_report["teacher_max_abs_delta"], 0.);
     assert!(warp_report["last_encoder_max_abs_delta"].as_f64().unwrap() > 0.);
+    // A fixed training-only anchor must survive optimizer resume unchanged;
+    // anchoring to the resumed student would silently reset the regularizer.
+    let anchor = burn_gekko_train::latent_pilot::WeightAncestor {
+        checkpoint: warp_full.join("final"),
+        model_sha256: sha256_file(&warp_full.join("final/model.mpk")).unwrap(),
+    };
+    let mut preserved = warped.clone();
+    preserved.warm_start = Some(anchor.clone());
+    preserved.initial_encoder_stage = 2;
+    preserved.encoder_stage_cap = 2;
+    preserved.encoder_preservation =
+        Some(burn_gekko_train::latent_pilot::EncoderPreservationConfig { weight: 4., anchor });
+    preserved.steps = 1;
+    let preserved_first = tmp.path().join("preserved-first");
+    run::<B>(&preserved, &preserved_first, None, &d).unwrap();
+    preserved.steps = 2;
+    let preserved_resumed = tmp.path().join("preserved-resumed");
+    run::<B>(
+        &preserved,
+        &preserved_resumed,
+        Some(&preserved_first.join("final")),
+        &d,
+    )
+    .unwrap();
+    let preserved_full = tmp.path().join("preserved-full");
+    run::<B>(&preserved, &preserved_full, None, &d).unwrap();
+    let (replay, uninterrupted) = (
+        rows(&preserved_resumed.join("metrics.jsonl")),
+        rows(&preserved_full.join("metrics.jsonl")),
+    );
+    for key in [
+        "samples",
+        "total",
+        "encoder_preservation_mse",
+        "gradient_norm",
+        "warp_pair_nll",
+    ] {
+        assert_eq!(replay[0][key], uninterrupted[1][key]);
+    }
+    assert!(
+        uninterrupted[0]["encoder_preservation_mse"]
+            .as_f64()
+            .unwrap()
+            < 1e-9
+    );
+    assert!(
+        uninterrupted[1]["encoder_preservation_mse"]
+            .as_f64()
+            .unwrap()
+            > 0.
+    );
+    let report = json(&preserved_full.join("report.json"));
+    let startup = json(&preserved_full.join("preservation-startup.json"));
+    assert_eq!(startup["parameters"]["max_abs_difference"], 0.);
+    assert!(
+        startup["parameters"]["parameter_elements"]
+            .as_u64()
+            .unwrap()
+            > 100
+    );
+    assert_eq!(
+        startup["route_relative_mse"].as_array().unwrap().len(),
+        preserved.references + 2
+    );
+    assert_eq!(
+        startup["mean_relative_mse"],
+        uninterrupted[0]["encoder_preservation_mse"]
+    );
+    assert!(!preserved_resumed.join("preservation-startup.json").exists());
+    assert_eq!(
+        report["preservation_anchor_qkv_max_abs_delta"],
+        serde_json::json!([0., 0.])
+    );
+    assert_eq!(report["teacher_max_abs_delta"], 0.);
+    assert!(report["first_encoder_max_abs_delta"].as_f64().unwrap() > 0.);
+    view_geometry::verify(&preserved, tmp.path());
+    preserved
+        .encoder_preservation
+        .as_mut()
+        .unwrap()
+        .anchor
+        .model_sha256 = "0".repeat(64);
+    let rejected = run::<B>(
+        &preserved,
+        &tmp.path().join("preserved-wrong-anchor"),
+        None,
+        &d,
+    )
+    .unwrap_err();
+    assert!(rejected.to_string().contains("checksum"));
     c.warm_start.as_mut().unwrap().model_sha256 = "wrong".into();
     assert!(run::<B>(&c, &tmp.path().join("latent-bad-warm"), None, &d).is_err());
     c.warm_start = None;
@@ -744,6 +840,7 @@ fn dataset_roundtrip_separates_rooms_and_detects_tampering() {
 
 #[test]
 fn bounded_capture_rejects_failure_and_incomplete_success() {
+    let _capture = CAPTURE_FIXTURES.lock().unwrap();
     let tmp = temp();
     let cfg = CaptureConfig::default();
     assert!(generate(&tmp.path().join("failed"), Path::new("/bin/false"), &cfg).is_err());
@@ -761,6 +858,7 @@ fn bounded_capture_rejects_failure_and_incomplete_success() {
 #[cfg(unix)]
 #[test]
 fn complete_capture_is_cached_and_reused_without_restarting_generator() {
+    let _capture = CAPTURE_FIXTURES.lock().unwrap();
     use std::os::unix::fs::PermissionsExt;
     let tmp = temp();
     let source = fixture(tmp.path());
@@ -1130,6 +1228,7 @@ fn unclamped_position_v2_preserves_world_geometry_and_requires_metadata() {
 #[cfg(unix)]
 #[test]
 fn explicit_capture_recovery_checks_identity_and_lock_without_rerendering() {
+    let _capture = CAPTURE_FIXTURES.lock().unwrap();
     use std::os::unix::fs::PermissionsExt;
     let tmp = temp();
     let source = fixture(tmp.path());
@@ -1145,7 +1244,11 @@ fn explicit_capture_recovery_checks_identity_and_lock_without_rerendering() {
         ..Default::default()
     };
     let data_root = tmp.path().join("cache");
-    assert!(generate(&data_root, &script, &config).is_err());
+    let setup_error = generate(&data_root, &script, &config).unwrap_err();
+    assert!(
+        setup_error.to_string().starts_with("capture failed"),
+        "fixture must fail after writing its capture, not during setup: {setup_error:#}"
+    );
     let stage = fs::read_dir(data_root.join("datasets"))
         .unwrap()
         .next()

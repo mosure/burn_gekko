@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-12-preserved-startup-audit"
+ledger = ".data/pilot-12/preserved-startup-audit-run/ledger.json"
+telemetry = ".data/pilot-12/preserved-startup-audit-run/preserved-startup-audit-gpu.jsonl"
+command = "preserved-startup-audit"
+output = ".data/pilot-12/preserved-startup-audit-summary.json"

@@ -2,6 +2,8 @@
 use anyhow::{Result, ensure};
 use serde::{Deserialize, Serialize};
 
+pub mod detail;
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct CompletionMetrics {
     pub tokens: usize,
@@ -10,6 +12,12 @@ pub struct CompletionMetrics {
     pub cosine: Option<f64>,
     pub cosine_defined_tokens: usize,
     pub spatial_variance_ratio: Option<f64>,
+    /// Mean squared teacher amplitude over the declared mask (not a peak range).
+    #[serde(default)]
+    pub signal_power: f64,
+    /// 10 log10(signal power / MSE); undefined at zero signal or zero error.
+    #[serde(default)]
+    pub signal_to_error_db: Option<f64>,
 }
 
 /// Equal-token weighting. A zero-norm token has undefined cosine, never perfect cosine.
@@ -38,7 +46,7 @@ pub fn completion(
         pred.iter().chain(truth).all(|v| v.is_finite()),
         "nonfinite latent"
     );
-    let (mut mse, mut cosine, mut defined) = (0., 0., 0);
+    let (mut mse, mut cosine, mut defined, mut power) = (0., 0., 0, 0.);
     for &i in selected {
         let (mut dot, mut a, mut b) = (0., 0., 0.);
         for c in 0..channels {
@@ -48,6 +56,7 @@ pub fn completion(
             dot += p * t;
             a += p * p;
             b += t * t;
+            power += t * t;
         }
         if a > 1e-24 && b > 1e-24 {
             cosine += dot / (a * b).sqrt();
@@ -72,14 +81,28 @@ pub fn completion(
             / channels as f64
     };
     let tv = variance(truth);
+    let denominator = (selected.len() * channels) as f64;
+    let mse = mse / denominator;
+    let signal_power = power / denominator;
     Ok(CompletionMetrics {
         tokens: selected.len(),
         channels,
-        mse: mse / (selected.len() * channels) as f64,
+        mse,
+        signal_power,
+        signal_to_error_db: signal_to_error_db(signal_power, mse)?,
         cosine: (defined > 0).then(|| cosine / defined as f64),
         cosine_defined_tokens: defined,
         spatial_variance_ratio: (tv > 1e-24).then(|| variance(pred) / tv),
     })
+}
+
+/// A signal-normalized error in dB, deliberately distinct from peak-based PSNR.
+pub fn signal_to_error_db(signal_power: f64, mse: f64) -> Result<Option<f64>> {
+    ensure!(
+        signal_power.is_finite() && signal_power >= 0. && mse.is_finite() && mse >= 0.,
+        "invalid signal/error power"
+    );
+    Ok((signal_power > 0. && mse > 0.).then(|| 10. * (signal_power / mse).log10()))
 }
 
 /// PSNR for declared data range; exact reconstruction is represented as None (+infinity).
@@ -140,5 +163,17 @@ mod tests {
         assert_eq!((r.correct1, r.correct3, r.correct5), (2, 3, 4));
         assert_eq!(psnr(0., 1.).unwrap(), None);
         assert!((psnr(0.01, 1.).unwrap().unwrap() - 20.).abs() < 1e-10);
+    }
+
+    #[test]
+    fn signal_ratio_uses_masked_teacher_power_and_is_scale_invariant() {
+        let r = completion(&[0.9, 1.8, 99., 99.], &[1., 2., 8., 8.], 2, &[0]).unwrap();
+        assert_eq!(r.signal_power, 2.5);
+        assert!((r.signal_to_error_db.unwrap() - 20.).abs() < 1e-5);
+        let scaled = completion(&[9., 18.], &[10., 20.], 2, &[0]).unwrap();
+        assert!((r.signal_to_error_db.unwrap() - scaled.signal_to_error_db.unwrap()).abs() < 1e-5);
+        assert_eq!(signal_to_error_db(0., 1.).unwrap(), None);
+        assert_eq!(signal_to_error_db(1., 0.).unwrap(), None);
+        assert!(signal_to_error_db(f64::NAN, 1.).is_err());
     }
 }

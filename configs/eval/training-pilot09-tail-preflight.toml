@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-09-tail-preflight"
+ledger = ".data/pilot-09/preflight-run/ledger.json"
+telemetry = ".data/pilot-09/preflight-run/tail-preflight-gpu.jsonl"
+command = "tail-preflight"
+output = ".data/pilot-09/tail-preflight-summary.json"

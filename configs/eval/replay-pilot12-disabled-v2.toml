@@ -1,0 +1,8 @@
+original = ".data/runs/pilot-11-batch-a-before/metrics.jsonl"
+original_sha256 = "de940c789c67f63e09db29b7590db544ca6d5495ce43c8202a29b21ef6373b97"
+replay = ".data/runs/pilot-12-disabled-replay-v2/metrics.jsonl"
+replay_sha256 = "74ac1e3254105d774c39c05f87da4aa56cee47772f7cccea9909ad4141a6ce81"
+prefix_updates = 64
+absolute_tolerance = 0.000001
+relative_tolerance = 0.00001
+output = ".data/pilot-12/disabled-replay-v2.json"

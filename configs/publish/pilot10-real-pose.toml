@@ -1,0 +1,45 @@
+schema = 1
+id = "pilot10-real-pose"
+title = "burn_gekko: Real-Image Camera-Motion Qualification"
+author = "Mitchell Mosure"
+description = "A frozen-checkpoint calibrated pose probe evaluates 186 RGB pairs from three previously unused TUM Freiburg 3 sequences. Pair-conditioned matching recovers 20.03% of poses within 10 degrees, versus 14.58% for the same-image control and 13.57% for the encoder. Its macro pose AUC at 10 degrees is 7.88%, versus 5.72% and 4.93%. The strict all-sequence gate fails against the same-image control. No new training occurs in this qualification; all completion and pose results use the selected Pilot 09 checkpoint."
+architecture = "An audited MIT V-JEPA 2.1 Base encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. Sparse completion uses 256 by 256 images, a 90% random target mask and two references. The spatial descriptor adds a learned correction bounded by 25% of the centered block-6 descriptor norm. Known RGB projective transforms supervise both pair-conditioned and shared-weight same-image descriptors at temperature 0.07; their combined loss has weight 0.1 alongside latent prediction and RI. This phase starts from an audited own checkpoint, resets both optimizers, and adapts the last two encoder blocks and hierarchical output norms from the first update. Earlier blocks, patch embedding and the teacher stay frozen. Trunk LR is 5e-5, encoder LR 1e-6, with 100 warmup steps and a fixed 2,700-step cosine horizon. The new inference operator preserves the hard match and computes a probability centroid in its fixed 3 by 3 neighborhood. Pair, same-image and encoder controls receive the same operator. No camera, renderer geometry or correspondence label enters inference. Pretrained weights are restricted to audited MIT V-JEPA and own checkpoints."
+run = ".data/runs/pilot-09-local-readout"
+checkpoint = ".data/runs/pilot-09-local-readout/final"
+checkpoint_sha256 = "a02277687d0f10cebd7bfe9e487facc6c24d461ea67a377e29b8f04b495d7185"
+sample_count = 6
+limitations = [
+  "This is additional qualification of the fixed Pilot 09 checkpoint, not a new training run or a comparison of private model versions.",
+  "The calibrated motion gate passes against the encoder but fails against the same-image control: the structure-far sequence has a negative AUC@10 contrast. No threshold, readout or checkpoint was retuned.",
+  "Pose recovery uses known camera intrinsics and a separate CPU eight-point essential-matrix RANSAC. Camera intrinsics and extrinsics are not predicted by a learned head, and metric translation scale is unavailable.",
+  "Only 20.03% of fusion-derived poses have both rotation and signed translation-direction error within 10 degrees. Mean translation-direction error is 52.71 degrees. Returning a pose (98.92%) does not imply a correct pose.",
+  "All three sequences share one acquisition environment. They were unused in local training, selection and evaluation before this frozen assessment; unknown encoder-pretraining overlap cannot be excluded. This is not a broad or official relative-pose/SLAM benchmark.",
+  "The fixed timestamp/index protocol proposed 192 pairs. Six lack a ground-truth association within 20 ms and are excluded without replacement. Of 186 evaluated pairs, one baseline below 1 cm is excluded from translation and pose metrics; rotation retains all pairs.",
+  "All errors include solver failures as 180 degrees. Results use equal pairs within sequence and equal sequence weighting; three related sequences do not support a broad generalization confidence claim.",
+  "Pose solver tests include exact geometry, noisy outliers, degeneracy and signed camera-frame conversion. Its normalized eight-point estimator is not a published five-point benchmark reproduction.",
+  "Completion evidence is reused unchanged from the same frozen checkpoint on its previous 512-target fresh cohort. Feature signal/error is 7.30 dB, reference benefit 5.99%, and only 42.27% of teacher spatial variation remains.",
+  "RGB reconstruction, camera and depth heads remain untrained; RGB PSNR is unavailable. Strict reference-order invariance fails at the previous 1e-5 threshold.",
+  "The GPU RGB export takes 29.49 seconds from the prior allowance. Dataset preparation and all camera estimation/scoring run on CPU. Training efficiency below belongs to the selected checkpoint's original 31.74-minute phase, not this inference-only qualification.",
+  "No noncommercial pretrained model weights or teachers are used. TUM RGB-D data is attributed under CC BY 4.0. The page and PDF remain local.",
+]
+
+[latent]
+directory = ".data/pilot-09/heldout/local_readout"
+metrics_sha256 = "ac5eb305ccfdbf628367da229ef14edb152c612aa71488b80637f63c0c626cf4"
+provenance_sha256 = "81cb6c88e45443e3191e820cbdb64ad76d45a5df0f1ffa546f66c145605291bd"
+evaluation_use = "held_out"
+
+[calibrated_pose]
+path = ".data/pilot-10/pose-score.json"
+sha256 = "ce478aab1b04f2f88bb7833dd79e51f9ec8cac50be49d7ca6a024076b11f6373"
+
+[efficiency]
+command = "training"
+
+[efficiency.ledger]
+path = ".data/pilot-09/training-run/ledger.json"
+sha256 = "f72153e1ac8be38968fc6df0e8defdd55973c6afd3bef6a69a3cf91e3ca8c042"
+
+[efficiency.telemetry]
+path = ".data/pilot-09/training-run/training-gpu.jsonl"
+sha256 = "ca39558e637558ac61b5fda22bf5aeb1cbcf1924d9b353738ca8bb3a91e59170"

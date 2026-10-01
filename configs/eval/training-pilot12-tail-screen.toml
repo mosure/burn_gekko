@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-12-tail-screen"
+ledger = ".data/pilot-12/tail-screen-run/ledger.json"
+telemetry = ".data/pilot-12/tail-screen-run/tail-screen-gpu.jsonl"
+command = "tail-screen"
+output = ".data/pilot-12/tail-screen-summary.json"

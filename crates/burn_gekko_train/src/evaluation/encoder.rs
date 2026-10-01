@@ -1,7 +1,7 @@
 //! Read-only controls for the encoder's trained hierarchical feature levels.
 //! No fitting, ground-truth inputs, new weights, or decoder changes are involved.
 use crate::{
-    correspondence::{cosine_scores, nearest_checked, reciprocal_conditionals},
+    correspondence::{ScoredReadouts, cosine_scores, nearest_checked, reciprocal_conditionals},
     encoder::normalize,
     fusion_audit::NamedMatches,
     latent_eval::values,
@@ -9,6 +9,7 @@ use crate::{
 use anyhow::{Result, ensure};
 use burn::tensor::{Tensor, backend::Backend};
 use burn_vjepa::{VJepaConfig, VJepaEncoder};
+use std::collections::BTreeMap;
 
 pub struct EncodedLayer<B: Backend> {
     /// Zero-based encoder block index; exported names use one-based numbering.
@@ -62,19 +63,27 @@ pub fn capture_view_layers<B: Backend>(
         .collect())
 }
 
-fn score_readouts<B: Backend>(prefix: &str, scores: Tensor<B, 3>) -> Result<Vec<NamedMatches>> {
+fn score_readouts<B: Backend>(
+    prefix: &str,
+    scores: Tensor<B, 3>,
+) -> Result<ScoredReadouts<Vec<f32>>> {
     let n = scores.dims()[1];
     let conditional = reciprocal_conditionals(
         vec![scores.clone() / 0.07],
         vec![scores.clone().swap_dims(1, 2) / 0.07],
     );
-    Ok(vec![
-        (prefix.to_owned(), nearest_checked(&values(scores)?, n)?),
-        (
-            format!("{prefix}_conditional"),
-            nearest_checked(&values(conditional)?, n)?,
-        ),
-    ])
+    let raw = nearest_checked(&values(scores)?, n)?;
+    let conditional = values(conditional)?;
+    Ok(ScoredReadouts {
+        readouts: vec![
+            (prefix.to_owned(), raw),
+            (
+                format!("{prefix}_conditional"),
+                nearest_checked(&conditional, n)?,
+            ),
+        ],
+        scores: conditional,
+    })
 }
 
 /// Raw/centered cosine, with/without the already fixed conditional operator.
@@ -85,8 +94,18 @@ pub fn readouts<B: Backend>(
     target: usize,
     reference: usize,
 ) -> Result<Vec<NamedMatches>> {
+    Ok(readouts_with_scores(prefix, layers, target, reference)?.readouts)
+}
+
+pub(crate) fn readouts_with_scores<B: Backend>(
+    prefix: &str,
+    layers: &[EncodedLayer<B>],
+    target: usize,
+    reference: usize,
+) -> Result<ScoredReadouts<BTreeMap<String, Vec<f32>>>> {
     ensure!(!layers.is_empty(), "no captured layers");
     let mut result = Vec::new();
+    let mut captured = BTreeMap::new();
     for centered in [false, true] {
         let mode = if centered { "centered" } else { "raw" };
         let mut scores = Vec::new();
@@ -106,18 +125,24 @@ pub fn readouts<B: Backend>(
                 transform(layer.views[target].clone()),
                 transform(layer.views[reference].clone()),
             );
-            result.extend(score_readouts(
-                &format!("{prefix}_l{:02}_{mode}", layer.index + 1),
-                score.clone(),
-            )?);
+            let name = format!("{prefix}_l{:02}_{mode}", layer.index + 1);
+            let scored = score_readouts(&name, score.clone())?;
+            result.extend(scored.readouts);
+            captured.insert(format!("{name}_conditional"), scored.scores);
             scores.push(score);
         }
         if layers.len() > 1 {
             let mean = scores.into_iter().reduce(|a, b| a + b).unwrap() / layers.len() as f64;
-            result.extend(score_readouts(&format!("{prefix}_mean_{mode}"), mean)?);
+            let name = format!("{prefix}_mean_{mode}");
+            let scored = score_readouts(&name, mean)?;
+            result.extend(scored.readouts);
+            captured.insert(format!("{name}_conditional"), scored.scores);
         }
     }
-    Ok(result)
+    Ok(ScoredReadouts {
+        readouts: result,
+        scores: captured,
+    })
 }
 
 #[cfg(test)]

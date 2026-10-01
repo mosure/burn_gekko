@@ -1,0 +1,19 @@
+updates = 384
+expected_weight = 0.1
+output = ".data/pilot-13/screen-selection.json"
+
+[control.summary]
+path = ".data/pilot-13/control-summary.json"
+sha256 = "c9cd1ce01974c95a21f7d58608a8fe8556725e86d44cdbb762c5192aa37f6587"
+
+[control.geometry]
+path = ".data/pilot-13/control-view-audit/metrics.json"
+sha256 = "32bba87abb9881d6119b8608bf45428cc5f5eb5b55907a27b0a9f3846268a6fb"
+
+[candidate.summary]
+path = ".data/pilot-13/geometry-summary.json"
+sha256 = "da09a9bca7531acdaf61348ce67c7caeb9e297ee91c76410e05ae178dfe00871"
+
+[candidate.geometry]
+path = ".data/pilot-13/geometry-view-audit/metrics.json"
+sha256 = "34aabec39b5f741a73d7948c7c946c4a8249dec147c14b4ce7022d0d9aea9907"

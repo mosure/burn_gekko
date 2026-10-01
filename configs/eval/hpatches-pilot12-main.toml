@@ -1,0 +1,37 @@
+benchmark = "hpatches"
+dataset = ".data/benchmarks/hpatches"
+predictions = ".data/pilot-12/main/hpatches/model.jsonl"
+provenance = ".data/pilot-12/main/hpatches/model-provenance.json"
+checkpoint_sha256 = "b8e5d38c3a62eefd2b2d7ebc89e5b2d47b6ee91ac844d7e3d6eb257ae487aad8"
+images_sha256 = "964531304ae02e8ea08bdede53e5ceb197890f718a35c9f2a82ed8e490fa8ec8"
+geometry_sha256 = "07166b74782d36d2835eecf8875d45898ad52857c500cc2ca30c9ed638bdd258"
+predictions_sha256 = "660c008e41363a083d658290e08bf648f3c8f2c5f248fa3d94b1d3f2c7405f58"
+evaluation_use = "development"
+output = ".data/pilot-12/main/hpatches-score.json"
+visual_method = "spatial_residual_conditional_local"
+methods = ["spatial_residual_conditional", "spatial_self_conditional", "student_l06_centered_conditional", "spatial_residual_conditional_local", "spatial_self_conditional_local", "student_l06_centered_conditional_local"]
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "student_l06_centered_conditional"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "spatial_self_conditional"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional_local"
+control = "student_l06_centered_conditional_local"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional_local"
+control = "spatial_self_conditional_local"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional_local"
+control = "spatial_residual_conditional"
+gate = "local_precision"

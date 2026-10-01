@@ -22,11 +22,36 @@ pub fn score(
     let [h, w] = grid;
     let n = h * w;
     ensure!(
+        n > 0 && indices.len() == n && indices.iter().all(|i| *i < n),
+        "invalid warp indices"
+    );
+    let coordinates = indices
+        .iter()
+        .map(|i| [(i % w) as f64, (i / w) as f64])
+        .collect::<Vec<_>>();
+    score_coordinates(&coordinates, labels, grid, patch)
+}
+
+/// Fractional patch coordinates use integer grid indices for patch centers.
+pub fn score_coordinates(
+    coordinates: &[[f64; 2]],
+    labels: &[f32],
+    grid: [usize; 2],
+    patch: usize,
+) -> Result<GridError> {
+    let [h, w] = grid;
+    let n = h * w;
+    ensure!(
         n > 0
             && patch > 0
-            && indices.len() == n
+            && coordinates.len() == n
             && labels.len() == n * n
-            && indices.iter().all(|i| *i < n)
+            && coordinates.iter().all(|p| p[0].is_finite()
+                && p[1].is_finite()
+                && p[0] >= 0.
+                && p[0] <= (w - 1) as f64
+                && p[1] >= 0.
+                && p[1] <= (h - 1) as f64)
             && labels.iter().all(|p| p.is_finite() && *p >= 0.),
         "invalid warp scoring inputs"
     );
@@ -52,7 +77,7 @@ pub fn score(
                 *t += x * *p as f64 / mass;
             }
         }
-        let prediction = center(indices[query]);
+        let prediction = coordinates[query].map(|x| (x + 0.5) * patch as f64);
         let error = (prediction[0] - truth[0]).hypot(prediction[1] - truth[1]);
         points.push((query, prediction, truth, error));
     }
@@ -79,6 +104,10 @@ mod tests {
         assert_eq!(report.mean_epe, 4.);
         assert_eq!(report.points[0].2, [12., 8.]);
         assert_eq!(score(&[1, 0], &labels, [1, 2], 16).unwrap().mean_epe, 12.);
+        let fine = score_coordinates(&[[0.25, 0.], [1., 0.]], &labels, [1, 2], 16).unwrap();
+        assert_eq!(fine.mean_epe, 0.);
+        assert_eq!(fine.points[0].1, [12., 8.]);
+        assert!(score_coordinates(&[[f64::NAN, 0.], [1., 0.]], &labels, [1, 2], 16).is_err());
         assert!(score(&[0, 1], &[0.; 4], [1, 2], 16).is_err());
     }
 }

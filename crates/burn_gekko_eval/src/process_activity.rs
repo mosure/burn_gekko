@@ -22,7 +22,7 @@ pub struct ProcessActivity {
     pub peak_reported_fb_mb: Option<u64>,
 }
 
-/// Supports the named columns emitted by `nvidia-smi pmon -s um -o DT`.
+/// Supports named pmon columns with or without `-o DT` timestamps.
 /// Missing counters (`-`) remain missing; they are never converted to zero.
 pub fn parse(text: &str) -> Result<Vec<ProcessActivity>> {
     let mut header: Option<Vec<&str>> = None;
@@ -31,7 +31,13 @@ pub fn parse(text: &str) -> Result<Vec<ProcessActivity>> {
         let columns = line.split_whitespace().collect::<Vec<_>>();
         if line.trim_start().starts_with('#') {
             if columns.contains(&"pid") && columns.contains(&"command") {
-                header = Some(columns);
+                // Undated output has a standalone comment marker; dated output
+                // attaches it to the first column name (`#Date`).
+                header = Some(if columns.first() == Some(&"#") {
+                    columns[1..].to_vec()
+                } else {
+                    columns
+                });
             }
             continue;
         }
@@ -128,5 +134,15 @@ mod tests {
         assert_eq!(p[2].mean_reported_sm_percent, Some(50.));
         assert!(parse(&format!("{header}20260930 02:00:00 0 7\n")).is_err());
         assert!(parse(&format!("{header}{}", rows.replace("40 2", "101 2"))).is_err());
+    }
+
+    #[test]
+    fn undated_header_does_not_shift_gpu_and_pid_columns() {
+        let rows = "# gpu pid type sm mem enc dec jpg ofa fb ccpm command\n# Idx # C/G % % % % % % MB MB name\n0 42 C 37 5 - - - - 27380 0 gekko\n";
+        let p = parse(rows).unwrap();
+        assert_eq!(p[0].gpu_index, 0);
+        assert_eq!(p[0].pid, 42);
+        assert_eq!(p[0].mean_reported_sm_percent, Some(37.));
+        assert_eq!(p[0].peak_reported_fb_mb, Some(27380));
     }
 }

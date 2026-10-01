@@ -1,0 +1,48 @@
+schema = 1
+author = "Mitchell Mosure"
+run = ".data/runs/pilot-13-geometry"
+checkpoint = ".data/runs/pilot-13-geometry/final"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+sample_count = 6
+id = "head-stability15"
+title = "burn_gekko: Stable Output Heads, Measured Limitations"
+description = "One frozen multi-view foundation with newly trained camera-calibration and RGB reconstruction heads. An 800-update CPU study uses 32 training rooms and 8 disjoint development rooms. RGB completion reaches 21.09 dB hidden-pixel PSNR. Both heads pass bounded numerical stability and exact checkpoint replay; camera calibration still overfits and is not reliable. All figures use this foundation and one final set of attached head weights."
+architecture = "An audited MIT V-JEPA 2.1 Base image encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. This phase starts from the audited own Pilot 12 checkpoint, resets both AdamW optimizers, and trains all 151 encoder tensors. Images are 256 by 256, batch size is 16, two references are provided and 90% of target patches are masked. The original fixed V-JEPA supplies latent targets. A fixed own Pilot 11 encoder supplies training-only final-feature preservation with weight 4.0; it is absent from inference. The latent, RI and image-homography objectives are retained. Seed is 829, trunk learning rate is 2e-5, encoder rate is 4e-7, warmup is 32 and the cosine horizon is 384 updates. The spatial residual is bounded by 25% of the centered block-6 norm. Matching uses a fixed 3 by 3 local probability centroid, plus the retained hard readout. An additional renderer-supervised bidirectional correspondence NLL has weight 0.1 and temperature 0.07. It pairs the dense target with a rotating reference using known visible patch-center projections. Source depth discontinuities, unknown depth, occlusion, out-of-frame and descriptor-border locations are excluded. Geometry supplies detached training labels only. All inference inputs are RGB. Known intrinsics enter the calibrated CPU pose solver after inference. No noncommercial pretrained weights or teachers are used. Attached RGB head: predicted 768-dimensional completion latent, 64-wide GELU MLP, sigmoid 16x16 RGB patches. Attached camera head: both directions of dense RGB-pair fusion, 4x4 spatial pooling per direction, shared 16-channel projection and 64-wide MLP; six rotation coordinates, signed translation direction and log normalized focal lengths. Camera labels and target RGB are loss/scoring targets only. Both heads are trained from scratch with separate AdamW optimizers; the foundation is frozen."
+limitations = ["This publication binds one frozen foundation checkpoint and one final attached-head training run. Head weight hashes, optimizer records, native validation predictions and training logs are pinned separately. It does not compare separately trained private model versions.", "The 800-update head phase uses 32 training rooms and 8 disjoint validation rooms from existing synthetic data, with one seed. These are development cohorts previously used by the foundation study, not a fresh generalization test. The final checkpoint is fixed by the schedule, not chosen on validation performance.", "Numerical head stability passed, but camera generalization is poor: training camera regression loss 0.000131 versus validation 0.387406; validation rotation 11.64 degrees, translation direction 32.68 degrees and focal relative error 44.35%. The calibration head is not deployment-ready.", "The camera head uses dense target/reference RGB pair features. RGB completion uses only sparse target and reference information. A centered principal point is assumed; translation scale is not predicted. No camera labels enter either inference path.", "RGB PSNR uses hidden sRGB pixels in [0,1] and averages per-target PSNR. It is separate from feature signal/error dB. The same RGB decoder scores the cross-view and monocular routes. PSNR gains do not establish sharp details, geometric consistency or real-scene completion quality.", "The latent gallery and external correspondence/solver results describe the unchanged foundation checkpoint. Attached-head metrics use a separate explicitly labeled 24-target cohort. Legacy calibrated RANSAC results use known intrinsics and are not measurements of the learned calibration head.", "The training curve and board-efficiency panel describe the historical foundation phase. The attached heads train on CPU in 66.44 seconds total; frozen GPU feature export takes 44.99 seconds under the old remaining allowance. Desktop GPU activity is included in board observations. No process-attributed power claim.", "A legacy assessment provenance flag incorrectly said geometry_training_supervision=false. Foundation training used renderer-supervised correspondence. The preserved training configuration and label-cache records are authoritative; the later exporter correction passed exact replay.", "Encoder/fusion joint training with these output heads has not been qualified. Camera intrinsics generalization, additional seeds, larger datasets, strict numerical reference-order invariance, independent real data and matched public baselines remain open. SOTA and blur resolution are not established.", "No noncommercial pretrained weights or teachers enter this lineage. Depth and other future heads remain untrained. Earlier recorded failed gates and numerical/exporter limitations are not waived by this head study."]
+
+[latent]
+directory = ".data/pilot-13/fresh-latent/model"
+metrics_sha256 = "fb6baf4c9581d6042310b2dedb14f8780243ec3c3c4d9ab46ac7eec3f89878ad"
+provenance_sha256 = "0ae335f2a88c44da951c50aeb84fcbf47be10ec34ea7b4f1a6e7bbb0aff937df"
+evaluation_use = "development"
+
+[calibrated_pose]
+path = ".data/pilot-13/geometry/pose-score.json"
+sha256 = "e6ab5dd686d08decf5b5e9004ddd472dc5b631dd46e136985a4db95946bfdceb"
+
+[view_geometry]
+path = ".data/pilot-13/geometry-view-audit/metrics.json"
+sha256 = "34aabec39b5f741a73d7948c7c946c4a8249dec147c14b4ce7022d0d9aea9907"
+
+[[benchmarks]]
+path = ".data/pilot-13/geometry/hpatches-score.json"
+sha256 = "46b854493c966395cdfc177b2fa91a153e95db297a26083f473682060eab09ae"
+
+[[benchmarks]]
+path = ".data/pilot-13/geometry/eth3d-score.json"
+sha256 = "97b3f10516d8b964cdb523521cb51949d84b266399984e639beb0513e3e9f37c"
+
+[output_heads]
+path = ".data/runs/head-stability-15/evidence.json"
+sha256 = "03e4f066c37aedfe05fc04329736fa6d783a8830ba7656787121811e993fe436"
+
+[efficiency]
+command = "geometry"
+
+[efficiency.ledger]
+path = ".data/pilot-13/geometry-run/ledger.json"
+sha256 = "6bc8675735300050346575a53db40c580fee8c3cc8e58e4f0bf45037935adad5"
+
+[efficiency.telemetry]
+path = ".data/pilot-13/geometry-run/geometry-gpu.jsonl"
+sha256 = "a1ac32be19637d74ead2f74504b5ccff3cfda79da557981aaa351fbe8bfa110d"

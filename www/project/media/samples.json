@@ -1,0 +1,356 @@
+[
+  {
+    "id": "room-2610091002-view-0",
+    "room_seed": 2610091002,
+    "target_view": 0,
+    "mse": 0.1360113274103519,
+    "cosine": 0.9287026870721302,
+    "feature_snr_db": 8.664245633046828,
+    "panels": [
+      [
+        "Sparse target input",
+        "media/room-2610091002-view-0-0.png"
+      ],
+      [
+        "Reference view 1",
+        "media/room-2610091002-view-0-1.png"
+      ],
+      [
+        "Reference view 2",
+        "media/room-2610091002-view-0-2.png"
+      ],
+      [
+        "Target RGB (evaluation only)",
+        "media/room-2610091002-view-0-3.png"
+      ],
+      [
+        "Teacher latent (evaluation only)",
+        "media/room-2610091002-view-0-4.png"
+      ],
+      [
+        "Predicted latent",
+        "media/room-2610091002-view-0-5.png"
+      ],
+      [
+        "Hidden-token MSE (0 to 1)",
+        "media/room-2610091002-view-0-6.png"
+      ],
+      [
+        "Co-visibility truth",
+        "media/room-2610091002-view-0-7.png"
+      ],
+      [
+        "Monocular latent (same model)",
+        "media/room-2610091002-view-0-8.png"
+      ],
+      [
+        "RI score (full target; 0 to 1)",
+        "media/room-2610091002-view-0-9.png"
+      ],
+      [
+        "Reference benefit (-1 to +1)",
+        "media/room-2610091002-view-0-10.png"
+      ],
+      [
+        "Geometric visibility fraction",
+        "media/room-2610091002-view-0-11.png"
+      ]
+    ],
+    "contact_sheet": "media/room-2610091002-view-0-sheet.png"
+  },
+  {
+    "id": "room-2610091027-view-2",
+    "room_seed": 2610091027,
+    "target_view": 2,
+    "mse": 0.17021288364351383,
+    "cosine": 0.9106932265237466,
+    "feature_snr_db": 7.690072202760931,
+    "panels": [
+      [
+        "Sparse target input",
+        "media/room-2610091027-view-2-0.png"
+      ],
+      [
+        "Reference view 1",
+        "media/room-2610091027-view-2-1.png"
+      ],
+      [
+        "Reference view 2",
+        "media/room-2610091027-view-2-2.png"
+      ],
+      [
+        "Target RGB (evaluation only)",
+        "media/room-2610091027-view-2-3.png"
+      ],
+      [
+        "Teacher latent (evaluation only)",
+        "media/room-2610091027-view-2-4.png"
+      ],
+      [
+        "Predicted latent",
+        "media/room-2610091027-view-2-5.png"
+      ],
+      [
+        "Hidden-token MSE (0 to 1)",
+        "media/room-2610091027-view-2-6.png"
+      ],
+      [
+        "Co-visibility truth",
+        "media/room-2610091027-view-2-7.png"
+      ],
+      [
+        "Monocular latent (same model)",
+        "media/room-2610091027-view-2-8.png"
+      ],
+      [
+        "RI score (full target; 0 to 1)",
+        "media/room-2610091027-view-2-9.png"
+      ],
+      [
+        "Reference benefit (-1 to +1)",
+        "media/room-2610091027-view-2-10.png"
+      ],
+      [
+        "Geometric visibility fraction",
+        "media/room-2610091027-view-2-11.png"
+      ]
+    ],
+    "contact_sheet": "media/room-2610091027-view-2-sheet.png"
+  },
+  {
+    "id": "room-2610091053-view-0",
+    "room_seed": 2610091053,
+    "target_view": 0,
+    "mse": 0.19624978437682172,
+    "cosine": 0.8958619757250231,
+    "feature_snr_db": 7.0719046153874014,
+    "panels": [
+      [
+        "Sparse target input",
+        "media/room-2610091053-view-0-0.png"
+      ],
+      [
+        "Reference view 1",
+        "media/room-2610091053-view-0-1.png"
+      ],
+      [
+        "Reference view 2",
+        "media/room-2610091053-view-0-2.png"
+      ],
+      [
+        "Target RGB (evaluation only)",
+        "media/room-2610091053-view-0-3.png"
+      ],
+      [
+        "Teacher latent (evaluation only)",
+        "media/room-2610091053-view-0-4.png"
+      ],
+      [
+        "Predicted latent",
+        "media/room-2610091053-view-0-5.png"
+      ],
+      [
+        "Hidden-token MSE (0 to 1)",
+        "media/room-2610091053-view-0-6.png"
+      ],
+      [
+        "Co-visibility truth",
+        "media/room-2610091053-view-0-7.png"
+      ],
+      [
+        "Monocular latent (same model)",
+        "media/room-2610091053-view-0-8.png"
+      ],
+      [
+        "RI score (full target; 0 to 1)",
+        "media/room-2610091053-view-0-9.png"
+      ],
+      [
+        "Reference benefit (-1 to +1)",
+        "media/room-2610091053-view-0-10.png"
+      ],
+      [
+        "Geometric visibility fraction",
+        "media/room-2610091053-view-0-11.png"
+      ]
+    ],
+    "contact_sheet": "media/room-2610091053-view-0-sheet.png"
+  },
+  {
+    "id": "room-2610091078-view-2",
+    "room_seed": 2610091078,
+    "target_view": 2,
+    "mse": 0.16199176252863404,
+    "cosine": 0.9148490282414187,
+    "feature_snr_db": 7.905067176123377,
+    "panels": [
+      [
+        "Sparse target input",
+        "media/room-2610091078-view-2-0.png"
+      ],
+      [
+        "Reference view 1",
+        "media/room-2610091078-view-2-1.png"
+      ],
+      [
+        "Reference view 2",
+        "media/room-2610091078-view-2-2.png"
+      ],
+      [
+        "Target RGB (evaluation only)",
+        "media/room-2610091078-view-2-3.png"
+      ],
+      [
+        "Teacher latent (evaluation only)",
+        "media/room-2610091078-view-2-4.png"
+      ],
+      [
+        "Predicted latent",
+        "media/room-2610091078-view-2-5.png"
+      ],
+      [
+        "Hidden-token MSE (0 to 1)",
+        "media/room-2610091078-view-2-6.png"
+      ],
+      [
+        "Co-visibility truth",
+        "media/room-2610091078-view-2-7.png"
+      ],
+      [
+        "Monocular latent (same model)",
+        "media/room-2610091078-view-2-8.png"
+      ],
+      [
+        "RI score (full target; 0 to 1)",
+        "media/room-2610091078-view-2-9.png"
+      ],
+      [
+        "Reference benefit (-1 to +1)",
+        "media/room-2610091078-view-2-10.png"
+      ],
+      [
+        "Geometric visibility fraction",
+        "media/room-2610091078-view-2-11.png"
+      ]
+    ],
+    "contact_sheet": "media/room-2610091078-view-2-sheet.png"
+  },
+  {
+    "id": "room-2610091104-view-0",
+    "room_seed": 2610091104,
+    "target_view": 0,
+    "mse": 0.1710152495750564,
+    "cosine": 0.9099748987194927,
+    "feature_snr_db": 7.669648125197375,
+    "panels": [
+      [
+        "Sparse target input",
+        "media/room-2610091104-view-0-0.png"
+      ],
+      [
+        "Reference view 1",
+        "media/room-2610091104-view-0-1.png"
+      ],
+      [
+        "Reference view 2",
+        "media/room-2610091104-view-0-2.png"
+      ],
+      [
+        "Target RGB (evaluation only)",
+        "media/room-2610091104-view-0-3.png"
+      ],
+      [
+        "Teacher latent (evaluation only)",
+        "media/room-2610091104-view-0-4.png"
+      ],
+      [
+        "Predicted latent",
+        "media/room-2610091104-view-0-5.png"
+      ],
+      [
+        "Hidden-token MSE (0 to 1)",
+        "media/room-2610091104-view-0-6.png"
+      ],
+      [
+        "Co-visibility truth",
+        "media/room-2610091104-view-0-7.png"
+      ],
+      [
+        "Monocular latent (same model)",
+        "media/room-2610091104-view-0-8.png"
+      ],
+      [
+        "RI score (full target; 0 to 1)",
+        "media/room-2610091104-view-0-9.png"
+      ],
+      [
+        "Reference benefit (-1 to +1)",
+        "media/room-2610091104-view-0-10.png"
+      ],
+      [
+        "Geometric visibility fraction",
+        "media/room-2610091104-view-0-11.png"
+      ]
+    ],
+    "contact_sheet": "media/room-2610091104-view-0-sheet.png"
+  },
+  {
+    "id": "room-2610091129-view-3",
+    "room_seed": 2610091129,
+    "target_view": 3,
+    "mse": 0.2032654027470355,
+    "cosine": 0.8924162333497645,
+    "feature_snr_db": 6.919361830161801,
+    "panels": [
+      [
+        "Sparse target input",
+        "media/room-2610091129-view-3-0.png"
+      ],
+      [
+        "Reference view 1",
+        "media/room-2610091129-view-3-1.png"
+      ],
+      [
+        "Reference view 2",
+        "media/room-2610091129-view-3-2.png"
+      ],
+      [
+        "Target RGB (evaluation only)",
+        "media/room-2610091129-view-3-3.png"
+      ],
+      [
+        "Teacher latent (evaluation only)",
+        "media/room-2610091129-view-3-4.png"
+      ],
+      [
+        "Predicted latent",
+        "media/room-2610091129-view-3-5.png"
+      ],
+      [
+        "Hidden-token MSE (0 to 1)",
+        "media/room-2610091129-view-3-6.png"
+      ],
+      [
+        "Co-visibility truth",
+        "media/room-2610091129-view-3-7.png"
+      ],
+      [
+        "Monocular latent (same model)",
+        "media/room-2610091129-view-3-8.png"
+      ],
+      [
+        "RI score (full target; 0 to 1)",
+        "media/room-2610091129-view-3-9.png"
+      ],
+      [
+        "Reference benefit (-1 to +1)",
+        "media/room-2610091129-view-3-10.png"
+      ],
+      [
+        "Geometric visibility fraction",
+        "media/room-2610091129-view-3-11.png"
+      ]
+    ],
+    "contact_sheet": "media/room-2610091129-view-3-sheet.png"
+  }
+]

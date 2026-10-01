@@ -20,6 +20,7 @@ pub struct Report {
     pub capabilities: Vec<Capability>,
     pub latent: Value,
     pub benchmarks: Vec<Value>,
+    pub calibrated_pose: Option<burn_gekko_eval::pose::benchmark::PoseReport>,
     pub training: Value,
     pub efficiency: Option<burn_gekko_eval::efficiency::Efficiency>,
     pub sources: Vec<Source>,
@@ -40,7 +41,7 @@ pub fn record(path: &Path, sources: &mut Vec<Source>) -> Result<String> {
     }
     Ok(sha)
 }
-fn pinned(file: &PinnedFile, sources: &mut Vec<Source>) -> Result<Value> {
+pub(crate) fn pinned(file: &PinnedFile, sources: &mut Vec<Source>) -> Result<Value> {
     ensure!(
         record(&file.path, sources)? == file.sha256,
         "artifact checksum mismatch: {}",
@@ -125,6 +126,43 @@ pub fn load(e: &Experiment) -> Result<Report> {
         "checkpoint predates this run"
     );
     let config: Value = burn_gekko_data::read_config(&e.run.join("config.toml"))?;
+    let view_geometry = crate::view_geometry::training_provenance(
+        &config,
+        &e.run,
+        &provenance["dataset_id"],
+        &mut sources,
+    )?;
+    if config["encoder_preservation"].is_object() {
+        ensure!(
+            training_report["preservation_anchor_qkv_max_abs_delta"] == json!([0., 0.]),
+            "preservation anchor changed or its probes are missing"
+        );
+        ensure!(
+            provenance["encoder_preservation"] == config["encoder_preservation"],
+            "training preservation provenance mismatch"
+        );
+        let anchor = &config["encoder_preservation"]["anchor"];
+        ensure!(
+            metadata["weight_ancestors"]
+                .as_array()
+                .is_some_and(|parents| parents.contains(anchor)),
+            "preservation anchor missing from checkpoint ancestry"
+        );
+        let path = Path::new(
+            anchor["checkpoint"]
+                .as_str()
+                .context("preservation anchor checkpoint")?,
+        );
+        let digest = anchor["model_sha256"]
+            .as_str()
+            .context("preservation anchor hash")?;
+        ensure!(
+            burn_gekko_data::sha256_file(&path.join("model.mpk"))? == digest,
+            "preservation anchor checksum mismatch"
+        );
+        record(&path.join("model.mpk"), &mut sources)?;
+        record(&path.join("metadata.json"), &mut sources)?;
+    }
     let training_log = e.run.join("metrics.jsonl");
     record(&training_log, &mut sources)?;
     let lines = |p: &Path| -> Result<Vec<Value>> {
@@ -134,6 +172,22 @@ pub fn load(e: &Experiment) -> Result<Report> {
             .collect()
     };
     let steps = lines(&training_log)?;
+    let startup_path = e.run.join("preservation-startup.json");
+    let preservation_startup: Value = if startup_path.exists() {
+        record(&startup_path, &mut sources)?;
+        let startup: Value = serde_json::from_slice(&fs::read(startup_path)?)?;
+        ensure!(
+            starting_step == 0
+                && config["encoder_preservation"]["anchor"] == config["warm_start"]
+                && startup["parameters"]["max_abs_difference"] == 0.
+                && startup["mean_relative_mse"]
+                    == steps.first().context("missing preservation update")?["encoder_preservation_mse"],
+            "inconsistent preservation startup evidence"
+        );
+        startup
+    } else {
+        Value::Null
+    };
     let coverage = burn_gekko_eval::training::coverage(
         &steps,
         starting_step,
@@ -210,6 +264,12 @@ pub fn load(e: &Experiment) -> Result<Report> {
         719,
     )?;
     let mut latent = latent;
+    if latent.get("mean_feature_snr_db").is_some() {
+        let strata = crate::latent_metrics::verify(e, &latent, &mut sources)?;
+        latent["visibility_strata"] = strata;
+        latent["feature_metrics_array_verification"] =
+            json!({"target_views": count, "scope":"every exported target, hidden tokens only"});
+    }
     latent["room_bootstrap_mse"] = json!(ci);
     let mut gains = BTreeMap::<u64, Vec<f64>>::new();
     for row in latent["rows"].as_array().context("completion rows")? {
@@ -257,15 +317,34 @@ pub fn load(e: &Experiment) -> Result<Report> {
             ),
             metric(
                 "spatial_variance",
-                "Spatial variance / teacher",
+                "Teacher spatial variation retained (100% is reference)",
                 number(&latent, "mean_spatial_variance_ratio")?,
-                "ratio",
+                "fraction",
                 false,
                 count,
                 "mean target-view variance ratio; 1 is teacher variance, larger is not always better",
             ),
         ],
     }];
+    let mono_mse = number(&latent, "mean_monocular_mse")?;
+    if mono_mse > 0. {
+        capabilities[0].metrics.insert(
+            0,
+            metric(
+                "reference_benefit",
+                "Error reduction from reference views",
+                1. - number(&latent, "mean_cross_mse")? / mono_mse,
+                "fraction",
+                false,
+                count,
+                "1 minus cross-view mean MSE / references-disabled mean MSE; positive is better",
+            ),
+        );
+    }
+    if let Some(snr) = latent["mean_feature_snr_db"].as_f64() {
+        capabilities[0].metrics.insert(0, metric("feature_snr", "Feature signal / error (higher is better)", snr,
+            "dB", false, count, "mean target-view 10 log10(masked teacher squared amplitude / prediction MSE); not RGB PSNR"));
+    }
     let mut controls = Vec::new();
     for (key, label) in [
         ("mean_monocular_mse", "References disabled"),
@@ -299,16 +378,60 @@ pub fn load(e: &Experiment) -> Result<Report> {
         limitations: vec!["Controls measure information use within this experiment; they are not separately trained model versions.".into()],
         metrics: controls,
     });
+    if let Some(groups) = latent["visibility_strata"]["groups"].as_array() {
+        let metrics = groups
+            .iter()
+            .filter_map(|group| {
+                let mse = group["mse"].as_f64()?;
+                let visible = group["visible"].as_bool()?;
+                Some(metric(
+                    if visible {
+                        "visible_mse"
+                    } else {
+                        "nonvisible_mse"
+                    },
+                    if visible {
+                        "Majority visible in references: feature MSE"
+                    } else {
+                        "Majority not visible: feature MSE"
+                    },
+                    mse,
+                    "MSE",
+                    true,
+                    group["hidden_tokens"].as_u64()? as usize,
+                    "hidden patches pooled across target views; unknown labels excluded",
+                ))
+            })
+            .collect::<Vec<_>>();
+        if !metrics.is_empty() {
+            capabilities.push(Capability {id:"completion_visibility_strata".into(), label:"Completion by reference visibility".into(), status:CapabilityStatus::Evaluated,
+                protocol:"Post-hoc descriptive breakdown using geometry loaded after inference. Counts are hidden patches; errors are token-weighted, unlike the primary equal-view aggregate.".into(),
+                limitations:vec!["A binary majority label does not mean every pixel in the patch is visible or occluded. This is a diagnostic, not a registered acceptance gate or a causal explanation of smoothing.".into()], metrics});
+        }
+    }
     let ri = &latent["learned_ri_covisibility"];
     let n = ri["pixels"].as_u64().context("RI count")? as usize;
+    // Legacy exports describe these post-inference visibility labels as "never
+    // training supervision". Scope that statement to the evaluated labels;
+    // independent training-room correspondence supervision may also be active.
+    // Keep the original export intact in Report::latent and its pinned source.
+    let mut geometry_protocol = latent["geometry_protocol"]
+        .as_str()
+        .context("geometry protocol")?
+        .replace(
+            "never training supervision",
+            "these evaluation co-visibility labels never supervise training",
+        );
+    if config["view_geometry"].is_object() {
+        geometry_protocol.push_str(
+            ". Separate training-room patch-center correspondences supervise the renderer auxiliary; they use a different labeling policy and no evaluation rooms. Geometry is never a model input.",
+        );
+    }
     capabilities.push(Capability {
         id: "covisibility".into(),
         label: "Co-visibility".into(),
         status: CapabilityStatus::Evaluated,
-        protocol: latent["geometry_protocol"]
-            .as_str()
-            .context("geometry protocol")?
-            .into(),
+        protocol: geometry_protocol,
         limitations: vec![
             "RI uses a separate full-target branch; it is not sparse completion.".into(),
             format!(
@@ -350,8 +473,8 @@ pub fn load(e: &Experiment) -> Result<Report> {
         let mut limitations = vec![b["comparability"].as_str().context("comparability")?.into()];
         for (method, scores) in methods {
             for (key, label, unit, lower) in [
-                ("aepe", "AEPE", "pixels", true),
-                ("pck3", "PCK @ 3 px", "fraction", false),
+                ("aepe", "Mean match error", "pixels", true),
+                ("pck3", "Within 3 pixels", "fraction", false),
             ] {
                 metrics.push(metric(
                     &format!("{method}.{key}"),
@@ -404,7 +527,18 @@ pub fn load(e: &Experiment) -> Result<Report> {
                 let count = contrast["pairs"].as_u64().context("contrast pairs")? as usize;
                 let gain = &contrast["aepe_gain"];
                 let pck = &contrast["pck3_gain"];
-                let passed = number(gain, "low")? > 0. && number(pck, "mean")? >= 0.;
+                let precision_gate = contrast["gate"] == "local_precision";
+                let passed = if precision_gate {
+                    number(pck, "low")? > 0. && number(gain, "mean")? >= 0.
+                } else {
+                    number(gain, "low")? > 0. && number(pck, "mean")? >= 0.
+                };
+                if let Some(recorded) = contrast["passed"].as_bool() {
+                    ensure!(
+                        recorded == passed,
+                        "contrast gate result differs from intervals"
+                    );
+                }
                 capabilities.push(Capability {
                     id: format!("{name}_contrast_{i}"),
                     label: format!("{name}: paired readout gate — {}", if passed { "PASS" } else { "FAIL" }),
@@ -414,25 +548,33 @@ pub fn load(e: &Experiment) -> Result<Report> {
                         contrast["interpretation"].as_str().context("contrast protocol")?
                     ),
                     metrics: vec![
-                        metric("aepe_gain", "AEPE reduction (positive favors candidate)",
+                        metric("aepe_gain", "Mean pixel error reduction",
                             number(gain, "mean")?, "pixels", false, count, "paired scene/sequence means"),
-                        metric("pck3_gain", "PCK3 gain", 100. * number(pck, "mean")?,
+                        metric("pck3_gain", "Accuracy gain at 3 pixels", 100. * number(pck, "mean")?,
                             "percentage points", false, count, "paired scene/sequence means"),
                     ],
                     limitations: vec![
                         format!("Paired 95% AEPE-gain interval [{:.4}, {:.4}] pixels; PCK3-gain interval [{:.3}, {:.3}] percentage points. {} clusters, 10,000 deterministic draws.",
                             number(gain, "low")?, number(gain, "high")?,
                             100. * number(pck, "low")?, 100. * number(pck, "high")?, gain["clusters"]),
-                        format!("Readout gate {}: AEPE-gain interval must be entirely positive and mean PCK3 gain nonnegative. PCK3 uncertainty is reported separately; this is not an equivalence test or evidence of general SOTA performance.",
-                            if passed { "passes" } else { "fails" }),
+                        format!("{} gate {}: {}. This is not an equivalence test or evidence of general SOTA performance.",
+                            if precision_gate { "Local precision" } else { "Fusion transfer" }, if passed { "passes" } else { "fails" },
+                            if precision_gate { "the within-3-pixel gain interval must be entirely positive and mean pixel error must not increase" } else { "the pixel-error reduction interval must be entirely positive and mean within-3-pixel accuracy must not decrease" }),
                     ],
                 });
             }
         }
         benchmarks.push(b);
     }
-    if let Some(file) = &e.equivariance {
+    for (input, actual_views) in [(&e.equivariance, false), (&e.view_geometry, true)] {
+        let Some(file) = input else {
+            continue;
+        };
         let value = pinned(file, &mut sources)?;
+        ensure!(
+            !actual_views || value["task"] == "renderer_viewpoint_correspondence",
+            "invalid actual-view diagnostic"
+        );
         ensure!(
             value["checkpoint"]["model_sha256"] == e.checkpoint_sha256
                 && value["status"] == "development_diagnostic",
@@ -457,6 +599,9 @@ pub fn load(e: &Experiment) -> Result<Report> {
                 ("pck16", "pck_one_patch", "PCK16", "fraction", false),
                 ("nll", "nll_bidirectional", "NLL", "nats", true),
             ] {
+                if actual_views && key == "nll" {
+                    continue;
+                }
                 let sum = rows
                     .iter()
                     .map(|r| number(if key == "nll" { r } else { &r["score"] }, row_key))
@@ -478,13 +623,65 @@ pub fn load(e: &Experiment) -> Result<Report> {
                 ));
             }
         }
-        capabilities.push(Capability {id:"image_transform".into(),label:"Known image transforms".into(),status:CapabilityStatus::Evaluated,
-            protocol:"Development-only RGB homography diagnostic on validation rooms; the same checkpoint supplies pair-conditioned, self-conditioned and centered encoder descriptors.".into(),
-            limitations:vec!["This tests geometric augmentation learning, not generalization to real 3D viewpoint changes. All distances use model-input pixels and a 16-pixel descriptor grid.".into()],metrics});
+        capabilities.push(if actual_views {
+            Capability {id:"renderer_viewpoint".into(),label:"Synthetic camera-view matching".into(),status:CapabilityStatus::Evaluated,
+                protocol:"Fixed validation rooms, view 0 versus view 1, both directions. RGB-only predictions; renderer depth and camera labels enter scoring only. Pair, same-image and encoder controls share the query population.".into(),
+                limitations:vec!["This is synthetic development evaluation. Training may use renderer-supervised correspondence labels; external real-image transfer is reported separately. Unknown, occluded, out-of-frame and grid-border queries are excluded under the pinned policy.".into()],metrics}
+        } else {
+            Capability {id:"image_transform".into(),label:"Known image transforms".into(),status:CapabilityStatus::Evaluated,
+                protocol:"Development-only RGB homography diagnostic on validation rooms; the same checkpoint supplies pair-conditioned, self-conditioned and centered encoder descriptors.".into(),
+                limitations:vec!["This tests geometric augmentation learning, not generalization to real 3D viewpoint changes. All distances use model-input pixels and a 16-pixel descriptor grid.".into()],metrics}
+        });
+    }
+    let calibrated_pose = if let Some(file) = &e.calibrated_pose {
+        let pose: burn_gekko_eval::pose::benchmark::PoseReport =
+            serde_json::from_value(pinned(file, &mut sources)?)?;
+        ensure!(
+            pose.schema == 1
+                && pose.checkpoint_sha256 == e.checkpoint_sha256
+                && pose.config.checkpoint_sha256 == e.checkpoint_sha256,
+            "calibrated pose evidence belongs to another checkpoint"
+        );
+        for (path, sha) in &pose.inputs {
+            ensure!(record(path, &mut sources)? == *sha, "pose source changed");
+        }
+        crate::pose::verify(&pose)?;
+        for method in &pose.config.methods {
+            let mut capability = burn_gekko_eval::pose::benchmark::capability(&pose, method)?;
+            capability.label = format!("Calibrated motion / {}", crate::display::readout(method));
+            capabilities.push(capability);
+        }
+        let mut metrics = Vec::new();
+        for (i, contrast) in pose.contrasts.iter().enumerate() {
+            metrics.push(metric(
+                &format!("control_{i}_auc10_gain"),
+                &format!(
+                    "Pose AUC@10 gain over {}",
+                    crate::display::readout(contrast["control"].as_str().context("pose control")?)
+                ),
+                100. * number(contrast, "macro_auc10_gain")?,
+                "percentage points",
+                false,
+                pose.methods.values().next().unwrap().sequences.len(),
+                "paired sequence macro difference; positive favors pair conditioning",
+            ));
+        }
+        capabilities.push(Capability {id:"calibrated_pose.transfer".into(),label:"Camera-motion transfer gate".into(),status:CapabilityStatus::Evaluated,
+            protocol:format!("{}: AUC@10 must improve over both controls in every sequence, without lower overall solver success.",if pose.contrasts.iter().all(|v|v["passed"]==true){"PASSED"}else{"FAILED"}),
+            limitations:vec!["Only three related sequences; the gate is a bounded diagnostic, not a SOTA qualification.".into()],metrics});
+        Some(pose)
+    } else {
+        None
+    };
+    if let Some(file) = &e.output_heads {
+        let mut head_capabilities =
+            crate::output_heads::load(file, &e.checkpoint_sha256, &mut sources)?;
+        head_capabilities.extend(capabilities);
+        capabilities = head_capabilities;
     }
     for file in &e.heads {
         let value = pinned(file, &mut sources)?;
-        let head: HeadEvidence = serde_json::from_value(value)?;
+        let mut head: HeadEvidence = serde_json::from_value(value)?;
         ensure!(
             head.schema == 1 && head.checkpoint_sha256 == e.checkpoint_sha256,
             "head evidence belongs to another checkpoint"
@@ -494,6 +691,7 @@ pub fn load(e: &Experiment) -> Result<Report> {
             !capabilities.iter().any(|c| c.id == head.capability.id),
             "duplicate capability"
         );
+        crate::display::head_labels(&mut head.capability);
         capabilities.push(head.capability);
     }
     for (id, label, detail) in [
@@ -571,6 +769,9 @@ pub fn load(e: &Experiment) -> Result<Report> {
             "monocular",
             "warp_pair_nll",
             "warp_self_nll",
+            "encoder_preservation_mse",
+            "view_geometry_nll",
+            "view_geometry_valid_fraction",
             "augmentation_seconds",
         ],
         32,
@@ -582,8 +783,9 @@ pub fn load(e: &Experiment) -> Result<Report> {
         capabilities,
         latent,
         benchmarks,
+        calibrated_pose,
         efficiency,
-        training: json!({"config":config,"coverage":coverage,"scalar_windows":scalar_windows,"encoder_stages":encoder_stages,"completed_steps":selected_step-starting_step,"checkpoint_step":selected_step,"starting_step":starting_step,"stage_steps":training_report["stage_steps"],"teacher_max_abs_delta":training_report["teacher_max_abs_delta"],"dataset_id":provenance["dataset_id"],"teacher_id":provenance["teacher_id"],"backend":provenance["backend"],"warm_start":provenance["warm_start"],"resume":provenance["resume"],"training_run":e.run}),
+        training: json!({"config":config,"view_geometry":view_geometry,"coverage":coverage,"scalar_windows":scalar_windows,"encoder_stages":encoder_stages,"completed_steps":selected_step-starting_step,"checkpoint_step":selected_step,"starting_step":starting_step,"stage_steps":training_report["stage_steps"],"teacher_max_abs_delta":training_report["teacher_max_abs_delta"],"preservation_anchor_qkv_max_abs_delta":training_report["preservation_anchor_qkv_max_abs_delta"],"preservation_startup":preservation_startup,"dataset_id":provenance["dataset_id"],"teacher_id":provenance["teacher_id"],"backend":provenance["backend"],"warm_start":provenance["warm_start"],"resume":provenance["resume"],"training_run":e.run}),
         sources,
     })
 }

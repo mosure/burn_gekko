@@ -1,0 +1,5 @@
+run = ".data/runs/pilot-12-full-screen"
+ledger = ".data/pilot-12/full-screen-run/ledger.json"
+telemetry = ".data/pilot-12/full-screen-run/full-screen-gpu.jsonl"
+command = "full-screen"
+output = ".data/pilot-12/full-screen-summary.json"

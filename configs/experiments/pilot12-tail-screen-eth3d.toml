@@ -1,0 +1,15 @@
+images = ".data/benchmarks/eth3d/images.json"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+selection_record = ".data/pilot-12/tail-screen/eth3d-selection.toml"
+selection_sha256 = "8b3c3c1065d4ea65d93074302fd715c0464b51dca5f4e547ed3a1fec8a91fdd7"
+max_seconds = 330
+evaluation_use = "development"
+spatial_layer = 6
+self_conditioned_readouts = true
+local_refinement = true
+focused_spatial_readouts = true
+
+[[models]]
+name = "model"
+checkpoint = ".data/runs/pilot-12-tail-screen/final"
+model_sha256 = "d6508b27e661be35d82294c75d9a8196949a76450576e774b8270244670e884e"

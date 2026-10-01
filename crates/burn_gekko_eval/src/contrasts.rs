@@ -12,6 +12,24 @@ use std::collections::BTreeMap;
 pub struct ReadoutContrast {
     pub candidate: String,
     pub control: String,
+    #[serde(default)]
+    pub gate: ContrastGate,
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ContrastGate {
+    #[default]
+    Transfer,
+    LocalPrecision,
+}
+impl ContrastGate {
+    fn passed(self, aepe: &Interval, pck: &Interval) -> bool {
+        match self {
+            Self::Transfer => aepe.low > 0. && pck.mean >= 0.,
+            Self::LocalPrecision => pck.low > 0. && aepe.mean >= 0.,
+        }
+    }
 }
 #[derive(Debug, Serialize)]
 pub struct PairedContrast {
@@ -20,6 +38,8 @@ pub struct PairedContrast {
     pub pairs: usize,
     pub aepe_gain: Interval,
     pub pck3_gain: Interval,
+    pub gate: ContrastGate,
+    pub passed: bool,
     pub interpretation: &'static str,
 }
 
@@ -95,12 +115,16 @@ pub fn paired(rows: &[Row], contrast: &ReadoutContrast, eth3d: bool) -> Result<P
             })
             .collect::<Vec<_>>()
     };
+    let aepe_gain = bootstrap_mean(&values(0), 719)?;
+    let pck3_gain = bootstrap_mean(&values(1), 719)?;
     Ok(PairedContrast {
         candidate: contrast.candidate.clone(),
         control: contrast.control.clone(),
         pairs: candidate.len(),
-        aepe_gain: bootstrap_mean(&values(0), 719)?,
-        pck3_gain: bootstrap_mean(&values(1), 719)?,
+        gate: contrast.gate,
+        passed: contrast.gate.passed(&aepe_gain, &pck3_gain),
+        aepe_gain,
+        pck3_gain,
         interpretation: "Positive favors candidate: control minus candidate AEPE, candidate minus control PCK3. Pair means, then equal groups within each scene/sequence, then cluster bootstrap. One checkpoint; no training-seed uncertainty.",
     })
 }
@@ -128,6 +152,7 @@ mod tests {
         let c = ReadoutContrast {
             candidate: "candidate".into(),
             control: "control".into(),
+            gate: ContrastGate::Transfer,
         };
         let result = paired(&rows, &c, true).unwrap();
         assert_eq!(result.aepe_gain.mean, 2.);
@@ -158,12 +183,17 @@ mod tests {
         let contrast = ReadoutContrast {
             candidate: "candidate".into(),
             control: "control".into(),
+            gate: ContrastGate::LocalPrecision,
         };
         let result = paired(&rows, &contrast, false).unwrap();
         assert_eq!(result.pairs, 2);
         assert_eq!(result.aepe_gain.mean, 0.5);
         assert_eq!(result.pck3_gain.mean, 0.5);
         assert_eq!(result.aepe_gain.clusters, 2);
+        assert!(
+            !result.passed,
+            "precision uncertainty crossing zero must fail"
+        );
         rows[0].metrics.points += 1;
         assert!(paired(&rows, &contrast, false).is_err());
     }

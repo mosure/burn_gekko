@@ -1,0 +1,44 @@
+schema = 1
+id = "pilot11-main"
+title = "burn_gekko: Multi-View Latent Learning"
+author = "Mitchell Mosure"
+description = "A completed 12,000-update continuation trains multi-view latent prediction and a geometric descriptor over 8,192 procedural rooms. The fixed final checkpoint is evaluated on all 512 targets from 128 newly generated four-view rooms, all 580 HPatches and 3,365 ETH3D pairs, and a 186-pair calibrated TUM camera-motion probe. Tables retain complete populations, failed qualifications and equally processed controls from this checkpoint. This is a bounded research study; a state-of-the-art ranking is not established."
+architecture = "An audited MIT V-JEPA 2.1 Base encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. Latent prediction uses 256 by 256 images, two references and 90% random target masking. Dense RGB homographies supervise pair-conditioned and shared-weight same-image spatial descriptors with bilinear soft targets, temperature 0.07 and combined weight 0.1. The spatial descriptor adds a correction bounded by 25% of the centered block-6 descriptor norm. The fixed teacher supplies latent targets only to the loss. This phase adapts the last two encoder blocks and hierarchical output norms from an audited own screen checkpoint, resetting both AdamW optimizers. Batch size is 16, seed 773, trunk LR 4e-5, encoder LR 8e-7, warmup 200 and cosine horizon 12,000 updates. The correspondence operator retains the hard match and uses its fixed 3 by 3 reciprocal-probability centroid. Neural inference receives RGB only; cameras and geometric labels enter CPU scoring afterward. Training has no noncommercial pretrained weight or teacher dependency."
+run = ".data/runs/pilot-11-main"
+checkpoint = ".data/runs/pilot-11-main/final"
+checkpoint_sha256 = "bdd1bd204afc5584ce7277af40d8bea80f6987c6611937e79b7fb13074789637"
+sample_count = 6
+limitations = ["The fixed final endpoint is selected before fresh capture and external inference. This page presents one training run and checkpoint; every encoder, same-image, hard/local and information-use control belongs to those same weights.", "One training seed, limited synthetic diversity and unmatched public benchmark protocols prevent a SOTA claim. HPatches, ETH3D and the reused TUM cohort are development data.", "Completion uses 128 fresh rooms with four cameras each and all 512 target views, but only one fixed random mask (seed 773). It tests the same procedural generator, not independent real-world completion or mask-seed replication.", "Feature signal/error is teacher-power-normalized latent error in dB, not RGB PSNR. Colored feature maps are not reconstructed RGB. RGB, camera and depth heads remain untrained; their capabilities cannot be inferred from latent scores.", "Matching and calibrated pose inference use complete RGB pairs. Completion instead uses a sparse target and two references. Their input-information contracts differ.", "HPatches pixel distances use its declared 240 by 240 scoring frame; ETH3D uses original image pixels. The same three-pixel threshold has different relative size across these protocols.", "Local probability centroids are a fixed readout, not a reproduction of published full-resolution refinement. Raw decoder and attention matching are outside this focused spatial-descriptor evaluation.", "Known-transform evaluation uses 32 validation rooms and seed 1000773. Homographies do not test nonplanar parallax or disocclusion. Visibility strata are descriptive majority-label groups and make no causal claim about smoothing.", "Camera motion is fitted by a separate normalized eight-point essential RANSAC with known intrinsics. It is not learned camera/intrinsics prediction and does not recover metric translation scale or reproduce a five-point public benchmark.", "TUM has 186 eligible pairs across three related sequences. Six proposed pairs lacked a ground-truth timestamp association within 20 ms. One baseline below 1 cm is excluded from translation/pose only. Failed fits contribute 180 degrees; solver success does not mean accurate pose.", "Pose metrics give equal weight to pairs within sequence and equal weight to sequences. Unknown encoder-pretraining overlap cannot be excluded. This small reused acquisition cohort does not establish broad camera-motion generalization.", "Strict hidden-input isolation and reference-permutation outcomes are retained in the generated capability tables. The report does not relax their tolerances to turn a failure into a pass.", "Device power and utilization include shared desktop activity. They are not process-attributed energy or SM occupancy. Training energy includes preparation and evaluation; profiler replay timing is kept outside this report."]
+
+[latent]
+directory = ".data/pilot-11/heldout/main"
+metrics_sha256 = "6845194c908b7896077dc67a1f2334ca866dd659999610f7f249875d319a6ed9"
+provenance_sha256 = "354545a552cec0fc768c6c7ebe29d30114be5bde75864bdd4e4b2b382af29f23"
+evaluation_use = "held_out"
+
+[calibrated_pose]
+path = ".data/pilot-11/pose-256-score.json"
+sha256 = "fdb8e02f8cf44545b3e95b709fbbc9d02d4ae22cc98d300427b40d5f63d664e3"
+
+[equivariance]
+path = ".data/pilot-11/warp/metrics.json"
+sha256 = "306eec733a7d699c1cd8d53a2bbf801ff2243b1a31bbc4198f626924c33344d1"
+
+[[benchmarks]]
+path = ".data/pilot-11/hpatches-score.json"
+sha256 = "fa4476c1a5ef93e7c11cab1938c824b9219585761269fea2dbfbb7ece7663308"
+
+[[benchmarks]]
+path = ".data/pilot-11/eth3d-score.json"
+sha256 = "4ec309daccea0ca80cc9b5cb4174feb2017610699c4610dee1a2f93a3a0d51d2"
+
+[efficiency]
+command = "main-training"
+
+[efficiency.ledger]
+path = ".data/pilot-11/main-training-run/ledger.json"
+sha256 = "e2735cea2d39ec762cf62f02dd7666ddba84a366d4dfaacc2ce10bab1541c2a0"
+
+[efficiency.telemetry]
+path = ".data/pilot-11/main-training-run/main-training-gpu.jsonl"
+sha256 = "d31e5d7f9809ea2adbd75e9b5883f70f419688177a2d0248207adb0e84a1ab17"

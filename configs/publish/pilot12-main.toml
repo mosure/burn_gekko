@@ -1,0 +1,44 @@
+schema = 1
+id = "pilot12-main"
+title = "burn_gekko: Latent and Geometric Representation Learning"
+author = "Mitchell Mosure"
+description = "This fixed 4,096-update run trains multi-view latent prediction and geometric descriptors over 8,192 procedural rooms with a training-only frozen feature anchor. The registered preservation screen qualified before external evaluation. Evaluation covers all 512 targets from 128 newly generated four-view rooms, all 580 HPatches and 3,365 ETH3D pairs, and 186 calibrated TUM image pairs. This page presents one training run and checkpoint with equally processed controls, retained failures, uncertainty and annotated examples. A state-of-the-art ranking is not established."
+architecture = "An audited MIT V-JEPA 2.1 Base encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. Training uses 256 by 256 images, two reference views, 90% random target masking and batch 16. The entire image encoder is trainable. A pinned own frozen encoder supplies final-feature preservation targets only during training: raw squared error divided by per-image anchor energy, floor 1e-6, averaged equally over sparse target, full target and both full reference routes, with weight 4.0. Intermediate features have no direct preservation target. The fixed original V-JEPA teacher still supplies the latent completion targets. RGB homographies supervise pair-conditioned and same-image spatial descriptors with bilinear soft targets, temperature 0.07 and weight 0.1. The descriptor correction is bounded by 25% of the centered block-6 norm. Both AdamW optimizers reset at the start of this phase. Seed is 827, trunk LR 2e-05, encoder LR 4e-07, warmup 100 and cosine horizon 4096 updates. Inference contains no extra anchor encoder. Correspondence retains hard matches and the fixed 3 by 3 reciprocal-probability centroid. Model inputs are RGB only; known camera intrinsics and geometric labels enter CPU scoring afterward. No noncommercial pretrained weights or teachers are used."
+run = ".data/runs/pilot-12-main"
+checkpoint = ".data/runs/pilot-12-main/final"
+checkpoint_sha256 = "b8e5d38c3a62eefd2b2d7ebc89e5b2d47b6ee91ac844d7e3d6eb257ae487aad8"
+sample_count = 6
+limitations = ["ETH3D uses the canonical broad forward calculations after the optimized exporter failed exact index parity. Hard and local matches share the same score arrays for every pair, including both controls. The failed partial export is retained and is not scored.", "Implementation qualification found a repeatable 0.1415% RMS startup discrepancy despite exactly equal encoder parameters. Strict mean relative feature MSE below 1e-6 failed. Before quality measurements, initialization qualification was amended to exact whole-encoder parameter equality, mean error below 3e-6 and each route below 1e-5. The specific CUDA execution mechanism remains unresolved. Accuracy acceptance criteria stayed unchanged.", "The registered preservation screen qualified before external evaluation. Private training-arm comparisons are restricted to the internal study record, not this page.", "Fresh test rooms were captured after the fixed final checkpoint, with room seeds disjoint from all earlier cached dataset manifests. All 512 target views are exported. Completion uncertainty resamples rooms and does not measure training-seed uncertainty.", "HPatches, ETH3D and this reused TUM cohort are development benchmarks. One training seed and unmatched public baseline protocols cannot establish SOTA. Synthetic homography skill does not establish nonplanar 3D viewpoint transfer.", "The TUM probe uses known intrinsics and a normalized eight-point essential-matrix solver. Translation is a signed direction, not metric distance. Failures remain in the denominators. Camera, RGB and depth heads remain untrained.", "Feature signal/error dB is not RGB PSNR. Colored latent maps are not reconstructed RGB images, and feature preservation is a training regularizer rather than an independent task score. Suppressed spatial variation and all failed transfer or invariance checks remain visible.", "GPU board power includes shared desktop activity. CPU workspace tests also overlapped initialization and early updates; timings are shared-workstation observations. It is not process-attributed energy or SM occupancy. This report uses only the selected run's training telemetry, including preparation and evaluation."]
+
+[latent]
+directory = ".data/pilot-12/heldout/model"
+metrics_sha256 = "7d2e9078005ff4a73d5821a675e95e5065354f2b3f3a1f69dc91bf5eed618c4d"
+provenance_sha256 = "ce3e5354de8be9cf795ec83ebfdc05a4b58fb3bddfb0928a17abeebb101ec0cf"
+evaluation_use = "held_out"
+
+[calibrated_pose]
+path = ".data/pilot-12/main/pose-score.json"
+sha256 = "af201c68d9a8759e5c1e20c0f7b258c5066a32ffa7587f1e31f4cae6ea16f8ff"
+
+[equivariance]
+path = ".data/pilot-12/main-warp/metrics.json"
+sha256 = "c688f7a261537db9f286bca65885b647c91fab8e32be94e92b14bcc139bcc13a"
+
+[[benchmarks]]
+path = ".data/pilot-12/main/hpatches-score.json"
+sha256 = "b3e1d184d2090a7f2730d091d3cec89a83909091f6dbdc6ccde63ec4260e95cd"
+
+[[benchmarks]]
+path = ".data/pilot-12/main/eth3d-score.json"
+sha256 = "9073081aa95a31a3c9dda111581f419a2840ae6df21badf1a1854d68037a38b3"
+
+[efficiency]
+command = "main-training"
+
+[efficiency.ledger]
+path = ".data/pilot-12/main-training-run/ledger.json"
+sha256 = "823941093e74c1bbd4c89579d4b091c49ffad6c368986b808bd080fc38b5de42"
+
+[efficiency.telemetry]
+path = ".data/pilot-12/main-training-run/main-training-gpu.jsonl"
+sha256 = "248382ecc0b6b32044b5bad92c7ded62ab91bc4818cd162a9812dba856ba184f"

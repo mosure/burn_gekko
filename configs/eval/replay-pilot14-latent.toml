@@ -1,0 +1,15 @@
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+expected_target_views = 32
+latent_absolute_tolerance = 1e-05
+metric_absolute_tolerance = 2e-06
+output = ".data/pilot-14/latent-replay.json"
+
+[original]
+directory = ".data/pilot-13/fresh-latent/model"
+metrics_sha256 = "fb6baf4c9581d6042310b2dedb14f8780243ec3c3c4d9ab46ac7eec3f89878ad"
+provenance_sha256 = "0ae335f2a88c44da951c50aeb84fcbf47be10ec34ea7b4f1a6e7bbb0aff937df"
+
+[replay]
+directory = ".data/pilot-14/replay-2/model"
+metrics_sha256 = "2a05b42879cca579ed468315ee0154591d9f13220048a9f7c2bdc29c6c248303"
+provenance_sha256 = "f63764a54bf47330b9c8544769d501673c680eedb9c63eea790bfb0c8d2b4c6a"

@@ -1,0 +1,2 @@
+input = ".data/pilot-14/shared-gpu-pmon.log"
+output = ".data/pilot-14/shared-gpu-activity.json"

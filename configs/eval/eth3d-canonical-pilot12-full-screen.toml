@@ -1,0 +1,37 @@
+benchmark = "eth3d"
+dataset = ".data/benchmarks/eth3d"
+predictions = ".data/pilot-12/full-screen/eth3d-canonical/model.jsonl"
+provenance = ".data/pilot-12/full-screen/eth3d-canonical/model-provenance.json"
+checkpoint_sha256 = "35fe91c16ecd45195ce11406aeeefb9c2dd7917c906d45991a35aee977238f82"
+images_sha256 = "19585a9773ce00c8a63e32660e73ae09e8d48502fc43dc0059e0e4ebe8b687a6"
+geometry_sha256 = "23382999b5ba85e6dfb5e9fbbb396ef094814b467386df9e74cedea36e746ff3"
+predictions_sha256 = "bc849ef87af98329e4bcc664670431885fdd13adbfad8eb64ed7ba68944895b0"
+evaluation_use = "development"
+output = ".data/pilot-12/full-screen/eth3d-score.json"
+visual_method = "spatial_residual_conditional_local"
+methods = ["spatial_residual_conditional", "spatial_self_conditional", "student_l06_centered_conditional", "spatial_residual_conditional_local", "spatial_self_conditional_local", "student_l06_centered_conditional_local"]
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "student_l06_centered_conditional"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional"
+control = "spatial_self_conditional"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional_local"
+control = "student_l06_centered_conditional_local"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional_local"
+control = "spatial_self_conditional_local"
+gate = "transfer"
+
+[[contrasts]]
+candidate = "spatial_residual_conditional_local"
+control = "spatial_residual_conditional"
+gate = "local_precision"

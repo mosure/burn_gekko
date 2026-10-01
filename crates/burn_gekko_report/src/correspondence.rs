@@ -103,7 +103,7 @@ pub fn build(
             let file = format!("media/{name}-matches-{i}.png");
             image.save(out.join(&file))?;
             figures.push(CorrespondenceFigure {title:format!("{} / {}",name,example["sample"].as_str().context("sample")?),file,
-                caption:format!("Target left; reference right. Blue: target/true-match connection. Green: ground-truth reference location. Orange: model match. Yellow: matching error. {} readout; pair AEPE {:.2} protocol pixels. Eight labels selected uniformly, not by error. {}.",crate::display::readout(example["method"].as_str().context("method")?),example["metrics"]["aepe"].as_f64().context("AEPE")?,example["selection"].as_str().context("selection")?)});
+                caption:format!("Target left; reference right. Blue: target/true-match connection. Green: ground-truth reference location. Orange: model match. Yellow: matching error. {} readout; mean match error {:.2} pixels in the {:.0} by {:.0} scoring frame. Eight labels selected uniformly, not by error. {}.",crate::display::readout(example["method"].as_str().context("method")?),example["metrics"]["aepe"].as_f64().context("AEPE")?,w,h,example["selection"].as_str().context("selection")?)});
         }
     }
     Ok(figures)

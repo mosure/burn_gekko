@@ -5,7 +5,190 @@ representation learning through multi-view V-JEPA latent prediction. RGB
 completion remains an optional diagnostic. Its earlier blur has not been solved
 by changing the prediction space.
 
-The latest [Pilot 08 study](studies/pilot-08-equivariance.md) completes 6,000
+The [output-head stability study](studies/head-stability-15.md) fits separate
+camera and RGB heads on the fixed foundation. Its 800-update schedule passes
+finite-gradient, learning, valid-rotation and exact-replay checks. On 24 targets
+from 8 development rooms, RGB PSNR is 21.09 dB, versus 20.70 dB for the same head
+without references. Camera errors remain 11.64 degrees rotation, 32.68 degrees
+translation direction and 44.35% focal relative error. Training camera loss is
+0.000131 versus validation 0.387406: strong overfitting, despite stable numerical
+optimization. These are bounded head-training results, not full end-to-end
+joint-training qualification or state-of-the-art evidence. The latest
+[page](../www/project/index.html) and [PDF](../www/project/paper.pdf) retain these gaps.
+
+The completed [Pilot 14 diagnostics](studies/pilot-14-information-diagnostics.md)
+do not train new weights. On the fixed Pilot 13 checkpoint, a third reference
+reduces hidden-token error by 1.66% on the same 512 targets; the paired room
+interval for absolute reduction is [0.002545, 0.003599]. Spatial structure remains
+weak. Per-view teacher-assisted contrast correction barely helps, while matching
+teacher variance raises MSE by about 21%. Raising variance alone is not a
+demonstrated solution to missing detail.
+
+Camera qualification must account for RANSAC variability. With frozen predictions
+and eight solver seeds, the original 2,048-trial same-image / encoder gates pass
+only 1/8 and 2/8 times. A separately registered 8,192-trial probe raises mean
+AUC@10 from 7.99% to 9.42%, but each gate passes only 2/8 times and only one seed
+passes both together. The original seed
+passes both at the larger trial budget; selecting it would conceal instability.
+No best-seed promotion, camera-head claim or new training improvement is made.
+The [page](../.data/publications/pilot14-information-diagnostics-reviewed/index.html) and
+[PDF](../.data/publications/pilot14-information-diagnostics-reviewed/paper.pdf) preserve
+the original primary camera result alongside these diagnostics, all for one
+checkpoint. All 157 workspace tests pass; exact 32-target GPU replay qualifies
+the assessment provenance correction. Shared-process monitoring now runs with
+a supported interval and explicit unavailable counters. There are 3.63 minutes
+left in the prior 12-hour GPU allowance; a further training ceiling is pending.
+All earlier study budget snapshots and frozen artifacts remain unchanged.
+
+The completed [Pilot 13 study](studies/pilot-13-view-geometry.md) adds a detached,
+renderer-supervised correspondence objective across actual camera views. In a
+matched 384-update, one-epoch screen over 2,048 rooms, synthetic viewpoint error
+falls 26.9%, with completion MSE only 0.35% higher, inside its 1% retention gate.
+Selection precedes all external inference. The fixed local readout reduces mean
+error by 12.4% on HPatches viewpoint and 16.3% on ETH3D versus the matched control.
+Both endpoints complete all 580 / 3,365 pairs. The selected checkpoint reaches
+14.8376 / 23.8085 pixels mean error and 26.23% / 5.68% PCK3 in their different
+scoring frames. All ten declared within-checkpoint spatial contrasts pass.
+The coarse ETH3D encoder-control precision gain is small and its interval still
+includes zero; the existing transfer gate requires a nonnegative mean. This
+qualifies the declared spatial readouts, not every decoder or attention feature.
+
+Camera transfer remains incomplete. The selected checkpoint's calibrated TUM
+probe gives 21.10% pose recall within 10 degrees but 7.65% AUC@10, below both the
+matched control (8.35%) and parent (8.50%). Its encoder-control gate passes;
+the same-image gate fails on `structure_texture_near`. Known intrinsics and
+essential-matrix RANSAC are not a trained camera head. This accuracy tradeoff
+must remain visible even though synthetic checkpoint selection passed.
+
+A conditionally preregistered fresh cohort adds 128 new rooms / 512 targets,
+with verified seed disjointness and no subsequent fitting. Reference benefit
+is 7.18%, feature signal/error 7.38 dB, spatial variation retained 43.56%, and
+co-visibility AUROC 0.7382. The paired room interval for MSE reduction is
+[0.012480, 0.016027]. Hidden-input isolation passes; strict numerical reference
+permutation fails. RGB/camera/depth heads remain untrained. Oversmoothing and
+camera weakness remain, so SOTA and an RGB blur fix are not established.
+The reviewed [page](../.data/publications/pilot13-geometry-reviewed/index.html)
+and [PDF](../.data/publications/pilot13-geometry-reviewed/paper.pdf) show one
+selected checkpoint with its own controls. Arm comparisons remain internal.
+
+Pilot 13 consumes 43.69 GPU-command minutes. Combined Pilot 11--13 usage is
+11.900 / 12 authorized hours, leaving 6.02 minutes; all model jobs are finished.
+The objective adds 18.3% median update time and 12.6% observed board energy per
+target. Shared desktop load remains included. A supplementary per-process
+observer failed at startup; board telemetry and process VRAM remain valid, but
+historical process SM activity is unavailable. All 152 workspace tests and CUDA
+strict Clippy pass after repairing a concurrent capture-test fixture race;
+failure logs remain retained. Native publication and browser checks pass.
+Independent seeds, stronger pose accuracy and protocol-matched public baselines
+remain open requirements. Historical studies retain their own budget snapshots.
+
+The preceding [Pilot 12 study](studies/pilot-12-feature-preservation.md) addresses
+the full-encoder adaptation tradeoff with a pinned, training-only feature anchor.
+Its matched screen retains completion MSE while reducing known-transform error
+by 35.8%. The selected recipe's fixed 4,096-update continuation passes all
+registered refined-readout matching and calibrated-motion transfer gates against
+equally processed controls from that same checkpoint. The coarse ETH3D readout
+still fails its encoder-control gate: mean pixel error improves, but PCK3 drops
+by 0.0606 percentage points. This failure remains in the paper. HPatches viewpoint / ETH3D
+within-three-pixel accuracy is 24.00% / 5.15%, with mean errors 16.9561 / 28.3917
+pixels in their different scoring frames. All 580 / 3,365 pairs are retained.
+
+On the 186-pair TUM development cohort, pose recall within 10 degrees is 19.48%
+across 185 pose-eligible pairs. Pose AUC@10 improves over both controls in every
+sequence, with unchanged overall solver success. This qualifies the registered
+within-checkpoint conditioning gate; it is not a learned camera head, an official
+pose benchmark result or a strong absolute accuracy result. Three related
+sequences and one training seed remain insufficient for broad generalization.
+
+Fresh completion evaluation on 128 newly captured rooms / 512 targets gives
+7.47% reference benefit, 7.33 dB feature signal/error and only 42.52% of teacher
+spatial variation. The paired room interval for absolute MSE reduction is
+[0.01325, 0.01690]. Co-visibility AUROC is 0.7315. Hidden-input isolation passes;
+strict numerical reference-order invariance fails. RGB/camera/depth heads remain
+untrained. The reviewed [page](../.data/publications/pilot12-main-reviewed/index.html)
+and [PDF](../.data/publications/pilot12-main-reviewed/paper.pdf) show one run with
+its own controls, annotated examples and every retained limitation. Synthetic
+arm comparisons stay in the internal study. SOTA is not established.
+
+The GPU study is closed, at 11.172 / 12 combined authorized GPU-command hours,
+with 49.71 minutes unused. All 149 workspace tests pass; native scoring and
+publication checks pass. The original strict startup forward-parity failure,
+its preregistered numerical amendment, the failed optimized ETH3D export and
+the corrected capture-wrapper invocation remain auditable. The canonical
+export completes every pair and shares hard/local score arrays. Its correctness
+checks do not relabel optimized parity as passed. Historical studies below
+retain their original results and budget snapshots.
+
+The completed [Pilot 11 main phase](studies/pilot-11-full-adaptation.md) performs
+12,000 continuation updates over 8,192 rooms, with all scheduled stages and
+teacher probes verified. Its fresh 128-room / 512-target evaluation gives 6.42%
+reference benefit, 7.36 dB feature signal/error and only 43.30% of teacher spatial
+variation. Hidden-input isolation passes; strict numerical reference permutation
+fails. All matching transfer and local-precision gates pass, with 18.7348px /
+20.78% PCK3 on HPatches viewpoint and 29.7577px / 4.37% PCK3 on ETH3D. Their pixel
+frames differ. All 580 / 3,365 pairs remain in the reported populations.
+
+Camera transfer remains unqualified. On the reused 186-pair TUM development
+cohort, pose recall within 10 degrees is 14.61% at 256px and 25.97% at 512px.
+Both resolutions fail the positive-gain-in-every-sequence tests against the
+same-image and encoder controls. The secondary resolution probe is a readout
+diagnostic of the same fixed checkpoint, not a checkpoint selection rule.
+The reviewed [page](../.data/publications/pilot11-main-reviewed/index.html) and
+[PDF](../.data/publications/pilot11-main-reviewed/paper.pdf) retain all failures,
+learning curves and deterministic annotated examples. Neither improved latent
+error nor matching gains establish sharp RGB output or a SOTA result.
+
+The preceding [Pilot 10 qualification](studies/pilot-10-real-pose.md)
+evaluates the frozen Pilot 09 weights on three locally unused TUM sequences.
+All 186 eligible pairs are scored; solver failures remain in the denominators.
+Fusion gives 20.03% pose recall at 10 degrees, versus 14.58% for the same-image
+control and 13.57% for the encoder. Mean rotation and signed translation-direction
+errors are 8.03 and 52.71 degrees. The strict all-sequence gate **fails** against
+the same-image control. Known intrinsics and a native eight-point solver produce
+these motion estimates; they do not establish learned camera prediction.
+The [page](../.data/publications/pilot10-real-pose/index.html) and
+[PDF](../.data/publications/pilot10-real-pose/paper.pdf) retain the negative gate.
+Any reuse of this cohort is now development, including Pilot 11. Its completed
+2,048-update screen cuts known-transform error from 7.4941 to 3.4275 pixels with
+full adaptation, but completion MSE regresses by 4.23%, failing the registered
+1% retention limit. Its fixed tail continuation is completed above. A
+[matched longer recovery](studies/pilot-11-recovery.md) also completes 12,000
+updates. It reduces known-transform error from 7.4265 to 2.2721px and raises
+PCK8 from 73.64% to 98.99%, but completion MSE remains 4.99% higher than tail,
+failing the unchanged 1% limit. Retain tail and skip the rejected arm's external
+exports. Both completed decisions use synthetic validation only. The separately
+registered [batching probe](studies/pilot-11-batch-probe.md) completes all three
+legs and passes numerical replay, with 1.48% drift between batch-16 controls.
+Batch 32 uses 1.965 times the process VRAM for only 14.64--16.33% more throughput,
+failing its 20% performance threshold. Batch 16 and the selected weights stay
+unchanged. Pilot 11 closes at **26,476.85 / 43,200 GPU-command seconds**
+(7.355 / 12 hours), with all jobs finished and 4.645 hours unused. Shared-load
+energy and trace limitations remain explicit in the internal studies.
+
+The preceding [Pilot 09 study](studies/pilot-09-local-readout.md) completes 2,700
+continuation updates and passes both registered local-precision gates and all
+same-operator fusion-transfer gates. The fixed local centroid changes only the
+readout within the selected checkpoint: matches within three pixels increase
+from 13.26% to 19.69% on HPatches viewpoint and 2.33% to 4.19% on ETH3D. Mean
+error falls from 20.0946 to 19.4655 and 33.1232 to 30.8876 pixels, respectively.
+HPatches uses a 240 by 240 scoring frame; ETH3D uses original image coordinates.
+The percentages are not comparable across those scales. All 580 / 3,365 pairs
+are scored; positive paired precision intervals qualify the readout change.
+
+Equally refined encoder and trained same-image controls are also beaten, with
+positive paired error and precision intervals on both benchmarks. These remain
+development datasets; the result isolates the inference operator, not the
+continuation phase's effect or independent generalization. One training seed,
+low absolute fine-match accuracy and unmatched public protocols prevent a SOTA
+claim. The fresh 128-room / 512-target cohort has 7.30 dB feature signal/error
+(not RGB PSNR), 5.99% lower latent MSE with references and only 42.27% of teacher
+spatial variation. Strict numerical reference-order invariance still fails;
+RGB, camera and depth heads remain untrained. The single-run
+[page](../.data/publications/pilot09-local-readout/index.html) and
+[23-page PDF](../.data/publications/pilot09-local-readout/paper.pdf) include a
+metric guide, annotated matching and completion, uncertainty and efficiency.
+
+The preceding [Pilot 08 study](studies/pilot-08-equivariance.md) completes 6,000
 updates and **passes all four registered spatial-readout transfer gates**.
 HPatches viewpoint AEPE is 20.3217 versus encoder 25.4678 and same-image control
 21.3770; ETH3D is 33.5004 versus 36.7393 and 34.8031. All paired AEPE-gain intervals
@@ -40,7 +223,11 @@ same checkpoint's conditional block-6 encoder, and HPatches viewpoint PCK3 drops
 The paired intervals and annotated examples are in its single-run page/PDF.
 The completed Pilot 07 GPU-command ledger is 11.976 / 12 hours, with 87.19 seconds
 left unused. Pilot 08 uses a separate two-hour ceiling, with 4,317.42 seconds
-consumed and 2,882.58 seconds left unused. No study GPU job is running. The earlier
+consumed in its immutable ledger. Pilot 09 draws only from its 2,882.58-second
+remainder and consumes 2,345.76 seconds. Combined usage is **111.05 / 120 minutes**,
+leaving 8.95 minutes at that closeout. Pilot 10 then consumes 29.49 seconds,
+leaving **8.46 minutes unused** in the old allowance. Pilot 11 uses its own new
+ledger and does not modify these completed receipts. The earlier
 [native refinement study](studies/pilot-07-native-spatial-refinement.md)
 and chronological studies below retain their original evidence and budgets.
 

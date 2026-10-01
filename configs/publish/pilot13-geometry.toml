@@ -1,0 +1,44 @@
+schema = 1
+id = "pilot13-geometry"
+title = "burn_gekko: Multi-view Latent and Spatial Learning"
+author = "Mitchell Mosure"
+description = "This fixed 384-update continuation trains over 2,048 procedural rooms, visiting each of their three target views once. The registered synthetic screen accepted the renderer-supervised auxiliary before external scoring. Evaluation includes 512 targets from 128 new post-selection four-view test rooms; 32 synthetic validation rooms with actual camera changes; all 580 HPatches and 3,365 ETH3D pairs; and 186 calibrated TUM image pairs. Figures, metrics, uncertainty and controls all belong to this one checkpoint. This is a short development screen, not a SOTA qualification."
+architecture = "An audited MIT V-JEPA 2.1 Base image encoder supplies final and block-6 features to six fusion blocks of width 384 with six attention heads. This phase starts from the audited own Pilot 12 checkpoint, resets both AdamW optimizers, and trains all 151 encoder tensors. Images are 256 by 256, batch size is 16, two references are provided and 90% of target patches are masked. The original fixed V-JEPA supplies latent targets. A fixed own Pilot 11 encoder supplies training-only final-feature preservation with weight 4.0; it is absent from inference. The latent, RI and image-homography objectives are retained. Seed is 829, trunk learning rate is 2e-5, encoder rate is 4e-7, warmup is 32 and the cosine horizon is 384 updates. The spatial residual is bounded by 25% of the centered block-6 norm. Matching uses a fixed 3 by 3 local probability centroid, plus the retained hard readout. An additional renderer-supervised bidirectional correspondence NLL has weight 0.1 and temperature 0.07. It pairs the dense target with a rotating reference using known visible patch-center projections. Source depth discontinuities, unknown depth, occlusion, out-of-frame and descriptor-border locations are excluded. Geometry supplies detached training labels only. All inference inputs are RGB. Known intrinsics enter the calibrated CPU pose solver after inference. No noncommercial pretrained weights or teachers are used."
+run = ".data/runs/pilot-13-geometry"
+checkpoint = ".data/runs/pilot-13-geometry/final"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+sample_count = 6
+limitations = ["This is a 384-update, one-seed continuation of an existing model, not training from random weights or a convergence study. Private-arm comparisons remain in the internal study record. Matched target exposures do not imply equal compute.", "The primary completion cohort contains 128 newly generated test rooms (512 target views), captured after the fixed checkpoint and conditional protocol registration. Room seeds are disjoint from all existing completed dataset manifests. Mask seed is fixed at 829. The reused Pilot 12 cohort remains internal development evidence; no checkpoint or setting changed after seeing either cohort.", "Synthetic validation uses view 0 against view 1 in both directions for the same 32 rooms. All methods share visible query identities. Renderer visibility labels never enter matching scores or RGB inference.", "HPatches, ETH3D and the three related TUM sequences are reused development cohorts. External results cannot alter the sealed synthetic selection. Independent training seeds and matched public baseline protocols remain necessary for SOTA claims.", "ETH3D uses canonical broad calculations. Hard and local readouts share score arrays and pass exact hard-index and mutual-flag consistency on every pair. The historical optimized-export parity failure and startup numerical discrepancy remain unresolved; no numerical cause is asserted here.", "External exports evaluate the fixed spatial descriptor readouts. They do not qualify every decoder feature or attention layer.", "The TUM camera result uses known intrinsics and normalized eight-point essential-matrix RANSAC. Translation is a signed direction, not distance. Solver failures remain in the denominators, with one predefined tiny-baseline exclusion. Camera, RGB and depth heads remain untrained.", "Colored latent maps are not RGB reconstructions. Feature signal/error dB is not RGB PSNR. Spatial variation, co-visibility, failed transfer gates and invariance failures remain visible.", "Board energy includes shared desktop activity and startup/evaluation overhead. Process VRAM is separate. The short preflight is not used as a steady-state energy result. These measurements do not establish SM occupancy, process-attributed power or a dispatch optimization."]
+
+[latent]
+directory = ".data/pilot-13/fresh-latent/model"
+metrics_sha256 = "fb6baf4c9581d6042310b2dedb14f8780243ec3c3c4d9ab46ac7eec3f89878ad"
+provenance_sha256 = "0ae335f2a88c44da951c50aeb84fcbf47be10ec34ea7b4f1a6e7bbb0aff937df"
+evaluation_use = "held_out"
+
+[calibrated_pose]
+path = ".data/pilot-13/geometry/pose-score.json"
+sha256 = "e6ab5dd686d08decf5b5e9004ddd472dc5b631dd46e136985a4db95946bfdceb"
+
+[view_geometry]
+path = ".data/pilot-13/geometry-view-audit/metrics.json"
+sha256 = "34aabec39b5f741a73d7948c7c946c4a8249dec147c14b4ce7022d0d9aea9907"
+
+[[benchmarks]]
+path = ".data/pilot-13/geometry/hpatches-score.json"
+sha256 = "46b854493c966395cdfc177b2fa91a153e95db297a26083f473682060eab09ae"
+
+[[benchmarks]]
+path = ".data/pilot-13/geometry/eth3d-score.json"
+sha256 = "97b3f10516d8b964cdb523521cb51949d84b266399984e639beb0513e3e9f37c"
+
+[efficiency]
+command = "geometry"
+
+[efficiency.ledger]
+path = ".data/pilot-13/geometry-run/ledger.json"
+sha256 = "6bc8675735300050346575a53db40c580fee8c3cc8e58e4f0bf45037935adad5"
+
+[efficiency.telemetry]
+path = ".data/pilot-13/geometry-run/geometry-gpu.jsonl"
+sha256 = "a1ac32be19637d74ead2f74504b5ccff3cfda79da557981aaa351fbe8bfa110d"

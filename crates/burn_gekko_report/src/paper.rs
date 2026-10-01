@@ -36,10 +36,11 @@ pub fn write(
 \usepackage[a4paper,margin=23mm]{{geometry}}
 \usepackage[T1]{{fontenc}}
 \usepackage[utf8]{{inputenc}}
-\usepackage{{graphicx,booktabs,longtable,array,hyperref,microtype}}
+\usepackage{{graphicx,booktabs,array,hyperref,microtype,pgfplots}}
+\pgfplotsset{{compat=1.18}}
 \hypersetup{{hidelinks,pdftitle={{{}}},pdfauthor={{{}}}}}
 \setlength{{\parindent}}{{0pt}}\setlength{{\parskip}}{{6pt}}
-\title{{{}}}\author{{{}}}\date{{Private technical draft / experiment {}}}
+\title{{{}}}\author{{{}}}\date{{Local technical draft / experiment {}}}
 \begin{{document}}\maketitle
 \begin{{abstract}}
 {} This report presents a single selected training experiment in Burn, with fixed-teacher latent completion, co-visibility evaluation and declared correspondence readouts. Every table and visual binds to one checkpoint. Latent-space visualization is distinct from RGB synthesis; state-of-the-art performance is not established.
@@ -52,9 +53,8 @@ Sparse target tokens retain their original image-grid positions before encoder a
 \section{{Experiment and data}}
 The selected checkpoint is \texttt{{{}}}. This phase completed {} updates over {} configured cached training rooms, with {} logged target exposures covering {} unique rooms. Configurations, weight ancestry, dataset identities and the selected checkpoint hash are retained in the bundled machine-readable results. User inputs are TOML; metrics and prediction artifacts are typed native Rust exports. Pretrained noncommercial Gekko weights are excluded from this training lineage.
 
-Completion evaluation role: \textbf{{{}}}. Hidden-token MSE averages channels and hidden patches, then target views. Confidence intervals resample whole rooms rather than correlated pixels. The evaluation contains {} target views. Geometry is loaded after inference to score co-visibility and correspondence. Teacher-fitted display projections are visualization tools and do not enter inference or evaluation metrics.
+Completion evaluation role: \textbf{{{}}}. Hidden-token MSE averages channels and hidden patches, then target views. Confidence intervals resample whole rooms rather than correlated pixels. The evaluation contains {} target views. Evaluation geometry is loaded after inference to score co-visibility and correspondence; any training-room geometry supervision is declared separately above. Teacher-fitted display projections are visualization tools and do not enter inference or evaluation metrics.
 
-\section{{Absolute results for the selected checkpoint}}
 ",
         tex(&e.title),
         tex(&e.author),
@@ -71,6 +71,12 @@ Completion evaluation role: \textbf{{{}}}. Hidden-token MSE averages channels an
         tex(&e.latent.evaluation_use),
         r.latent["target_views"]
     );
+    body.push_str("\\section{Optimization trajectory}\n\\begin{center}\\resizebox{0.98\\linewidth}{!}{\\input{media/training-plot.tex}}\\end{center}\nTraining curves use nonoverlapping groups of at most 50 updates. Scheduled validation probes are shown when available. Every point belongs to this phase at or before the selected checkpoint. Validation uses development rooms and its declared masks; these curves do not establish independent generalization or training-seed convergence.\n");
+    body.push_str("\\section{How to read the metrics}\n");
+    for (name, detail) in crate::display::METRIC_GUIDE {
+        body.push_str(&format!("\\paragraph{{{}}} {}\n", tex(name), tex(detail)));
+    }
+    body.push_str("\\section{Absolute results for the selected checkpoint}\n");
     for c in &r.capabilities {
         body.push_str(&format!(
             "\\subsection{{{}}}\n{}\n",
@@ -78,18 +84,25 @@ Completion evaluation role: \textbf{{{}}}. Hidden-token MSE averages channels an
             tex(&c.protocol)
         ));
         if c.status == CapabilityStatus::Evaluated {
-            body.push_str("\\begin{longtable}{p{.57\\linewidth}rp{.23\\linewidth}}\\toprule Metric & Value & Unit / count \\\\ \\midrule\n");
-            for m in &c.metrics {
-                let (value, unit) = crate::display::value(m);
-                body.push_str(&format!(
-                    "{} & {} & {} / {} \\\\\n",
-                    tex(&m.label),
-                    value,
-                    tex(unit),
-                    m.samples
-                ));
+            // Bounded tables stay together and repeat their header when a head
+            // has many metrics, without splitting a row at the page boundary.
+            for (part, metrics) in c.metrics.chunks(12).enumerate() {
+                if part > 0 {
+                    body.push_str("Metrics continued.\n");
+                }
+                body.push_str("\\begin{center}\\begin{tabular}{p{.57\\linewidth}rp{.23\\linewidth}}\\toprule Metric & Value & Unit / count \\\\ \\midrule\n");
+                for m in metrics {
+                    let (value, unit) = crate::display::value(m);
+                    body.push_str(&format!(
+                        "{} & {} & {} / {} \\\\\n",
+                        tex(&m.label),
+                        value,
+                        tex(unit),
+                        m.samples
+                    ));
+                }
+                body.push_str("\\bottomrule\\end{tabular}\\end{center}\n");
             }
-            body.push_str("\\bottomrule\\end{longtable}\n");
         } else {
             body.push_str("\\textbf{No evaluated capability is claimed for this head.}\n");
         }
@@ -101,26 +114,49 @@ Completion evaluation role: \textbf{{{}}}. Hidden-token MSE averages channels an
     body.push_str(&format!("Completion room-bootstrap 95\\% interval: [{:.6}, {:.6}], {} rooms, 10,000 deterministic replicates. This measures scene sampling uncertainty, not variation across training seeds.\n",ci["low"].as_f64().unwrap(),ci["high"].as_f64().unwrap(),ci["clusters"]));
     let gain = &r.latent["room_bootstrap_monocular_gain"];
     body.push_str(&format!("Paired gain from using references (monocular MSE minus cross-view MSE): {:.6}, room-bootstrap 95\\% interval [{:.6}, {:.6}]. Positive values favor reference use.\n", gain["mean"].as_f64().unwrap(),gain["low"].as_f64().unwrap(),gain["high"].as_f64().unwrap()));
-    body.push_str("\\section{Visual evaluation protocol}\nExamples are evenly spaced over the exported sample identities, retaining the first and last. They are not selected by prediction quality. All displayed teacher features share one three-component PCA projection and teacher-derived 2nd--98th percentile color bounds; predictions use the identical projection and bounds. Color structure describes representation variation, not RGB texture reconstruction. Error maps use a fixed 0--1 scale (dark blue to teal to yellow to red), saturating above 1. Co-visibility truth uses teal for shared geometry, coral for non-visible patches and gray for observed/unknown patches.\n");
+    if let Some(pose) = &r.calibrated_pose {
+        body.push_str("\\subsection{Camera motion by sequence}\nTUM RGB-D data \\cite{tum} is CC BY 4.0. These three sequences share one acquisition environment; prior exposure in encoder pretraining is not established. Known intrinsics enter the CPU solver only. Solver success counts estimates returned, including inaccurate ones. Failed fits contribute 180 degrees. Exclusions are baselines below 1 cm and affect translation/pose only.\n\\begin{center}\\small\\begin{tabular}{llrrrrr}\\toprule Sequence & Readout & Solved/all & Rot. $^\\circ$ & Trans. $^\\circ$ & AUC@10 \\% & Excl. \\\\ \\midrule\n");
+        for row in crate::pose::sequence_rows(pose) {
+            body.push_str(&format!(
+                "{} \\\\\n",
+                row.iter().map(|x| tex(x)).collect::<Vec<_>>().join(" & ")
+            ));
+        }
+        body.push_str("\\bottomrule\\end{tabular}\\end{center}\n");
+    }
+    body.push_str("\\section{Visual evaluation protocol}\nExamples are evenly spaced over the exported sample identities, retaining the first and last. They are not selected by prediction quality. All displayed teacher features share one three-component PCA projection and teacher-derived 2nd--98th percentile color bounds; predictions use the identical projection and bounds. Color structure describes representation variation, not RGB texture reconstruction. Error maps use a fixed 0--1 scale (dark blue to teal to yellow to red), saturating above 1. Co-visibility truth uses teal for shared geometry, coral for non-visible patches and gray for observed/unknown patches. Camera-motion panels identify predicted matches and RANSAC inliers; these are not ground-truth correspondences.\n");
+    for (heads, heading) in [
+        (true, "Learned RGB and camera examples"),
+        (false, "Geometric correspondence examples"),
+    ] {
+        let selected: Vec<_> = matches
+            .iter()
+            .filter(|m| m.file.contains("output-head-") == heads)
+            .collect();
+        for pair in selected.chunks(2) {
+            body.push_str(&format!("\\clearpage\\section*{{{heading}}}\n"));
+            for figure in pair {
+                body.push_str(&format!(
+                    "\\subsection*{{{}}}\n\\includegraphics[width=.95\\linewidth]{{{}}}\n\n{}\n\n",
+                    tex(&figure.title),
+                    figure.file,
+                    tex(&figure.caption)
+                ));
+            }
+        }
+    }
     for sample in samples {
+        let snr = sample
+            .feature_snr_db
+            .map(|v| format!("Feature signal/error: {v:.2} dB (not RGB PSNR). "))
+            .unwrap_or_default();
         body.push_str(&format!(r"\clearpage\subsection{{Room {}, target view {}}}
 \includegraphics[width=\linewidth]{{{}}}
 
 Top row, left to right: sparse target input; reference 1; reference 2 (or an explicitly blank panel); full target RGB for evaluation only. Second row: teacher latent; predicted latent; hidden-token error; geometric co-visibility truth. If present, the third row shows the same model's monocular latent, learned RI score, signed reference benefit and geometric visibility fraction. RI/fraction maps use a 0--1 scale. Reference benefit is (monocular MSE minus cross-view MSE) divided by monocular MSE: -1 red (worse), 0 white, +1 teal (better), saturating outside that range. Unlike the clipped training RI target, this display retains negative effects. RI is an unconstrained regression score, not a calibrated visibility probability. The teacher and full target do not enter sparse inference.
 
-Hidden-token MSE: {:.6}. Cosine: {:.6}. Values are recomputed in Rust from the exported arrays and checked against the population evaluation. All samples use the same error and projection conventions.
-",sample.room_seed,sample.target_view,sample.contact_sheet,sample.mse,sample.cosine));
-    }
-    for pair in matches.chunks(2) {
-        body.push_str("\\clearpage\\section*{Geometric correspondence examples}\n");
-        for figure in pair {
-            body.push_str(&format!(
-                "\\subsection*{{{}}}\n\\includegraphics[width=.95\\linewidth]{{{}}}\n\n{}\n\n",
-                tex(&figure.title),
-                figure.file,
-                tex(&figure.caption)
-            ));
-        }
+{}Hidden-token MSE: {:.6}. Cosine: {:.6}. Values are recomputed in Rust from the exported arrays and checked against the population evaluation. All samples use the same error and projection conventions.
+",sample.room_seed,sample.target_view,sample.contact_sheet,snr,sample.mse,sample.cosine));
     }
     if let Some(v) = &r.efficiency {
         body.push_str(&format!("\\section{{Training efficiency}}\nCommand duration {:.1} minutes; observed board energy {:.2} Wh; observed board joules per logged target {:.2}; telemetry coverage {:.1}\\%. {}\n",v.command_seconds/60.,v.observed_board_energy_wh,v.observed_board_joules_per_target,100.*v.telemetry_coverage,tex(&v.scope)));
@@ -156,6 +192,18 @@ Hidden-token MSE: {:.6}. Cosine: {:.6}. Values are recomputed in Rust from the e
             tex(&note)
         ));
     }
+    if let Some(note) = crate::display::encoder_preservation(&r.training) {
+        body.push_str(&format!(
+            "\n\\paragraph{{Encoder feature preservation.}} {}\n",
+            tex(&note)
+        ));
+    }
+    if let Some(note) = crate::display::view_geometry(&r.training) {
+        body.push_str(&format!(
+            "\n\\paragraph{{Renderer-supervised correspondence.}} {}\n",
+            tex(&note)
+        ));
+    }
     if r.training["config"]["equivariance"].is_object()
         && r.training["scalar_windows"]["warp_pair_nll"].is_object()
     {
@@ -171,12 +219,13 @@ Hidden-token MSE: {:.6}. Cosine: {:.6}. Values are recomputed in Rust from the e
     }
     body.push_str("\\end{itemize}\n");
     body.push_str(r"\section{Reproducibility and extension}
-The model library, trainer, data reader, evaluation and publication are separate Rust crates. A new decoder/head supplies a checkpoint-bound capability record with explicit metric units, population, aggregation and evaluation status. Camera scoring includes SO(3) angular error, signed translation-direction error, normalized focal error and pose AUC at 5, 10 and 20 degrees. Zero ground-truth baselines are excluded from translation-direction and pose denominators; a zero predicted translation at a valid baseline is a failure. These implementations are not evidence that a camera head has been trained.
+The model library, trainer, data reader, evaluation and publication are separate Rust crates. A new decoder/head supplies a checkpoint-bound capability record with explicit metric units, population, aggregation and evaluation status. Camera scoring includes SO(3) angular error, signed translation-direction error, normalized focal error and pose AUC at 5, 10 and 20 degrees. Zero ground-truth baselines are excluded from translation-direction and pose denominators; a zero predicted translation at a valid baseline is a failure. A trained head requires the separate checkpoint-bound optimization and prediction evidence reported in its capability section.
 
 Generate this page and report from one TOML experiment manifest with \texttt{gekko-report build}. The bundle carries input and output hashes, exact sample identities, a common latent projection and the resolved report data. Local preparation does not commit, push, deploy or upload the repository. Checkpoints from old code identities require their sealed binaries for exact optimizer resume; weights-only new phases must record explicit ancestry and optimizer resets.
 
 \section{Related work and provenance}
-The project studies sparse visual encoding and multi-view fusion motivated by V-JEPA 2.1 and Gekko. Procedural room captures use published bevy\_zeroverse packages. Calibrated 3D positional encodings and supervised camera heads are research extensions; this experiment does not implement or claim their published results.
+The project studies sparse visual encoding and multi-view fusion motivated by V-JEPA 2.1 and Gekko. Procedural room captures use published bevy\_zeroverse packages. Calibrated 3D positional encodings remain a research extension. The optional supervised calibration head uses two continuous rotation columns, following the representation of Zhou et al. \cite{rotation6d}; it does not implement or claim the published camera systems referenced below.
+The external matching protocols use the documented HPatches and ETH3D assets associated with ZeroCo \cite{zeroco}, with the local input resolution and readout explicitly declared. This is not reproduction of its complete published matching system.
 \begin{thebibliography}{9}
 \bibitem{vjepa21} L. Mur-Labadia et al. V-JEPA 2.1: Unlocking Dense Features in Video Self-Supervised Learning. \url{https://arxiv.org/abs/2603.14482v3}.
 \bibitem{zeroverse} M. Mosure. bevy\_zeroverse: Procedural multi-view data. \url{https://mosure.github.io/bevy_zeroverse/project/}.
@@ -184,6 +233,9 @@ The project studies sparse visual encoding and multi-view fusion motivated by V-
 \bibitem{dppe} DPPE: Rethinking Camera-Based Positional Encoding for Scaling Multi-View Transformers. \url{https://arxiv.org/abs/2606.31585}.
 \bibitem{zipsplat} ZipSplat: Fewer Gaussians, Better Splats. \url{https://arxiv.org/abs/2606.05102}.
 \bibitem{silk} P. Gleize, W. Wang and M. Feiszli. SiLK: Simple Learned Keypoints. \url{https://arxiv.org/abs/2304.06194}.
+\bibitem{zeroco} ZeroCo: Cross-View Completion Models are Zero-shot Correspondence Estimators. Official implementation and benchmark protocols. \url{https://github.com/cvlab-kaist/ZeroCo}.
+\bibitem{rotation6d} Y. Zhou et al. On the Continuity of Rotation Representations in Neural Networks. CVPR 2019. \url{https://arxiv.org/abs/1812.07035}.
+\bibitem{tum} J. Sturm et al. A Benchmark for the Evaluation of RGB-D SLAM Systems. IROS 2012. Dataset, camera calibration and file formats. \url{https://cvg.cit.tum.de/data/datasets/rgbd-dataset}.
 \end{thebibliography}
 \end{document}
 ");
@@ -200,7 +252,14 @@ The project studies sparse visual encoding and multi-view fusion motivated by V-
                 ])
                 .output()
                 .context("pdflatex is required for --pdf")?;
-            fs::write(out.join(format!("paper-build-{pass}.log")), &result.stdout)?;
+            // TeX wraps image filenames with trailing spaces. Keep the generated
+            // text log reviewable under the repository's whitespace checks.
+            let log = String::from_utf8_lossy(&result.stdout)
+                .lines()
+                .map(str::trim_end)
+                .collect::<Vec<_>>()
+                .join("\n");
+            fs::write(out.join(format!("paper-build-{pass}.log")), log + "\n")?;
             ensure!(
                 result.status.success(),
                 "paper compilation failed; inspect paper-build-{pass}.log"

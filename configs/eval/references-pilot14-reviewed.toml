@@ -1,0 +1,14 @@
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"
+output = ".data/pilot-14/reference-count-reviewed.json"
+
+[[evaluations]]
+references = 2
+directory = ".data/pilot-13/fresh-latent/model"
+metrics_sha256 = "fb6baf4c9581d6042310b2dedb14f8780243ec3c3c4d9ab46ac7eec3f89878ad"
+provenance_sha256 = "0ae335f2a88c44da951c50aeb84fcbf47be10ec34ea7b4f1a6e7bbb0aff937df"
+
+[[evaluations]]
+references = 3
+directory = ".data/pilot-14/references-3/model"
+metrics_sha256 = "5ef41aea25ad2427a09dc2ca7dcf8c1c466fa4422d185c1a43420c440a829c8c"
+provenance_sha256 = "deb925638d1280d2a3745a4732b90bb66746f7b556e4d988c8eaf6e97182b895"

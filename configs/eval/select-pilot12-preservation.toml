@@ -1,0 +1,25 @@
+output = ".data/pilot-12/screen-selection.json"
+
+[tail.summary]
+path = ".data/pilot-12/tail-screen-summary.json"
+sha256 = "a09ab266e52ee0c7f5ffe71ba172d97eb53bcf7aa95746fd43c00dd4eac162b0"
+
+[tail.warp]
+path = ".data/pilot-12/tail-warp/metrics.json"
+sha256 = "7ef8dfa0cc3ce3c3aae8cb10b5619b43b0058f400f9c592a7b9c9f80925f9df8"
+
+[full.summary]
+path = ".data/pilot-12/full-screen-summary.json"
+sha256 = "6c3aa000a8396fb8eb1d89abe82e4453193e3f1316b476f2a5c13a71e81da366"
+
+[full.warp]
+path = ".data/pilot-12/full-warp/metrics.json"
+sha256 = "9c2498f4cdd990463ff01a1f2708521069ad53a66c9c6e0746936991874f94a5"
+
+[preserved.summary]
+path = ".data/pilot-12/preserved-screen-summary.json"
+sha256 = "003b3ca697a7e8f79aca1e2c13e7f2a04ca5ecc062e9fc11c5bb0e6141b891f6"
+
+[preserved.warp]
+path = ".data/pilot-12/preserved-warp/metrics.json"
+sha256 = "3aa1057bf85a487ed7c458e522eda9d026fb5692ea53027b157aadf755072df5"
