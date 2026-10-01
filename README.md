@@ -118,7 +118,16 @@ Report generation is local and never deploys a page. Read
 [crate organization](docs/repository-plan.md) and the
 [registered spatial-head experiment](docs/spatial-descriptor-protocol.md).
 
-The latest [Pilot 16 diagnostics](docs/studies/pilot-16-continuation.md) add native
+The latest [Pilot 17 diagnosis](docs/studies/pilot-17-localization.md) isolates a
+camera-solver weakness using the same frozen RGB predictions. Across all 186 TUM
+development pairs and eight seeds, native five-point fitting raises mean pose
+AUC@10 from **7.99% to 14.19%**, and lowers signed translation error from **51.71°
+to 35.50°**. Every seed improves. Subpixel refinement remains helpful; hard patch
+centers score worse. Fusion still passes both control gates together in only
+**1/8 seeds**. The page and paper retain one foundation checkpoint and the same
+attached heads; these are calibrated solver diagnostics, not new model training.
+
+The [Pilot 16 diagnostics](docs/studies/pilot-16-continuation.md) add native
 synthetic camera retention and room-bootstrap analysis. Across 32 development
 rooms and eight solver seeds, the geometry-trained trunk reaches **21.04% pose
 AUC@10**, versus **17.20%** for its original matched control. Joint angular error
@@ -126,7 +135,7 @@ falls **4.29°** (paired 95% room interval **1.00°–7.74°**). This synthetic 
 does not resolve the earlier real-view camera regression. Geometry labels now
 cover all 8,192 cached training rooms. A matched 4,096-update continuation is
 prepared; **96 seconds** remain in the old GPU allowance, so longer training
-awaits a renewed ceiling. The published model, page and paper remain Head Stability 15.
+awaits a renewed ceiling. Published weights remain those evaluated in Head Stability 15.
 
 The latest [output-head study](docs/studies/head-stability-15.md) trains camera and
 RGB heads for 800 CPU updates on a fixed foundation checkpoint. All bounded

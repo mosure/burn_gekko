@@ -6,7 +6,7 @@ Native CPU scoring of immutable Burn prediction exports. No Python or GPU backen
 - `refinement`: fixed local probability centroids in fractional patch coordinates.
 - `ranking`: tie-aware AP/AUROC.
 - `camera`: SO(3), signed translation direction, normalized intrinsics and pose AUC.
-- `pose`: calibrated eight-point RANSAC, failure-inclusive real-image motion scoring
+- `pose`: calibrated eight-point and explicit five-point RANSAC, failure-inclusive real-image motion scoring
   and same-checkpoint transfer gates; separate from learned camera heads.
 - `benchmark`: complete ETH3D/HPatches protocols and deterministic visual examples.
 - `statistics`: cluster bootstrap with a specified portable RNG.
@@ -93,3 +93,11 @@ not training-seed uncertainty or a new generalization result. It also writes a
 single-checkpoint capability for publication. Reference-count scoring reports
 paired room-bootstrap intervals so correlated target views do not inflate the
 uncertainty population.
+
+`gekko-eval pose-localization --config <TOML>` compares recorded subpixel matches
+with their hard patch centers across the complete method/pair/solver-seed panel.
+It reports ground-truth epipolar agreement after fitting, including disagreement
+inside the RANSAC consensus. Truth never filters solver input. The optional
+`minimal_solver = "five_point"` uses the pinned MIT `vision-geometry` solver;
+the default preserves the original eight-point implementation and verifies its
+original-seed replay. See the [Pilot 17 protocol](../../docs/studies/pilot-17-localization.md).

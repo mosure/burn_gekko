@@ -1256,6 +1256,200 @@
       ]
     },
     {
+      "id": "pose_localization_8_point",
+      "label": "Calibrated solver diagnostic / 8-point hypotheses",
+      "status": "evaluated",
+      "protocol": "Frozen RGB predictions; recorded local centroid versus hard patch center, with identical mutual flags, all methods/pairs and every declared solver seed. Known calibration only. All fits precede and are independent of truth diagnostics; failed poses count as 180 degrees. Mean camera metrics weight pairs within sequence, sequences within seed, then every seed. Epipolar summaries weight eligible pairs equally. Eight-point mode verifies the original seed replay; five-point mode changes only the minimal hypothesis solver and RANSAC sample size/stopping exponent. Both modes retain the same final linear refit and cheirality. No best-seed/readout selection or new trained weights.",
+      "limitations": [
+        "Repeated TUM development data, not independent qualification.",
+        "Ground-truth epipolar consistency is a necessary, not sufficient, condition for a correct correspondence; along-line errors can pass.",
+        "Sampling opportunity assumes the maximum trial budget and independent trials; it is not pose-success probability or an estimate of real correspondence precision.",
+        "Solver-seed ranges are sensitivity ranges, not scene or training uncertainty.",
+        "Hard and recorded labels change coordinate readout only; exported descriptor method IDs retain their original names.",
+        "This table shows the registered subpixel readout. All hard-coordinate ablations, seed ranges and failures remain in the pinned source reports. This is calibrated post-inference fitting, not a learned camera head or predicted intrinsics. Model and attached RGB-head weights are unchanged."
+      ],
+      "metrics": [
+        {
+          "id": "spatial_residual_conditional_local_auc10",
+          "label": "Pair-conditioned: Pose AUC at 10 degrees",
+          "value": 0.07994504111236124,
+          "unit": "fraction",
+          "lower_is_better": false,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_residual_conditional_local_rotation_degrees",
+          "label": "Pair-conditioned: Rotation error",
+          "value": 7.941576402828392,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_residual_conditional_local_translation_degrees",
+          "label": "Pair-conditioned: Translation-direction error",
+          "value": 51.71016437935084,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_self_conditional_local_auc10",
+          "label": "Same-image: Pose AUC at 10 degrees",
+          "value": 0.06787514581687093,
+          "unit": "fraction",
+          "lower_is_better": false,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_self_conditional_local_rotation_degrees",
+          "label": "Same-image: Rotation error",
+          "value": 9.196566814742337,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_self_conditional_local_translation_degrees",
+          "label": "Same-image: Translation-direction error",
+          "value": 55.94741915901858,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "student_l06_centered_conditional_local_auc10",
+          "label": "Encoder: Pose AUC at 10 degrees",
+          "value": 0.07266553712131803,
+          "unit": "fraction",
+          "lower_is_better": false,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "student_l06_centered_conditional_local_rotation_degrees",
+          "label": "Encoder: Rotation error",
+          "value": 9.035464324503032,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "student_l06_centered_conditional_local_translation_degrees",
+          "label": "Encoder: Translation-direction error",
+          "value": 56.417589540032,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        }
+      ]
+    },
+    {
+      "id": "pose_localization_5_point",
+      "label": "Calibrated solver diagnostic / 5-point hypotheses",
+      "status": "evaluated",
+      "protocol": "Frozen RGB predictions; recorded local centroid versus hard patch center, with identical mutual flags, all methods/pairs and every declared solver seed. Known calibration only. All fits precede and are independent of truth diagnostics; failed poses count as 180 degrees. Mean camera metrics weight pairs within sequence, sequences within seed, then every seed. Epipolar summaries weight eligible pairs equally. Eight-point mode verifies the original seed replay; five-point mode changes only the minimal hypothesis solver and RANSAC sample size/stopping exponent. Both modes retain the same final linear refit and cheirality. No best-seed/readout selection or new trained weights.",
+      "limitations": [
+        "Repeated TUM development data, not independent qualification.",
+        "Ground-truth epipolar consistency is a necessary, not sufficient, condition for a correct correspondence; along-line errors can pass.",
+        "Sampling opportunity assumes the maximum trial budget and independent trials; it is not pose-success probability or an estimate of real correspondence precision.",
+        "Solver-seed ranges are sensitivity ranges, not scene or training uncertainty.",
+        "Hard and recorded labels change coordinate readout only; exported descriptor method IDs retain their original names.",
+        "This table shows the registered subpixel readout. All hard-coordinate ablations, seed ranges and failures remain in the pinned source reports. This is calibrated post-inference fitting, not a learned camera head or predicted intrinsics. Model and attached RGB-head weights are unchanged."
+      ],
+      "metrics": [
+        {
+          "id": "spatial_residual_conditional_local_auc10",
+          "label": "Pair-conditioned: Pose AUC at 10 degrees",
+          "value": 0.14194872708034834,
+          "unit": "fraction",
+          "lower_is_better": false,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_residual_conditional_local_rotation_degrees",
+          "label": "Pair-conditioned: Rotation error",
+          "value": 5.464600328408089,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_residual_conditional_local_translation_degrees",
+          "label": "Pair-conditioned: Translation-direction error",
+          "value": 35.495053020867324,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_self_conditional_local_auc10",
+          "label": "Same-image: Pose AUC at 10 degrees",
+          "value": 0.12877452599301115,
+          "unit": "fraction",
+          "lower_is_better": false,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_self_conditional_local_rotation_degrees",
+          "label": "Same-image: Rotation error",
+          "value": 6.0215397070994,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "spatial_self_conditional_local_translation_degrees",
+          "label": "Same-image: Translation-direction error",
+          "value": 41.723338936180085,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "student_l06_centered_conditional_local_auc10",
+          "label": "Encoder: Pose AUC at 10 degrees",
+          "value": 0.12328057839367532,
+          "unit": "fraction",
+          "lower_is_better": false,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "student_l06_centered_conditional_local_rotation_degrees",
+          "label": "Encoder: Rotation error",
+          "value": 6.113464664048923,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        },
+        {
+          "id": "student_l06_centered_conditional_local_translation_degrees",
+          "label": "Encoder: Translation-direction error",
+          "value": 44.439386157520794,
+          "unit": "degrees",
+          "lower_is_better": true,
+          "samples": 8,
+          "aggregation": "equal pairs within each sequence, then equal sequences and all solver seeds; failures included"
+        }
+      ]
+    },
+    {
       "id": "depth",
       "label": "Depth / future decoders",
       "status": "not_trained",
@@ -484114,6 +484308,216 @@
       "path": ".data/runs/head-stability-15/validation/2609308199-2-target.f32",
       "sha256": "b8acf5a7c6d20fafc38c8a544c92249479f2132f6023621564880242e210014d",
       "bytes": 786432
+    },
+    {
+      "path": ".data/pilot-17/eight-point/head.json",
+      "sha256": "7725cd13560ae65ec21bdfb2c916cade3a730db65a3120db1023fd7d2465476c",
+      "bytes": 8362
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-consensus.json",
+      "sha256": "41605805dd54b23f724a63ac8d9fd4ceede5f30435f1c1e417283c6e1c6b4f8c",
+      "bytes": 1246173
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-781.json",
+      "sha256": "f5473e8c37465848456f702f243104339497840e01eb5b6a3c0ef865a434015c",
+      "bytes": 2279641
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-782.json",
+      "sha256": "eef779f6accea4f92d6bf567ddf9ae502a0d4e6a106f3f874346782e7f6cd6c8",
+      "bytes": 2283589
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-783.json",
+      "sha256": "987da1c7019f36c8da4b610c138b8becec58f9a58ee77df7232798ab690cd121",
+      "bytes": 2280176
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-784.json",
+      "sha256": "00db0277f5606817efae76d1c836eedc2b2cec0c84ee97d0c7d9d0c47fe8e3c0",
+      "bytes": 2282384
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-785.json",
+      "sha256": "4408d4430976e933f9ef4f0c1bc93f50ee194e80ca8bf146a4730a6c3b072b22",
+      "bytes": 2278445
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-786.json",
+      "sha256": "4afa232165cf0507103afe95cdb4409939956ec444368c6bb0811b10483969af",
+      "bytes": 2280248
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-787.json",
+      "sha256": "d653db4ec5f7e7b56456d434ae968e8c1328bf158de9a5ccf7a9170992ef029f",
+      "bytes": 2280804
+    },
+    {
+      "path": ".data/pilot-17/eight-point/hard-seed-788.json",
+      "sha256": "5fa32324abb5d3f8963c9dbe734f8ce1b582b10552ebb889693b2a9becc10fb2",
+      "bytes": 2283150
+    },
+    {
+      "path": ".data/pilot-17/eight-point/matches.json",
+      "sha256": "325c6bc9eccca73804ce440a91ac82a3ea0f670f0b676e47cd8d555b18c029e0",
+      "bytes": 607346
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-consensus.json",
+      "sha256": "28190ad06cf53b15a876c1324c46266f45b139198793f83bbf8bf414278f6662",
+      "bytes": 1244750
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-781.json",
+      "sha256": "2e46508956d80e3cf0f35f9f55b1403621c7bdee38ae966cad1a95fcbf8a1e90",
+      "bytes": 2391858
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-782.json",
+      "sha256": "bf43d5e1328843d3173da7368c664543cd1799a3325fbf311a5100f405604a57",
+      "bytes": 2391507
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-783.json",
+      "sha256": "bd9919849eeb2837e059cb1c9047d0977f156c3c74f24728362da00c2e840dcd",
+      "bytes": 2391357
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-784.json",
+      "sha256": "a201a48777aea77ddbac6bc60b43be3a9f55ec378ff5caf1a626de97fedf96c1",
+      "bytes": 2391788
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-785.json",
+      "sha256": "99dd5427ed3089a4a527ba4e9e33e9a27fbe9535c10b4f56f82d680ecffa3220",
+      "bytes": 2391020
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-786.json",
+      "sha256": "92be5e5909713a70431effe2d47ca25ca79f3722006bc9b0c9964cf2ae7775f7",
+      "bytes": 2392369
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-787.json",
+      "sha256": "c97a598910eb7780970c6c879de5566a9466c9ce2e39c7f8406b127247a1bcf7",
+      "bytes": 2391796
+    },
+    {
+      "path": ".data/pilot-17/eight-point/recorded-seed-788.json",
+      "sha256": "e18f0271f32efd0ac20a885887beff3fe31f9a1a7cb5a3301a3f7027caa6b779",
+      "bytes": 2391437
+    },
+    {
+      "path": ".data/pilot-17/eight-point/summary.json",
+      "sha256": "b1e14a549ca8678d2f4fda2284b88e948a7ff477ff9a5083a5a11dfd5059db94",
+      "bytes": 28310
+    },
+    {
+      "path": ".data/pilot-17/five-point/head.json",
+      "sha256": "190477eb40a95b551ac7110995a80ee139d6915699493c86d93eba1d7627ff8d",
+      "bytes": 8345
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-consensus.json",
+      "sha256": "874eca85ae40dc2dbaaf381b9a0301997eab7bc3edd9ded83839dd07dc00c9f9",
+      "bytes": 1248093
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-781.json",
+      "sha256": "a40b3fe5adfa95d6adcf5e0c2ae9f677aa9a5a2fae12c28591276a676f83403e",
+      "bytes": 2276197
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-782.json",
+      "sha256": "566ed37be13936c67da2e67442bdbced567ebf5a7f5ba84e24de7ed5f4982adc",
+      "bytes": 2274074
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-783.json",
+      "sha256": "53cbd90c39f5d4110dde556d595a05e104ce682e534cd348c3ec0eaadec9ce9e",
+      "bytes": 2275175
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-784.json",
+      "sha256": "848e453fd1bd94d3ca6a735e75d58d23270a868e94a85b681c2f06e96e24500d",
+      "bytes": 2276410
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-785.json",
+      "sha256": "04c2c54b99552ec7b01ace220519746ceabc43b0f50d0f85fae75b4b2a7db947",
+      "bytes": 2276510
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-786.json",
+      "sha256": "d2a85e702637a8734d95d365edafbee78c4758fa5478358b195dc9ed7d256450",
+      "bytes": 2275217
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-787.json",
+      "sha256": "a94e293bc022c499868da31d061614e902476e9bbcf477aed38096d121bdf766",
+      "bytes": 2276514
+    },
+    {
+      "path": ".data/pilot-17/five-point/hard-seed-788.json",
+      "sha256": "416a6272d6e8ff63ceafeebebd215dbd537497aab7093fd7f69b0735c7eb1504",
+      "bytes": 2276346
+    },
+    {
+      "path": ".data/pilot-17/five-point/matches.json",
+      "sha256": "ac6339e82c72b6c9359422196e119bd29216000dc02837a1899c7f33217e9d46",
+      "bytes": 604511
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-consensus.json",
+      "sha256": "e7656d593dc8d08bb43b922565a0a4ee87378b37f0564aed4ec0c4d9ce27c810",
+      "bytes": 1245004
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-781.json",
+      "sha256": "92d9162fcd03ffa98e739bb5decaeef9138f5e51d90323e5d3ca61c189d3adc3",
+      "bytes": 2389430
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-782.json",
+      "sha256": "08f0849e98f7b91a2dff29227ed6cd92f1fa536fc881dc8aabf8cb782849d731",
+      "bytes": 2389294
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-783.json",
+      "sha256": "07bbc74c24145d700bb245a307af40112e3f461b64d5ea47ee65266b027096e3",
+      "bytes": 2388759
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-784.json",
+      "sha256": "85cae7f658e0457d2737c350909b02cff675fce58dbbcf78d9005f28ca88de18",
+      "bytes": 2388926
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-785.json",
+      "sha256": "345c7daa12eaa5d2c56c47a96939365364a19823d70a308b35d787517e066cf9",
+      "bytes": 2389376
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-786.json",
+      "sha256": "0328ac9c148cdab90b78b77c41fc60cfa6b8f780cb865966d4a4daacfee33fb8",
+      "bytes": 2389310
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-787.json",
+      "sha256": "431ede6a57d143ea50444e7f8bf8c8241c245c5a543c1946d9c3e7f6f05e8034",
+      "bytes": 2388929
+    },
+    {
+      "path": ".data/pilot-17/five-point/recorded-seed-788.json",
+      "sha256": "fc2ae29b2d191724d2e829e56ebdd08be1d3044a87d05e780725b28f9bc56509",
+      "bytes": 2388809
+    },
+    {
+      "path": ".data/pilot-17/five-point/summary.json",
+      "sha256": "154933cf31a47ed2eebdcafbd50e4b003d11410d718c53c267d61c83bd8693d3",
+      "bytes": 28254
     },
     {
       "path": ".data/pilot-13/geometry-run/ledger.json",

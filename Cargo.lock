@@ -926,6 +926,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tempfile",
+ "vision-geometry",
  "zip 4.6.1",
 ]
 
@@ -3948,11 +3949,24 @@ dependencies = [
  "glam 0.31.1",
  "glam 0.32.1",
  "matrixmultiply",
+ "nalgebra-macros",
  "num-complex",
  "num-rational",
  "num-traits",
+ "serde",
  "simba",
  "typenum",
+]
+
+[[package]]
+name = "nalgebra-macros"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "973e7178a678cfd059ccec50887658d482ce16b0aa9da3888ddeab5cd5eb4889"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]
@@ -4090,6 +4104,7 @@ checksum = "73f88a1307638156682bada9d7604135552957b7818057dcef22705b4d509495"
 dependencies = [
  "bytemuck",
  "num-traits",
+ "serde",
 ]
 
 [[package]]
@@ -6171,6 +6186,29 @@ name = "version_check"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+
+[[package]]
+name = "vision-calibration-core"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e079d8ae51d455cf2c18a6c8cdbb0a270ee8a80e99f190a7b33482a248dffd5"
+dependencies = [
+ "nalgebra",
+ "rand 0.10.3",
+ "serde",
+ "thiserror 2.0.21",
+]
+
+[[package]]
+name = "vision-geometry"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40ca1e642cb2ce81e7a6b67203f13106a04fdefe7bb4e5da5ce9152ab535b1db"
+dependencies = [
+ "nalgebra",
+ "thiserror 2.0.21",
+ "vision-calibration-core",
+]
 
 [[package]]
 name = "void"

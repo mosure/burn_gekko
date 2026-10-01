@@ -27,6 +27,12 @@ pub const SOURCES: &[(&str, &str)] = &[
     ("metrics/detail.rs", include_str!("metrics/detail.rs")),
     ("npy.rs", include_str!("npy.rs")),
     ("pose/mod.rs", include_str!("pose/mod.rs")),
+    ("pose/five_point.rs", include_str!("pose/five_point.rs")),
+    ("pose/localization.rs", include_str!("pose/localization.rs")),
+    (
+        "pose/localization/publication.rs",
+        include_str!("pose/localization/publication.rs"),
+    ),
     ("pose/replay.rs", include_str!("pose/replay.rs")),
     ("pose/solver.rs", include_str!("pose/solver.rs")),
     ("pose/stability.rs", include_str!("pose/stability.rs")),

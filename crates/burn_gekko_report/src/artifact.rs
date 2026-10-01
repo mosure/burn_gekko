@@ -80,6 +80,9 @@ struct HeadEvidence {
     schema: u32,
     checkpoint_sha256: String,
     capability: Capability,
+    /// Optional recursive evidence closure for native diagnostic capabilities.
+    #[serde(default)]
+    sources: BTreeMap<std::path::PathBuf, String>,
 }
 pub fn load(e: &Experiment) -> Result<Report> {
     ensure!(
@@ -693,6 +696,13 @@ pub fn load(e: &Experiment) -> Result<Report> {
     for file in &e.heads {
         let value = pinned(file, &mut sources)?;
         let mut head: HeadEvidence = serde_json::from_value(value)?;
+        for (path, expected) in &head.sources {
+            ensure!(
+                record(path, &mut sources)? == *expected,
+                "head evidence source changed: {}",
+                path.display()
+            );
+        }
         ensure!(
             head.schema == 1 && head.checkpoint_sha256 == e.checkpoint_sha256,
             "head evidence belongs to another checkpoint"

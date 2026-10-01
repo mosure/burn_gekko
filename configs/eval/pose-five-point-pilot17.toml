@@ -1,0 +1,6 @@
+# CPU-only solver diagnostic; same matches and full seed/readout population.
+original = ".data/pilot-13/geometry/pose-score.json"
+original_sha256 = "e6ab5dd686d08decf5b5e9004ddd472dc5b631dd46e136985a4db95946bfdceb"
+seeds = [781, 782, 783, 784, 785, 786, 787, 788]
+minimal_solver = "five_point"
+output = ".data/pilot-17/five-point"

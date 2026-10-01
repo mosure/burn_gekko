@@ -1,7 +1,23 @@
-//! Deterministic normalized eight-point RANSAC with essential projection and cheirality.
+//! Deterministic calibrated RANSAC; legacy eight-point and explicit five-point hypotheses.
 use anyhow::{Result, ensure};
 use nalgebra::{Matrix3, SMatrix, SVector, Vector3};
 use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum MinimalSolver {
+    #[default]
+    EightPoint,
+    FivePoint,
+}
+impl MinimalSolver {
+    pub fn sample_size(self) -> usize {
+        match self {
+            Self::EightPoint => 8,
+            Self::FivePoint => 5,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -102,7 +118,7 @@ fn essential(matches: &[Match]) -> Option<Matrix3<f64>> {
     let norm = e.norm();
     (norm.is_finite() && norm > 1e-12).then(|| e / norm)
 }
-fn sampson(e: &Matrix3<f64>, p: Match) -> f64 {
+pub(crate) fn sampson(e: &Matrix3<f64>, p: Match) -> f64 {
     let a = bearing(p[0]);
     let b = bearing(p[1]);
     let ea = e * a;
@@ -187,6 +203,16 @@ impl Rng {
     }
 }
 pub fn estimate(matches: &[Match], c: &SolverConfig) -> Result<PoseFit> {
+    estimate_with(matches, c, MinimalSolver::EightPoint)
+}
+
+/// Change only the minimal hypothesis generator. Consensus scoring, optional
+/// eight-point final refit and signed cheirality remain identical in both modes.
+pub fn estimate_with(
+    matches: &[Match],
+    c: &SolverConfig,
+    solver: MinimalSolver,
+) -> Result<PoseFit> {
     ensure!(
         c.max_trials >= c.min_trials
             && c.min_trials > 0
@@ -222,31 +248,35 @@ pub fn estimate(matches: &[Match], c: &SolverConfig) -> Result<PoseFit> {
             break;
         }
         fit.trials = trial + 1;
-        let mut indices = Vec::with_capacity(8);
-        while indices.len() < 8 {
+        let sample_size = solver.sample_size();
+        let mut indices = Vec::with_capacity(sample_size);
+        while indices.len() < sample_size {
             let i = rng.index(matches.len());
             if !indices.contains(&i) {
                 indices.push(i);
             }
         }
         let subset = indices.iter().map(|&i| matches[i]).collect::<Vec<_>>();
-        let Some(e) = essential(&subset) else {
-            continue;
+        let candidates = match solver {
+            MinimalSolver::EightPoint => essential(&subset).into_iter().collect(),
+            MinimalSolver::FivePoint => super::five_point::candidates(&subset),
         };
-        let (mask, count, cost) = classify(&e, matches, c.threshold * c.threshold);
-        if count > best_count || (count == best_count && cost < best_cost) {
-            best = Some(e);
-            fit.inliers = mask;
-            best_count = count;
-            best_cost = cost;
-            let probability = (count as f64 / matches.len() as f64).powi(8);
-            if probability > 0. {
-                let needed = if probability >= 1. {
-                    c.min_trials
-                } else {
-                    ((1. - c.confidence).ln() / (-probability).ln_1p()).ceil() as usize
-                };
-                limit = limit.min(needed.max(c.min_trials));
+        for e in candidates {
+            let (mask, count, cost) = classify(&e, matches, c.threshold * c.threshold);
+            if count > best_count || (count == best_count && cost < best_cost) {
+                best = Some(e);
+                fit.inliers = mask;
+                best_count = count;
+                best_cost = cost;
+                let probability = (count as f64 / matches.len() as f64).powi(sample_size as i32);
+                if probability > 0. {
+                    let needed = if probability >= 1. {
+                        c.min_trials
+                    } else {
+                        ((1. - c.confidence).ln() / (-probability).ln_1p()).ceil() as usize
+                    };
+                    limit = limit.min(needed.max(c.min_trials));
+                }
             }
         }
     }
@@ -347,6 +377,40 @@ mod tests {
                 serde_json::to_value(estimate(&points, &config()).unwrap()).unwrap()
             );
         }
+    }
+    #[test]
+    fn five_point_recovers_pose_deterministically_with_outliers() {
+        for noise in [false, true] {
+            let (points, truth) = fixture(noise);
+            let fit = estimate_with(&points, &config(), MinimalSolver::FivePoint).unwrap();
+            let pose = fit.pose.as_ref().expect("five-point pose recovered");
+            assert!(
+                rotation_degrees(pose.rotation, truth.rotation).unwrap() < 0.15,
+                "{fit:?}"
+            );
+            assert!(
+                translation_degrees(pose.translation, truth.translation)
+                    .unwrap()
+                    .unwrap()
+                    < 0.8,
+                "{fit:?}"
+            );
+            assert!(fit.positive_depth_points >= 70);
+            assert_eq!(
+                serde_json::to_value(&fit).unwrap(),
+                serde_json::to_value(
+                    estimate_with(&points, &config(), MinimalSolver::FivePoint).unwrap()
+                )
+                .unwrap()
+            );
+        }
+        let constant = vec![[[0.1, 0.2], [0.3, 0.4]]; 32];
+        assert!(
+            estimate_with(&constant, &config(), MinimalSolver::FivePoint)
+                .unwrap()
+                .pose
+                .is_none()
+        );
     }
     #[test]
     fn insufficient_degenerate_and_nonfinite_inputs_are_explicit() {

@@ -1,11 +1,11 @@
 {
   "checkpoint_sha256": "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7",
-  "experiment_id": "head-stability15",
+  "experiment_id": "pilot17-camera-diagnostics",
   "files": [
     {
-      "bytes": 7019,
+      "bytes": 7932,
       "file": "experiment.toml",
-      "sha256": "71c5ef8878a3a0284b2c3cc2b562de86fa1d285e8a5daf2550c5e76b6d33bbcc"
+      "sha256": "13b6f3b4538d40ef95b216a4c29eea3f50227a4b418386994d91a3b8b61fd2d9"
     },
     {
       "bytes": 757,
@@ -13,9 +13,9 @@
       "sha256": "d43f3d9ebc49c5c72862b7723c1fb7b8c976ade45789df1bfab70ca4997001ba"
     },
     {
-      "bytes": 88799,
+      "bytes": 97200,
       "file": "index.html",
-      "sha256": "1431b4597a9fec1385b4c21ff263da27863ff5cd16140861fc7ff828ff540448"
+      "sha256": "a50eaa4034eabcb5651d347493b6975997fb0113758d860cbd73d0369fa000c5"
     },
     {
       "bytes": 215988,
@@ -573,29 +573,29 @@
       "sha256": "b4b81f0d50339667b0767f027b5bc012135a4ff3ca94af1f47366cc0a769c4c7"
     },
     {
-      "bytes": 16494,
+      "bytes": 16499,
       "file": "paper-build-1.log",
-      "sha256": "dc4e2c6ac15c9362ae3f0de1c25fa1973e04306d8876082a3723e16cee92a82e"
+      "sha256": "5f49bd26b0adb2b58dd8531c2a078a03f35c4a3beeb7fc0fd51ab4f49141a6ad"
     },
     {
-      "bytes": 15906,
+      "bytes": 15915,
       "file": "paper-build-2.log",
-      "sha256": "3d38a927216a45176311192baf73c1c63f413c30b4df4cfbcfcb5e295cdd8e8c"
+      "sha256": "69793511256516d193c07fe7c27a9bbab35c9ab4a18af6247097ab6bfa1041d6"
     },
     {
-      "bytes": 5767712,
+      "bytes": 5771770,
       "file": "paper.pdf",
-      "sha256": "11fe461e33f0d822e5742355d2566f68415a4cb0a219b8b63f017e0f369217c8"
+      "sha256": "ce3b5e203679e9b5f1ff6ca14764e5abfa3bd4d8c4dafba69c415b8dfaf6683d"
     },
     {
-      "bytes": 68015,
+      "bytes": 73195,
       "file": "paper.tex",
-      "sha256": "c7c5e459fed1b02f48e5533597de5ff4730cf201d29a448fb68d4c5b560c3a74"
+      "sha256": "2a8755999e83991bb99ff2565efc659d2242bbca454d0948e0bd83bbff929a34"
     },
     {
-      "bytes": 13823956,
+      "bytes": 13842398,
       "file": "results.json",
-      "sha256": "981f81bf87834e970234dc3131c36dd989be66187335cb621e04f736ac7eb218"
+      "sha256": "93ec4b935af8902f71cba1620abec7f66f12e45837c403afa4ad6ddc8532a863"
     },
     {
       "bytes": 6416,

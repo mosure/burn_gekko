@@ -325,6 +325,22 @@ training runs. Changing solver policy requires a separate original report and
 declared protocol. The main camera gate is not retroactively changed by a seed
 panel or best-seed selection. See the [Pilot 14 study](studies/pilot-14-information-diagnostics.md).
 
+`pose-localization` uses the same pinned development export to separate coordinate
+localization from minimal pose fitting. TOML selects `eight_point` (the default)
+or `five_point`; both evaluate recorded local centroids and hard patch centers,
+all declared solver seeds and identical mutual matches. The eight-point mode
+checks the original seed against the historical report. The five-point adapter
+uses MIT `vision-geometry =0.9.0`, checks rank and algebraic residuals, and keeps
+the existing consensus scoring, final linear refit and signed cheirality.
+No labels enter hypothesis generation or select matches. Post-fit diagnostics
+measure agreement with the known essential matrix, with excluded baselines and
+undefined residuals explicit. Epipolar agreement cannot validate displacement
+along the epipolar line. See the [Pilot 17 protocol](studies/pilot-17-localization.md).
+The same command with `--report-only` validates all pinned inputs and emits a
+single-checkpoint capability without refitting. Diagnostic capabilities can carry
+an optional `sources` checksum map; the report builder verifies and records every
+source before producing the page or PDF.
+
 Standalone assessment provenance now distinguishes scoring-only evaluation
 geometry from the selected phase's training geometry objective and pins the
 training config. Legacy assessment flags are retained in old artifacts and

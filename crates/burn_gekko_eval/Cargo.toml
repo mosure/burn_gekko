@@ -21,6 +21,7 @@ burn_gekko_data = { version = "0.1.1", path = "../burn_gekko_data" }
 clap = { version = "4.5", features = ["derive"] }
 zip = { version = "4.6", default-features = false, features = ["deflate"] }
 nalgebra = { version = "0.34.2", default-features = false, features = ["std"] }
+vision-geometry = "=0.9.0"
 
 [dev-dependencies]
 tempfile = "3"

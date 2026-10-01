@@ -23,7 +23,7 @@ pub struct ReplayConfig {
     pub output: PathBuf,
 }
 type Population = BTreeMap<(String, String), Prediction>;
-fn load(c: &Export) -> Result<(Population, Value)> {
+pub(crate) fn load(c: &Export) -> Result<(Population, Value)> {
     ensure!(
         sha256_file(&c.predictions)? == c.predictions_sha256
             && sha256_file(&c.provenance)? == c.provenance_sha256,

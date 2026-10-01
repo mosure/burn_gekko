@@ -9,6 +9,14 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Diagnose hard versus subpatch localization and camera consensus on cached RGB matches.
+    PoseLocalization {
+        #[arg(long)]
+        config: PathBuf,
+        /// Verify a completed report and emit its checkpoint-bound publication capability.
+        #[arg(long)]
+        report_only: bool,
+    },
     /// Paired room-level uncertainty across a fixed synthetic pose solver-seed panel.
     CompareSyntheticPose {
         #[arg(long)]
@@ -107,6 +115,18 @@ enum Command {
 }
 fn main() -> Result<()> {
     match Args::parse().command {
+        Command::PoseLocalization {
+            config,
+            report_only,
+        } => {
+            let config = burn_gekko_data::read_config(&config)?;
+            let result = if report_only {
+                burn_gekko_eval::pose::localization::publish(&config)?
+            } else {
+                burn_gekko_eval::pose::localization::analyze(&config)?
+            };
+            println!("{}", serde_json::to_string_pretty(&result)?);
+        }
         Command::CompareSyntheticPose { config } => {
             let result = burn_gekko_eval::pose::synthetic_comparison::compare(
                 &burn_gekko_data::read_config(&config)?,
