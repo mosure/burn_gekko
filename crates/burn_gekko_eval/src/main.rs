@@ -41,6 +41,9 @@ enum Command {
     SyntheticPose {
         #[arg(long)]
         config: PathBuf,
+        /// Verify all recorded solver seeds and publish this checkpoint's capability.
+        #[arg(long)]
+        report_only: bool,
     },
     /// Verify a fixed latent-export prefix after exporter-only changes.
     LatentReplay {
@@ -160,10 +163,22 @@ fn main() -> Result<()> {
                 burn_gekko_eval::target_audit::audit(&burn_gekko_data::read_config(&config)?)?;
             println!("{}", serde_json::to_string_pretty(&result)?);
         }
-        Command::SyntheticPose { config } => {
-            let result =
-                burn_gekko_eval::pose::synthetic::score(&burn_gekko_data::read_config(&config)?)?;
-            println!("{}", serde_json::to_string_pretty(&result["methods"])?);
+        Command::SyntheticPose {
+            config,
+            report_only,
+        } => {
+            let config = burn_gekko_data::read_config(&config)?;
+            let result = if report_only {
+                burn_gekko_eval::pose::synthetic::publication::publish(&config)?
+            } else {
+                burn_gekko_eval::pose::synthetic::score(&config)?
+            };
+            let shown = if report_only {
+                &result["capability"]
+            } else {
+                &result["methods"]
+            };
+            println!("{}", serde_json::to_string_pretty(shown)?);
         }
         Command::LatentReplay { config } => {
             let result =

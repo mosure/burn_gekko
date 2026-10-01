@@ -1,4 +1,5 @@
 //! Synthetic camera retention from dense RGB predictions, never visibility-filtered matches.
+pub mod publication;
 use super::{
     benchmark::{PoseRow, summary},
     solver::{SolverConfig, estimate},

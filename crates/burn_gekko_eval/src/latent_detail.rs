@@ -275,9 +275,11 @@ pub fn analyze(c: &DetailConfig) -> Result<Value> {
         metrics: measures,
     };
     capability.validate()?;
+    let mut closure = sources;
+    closure.insert(c.output.clone(), sha256_file(&c.output)?);
     write_json(
         &c.output.with_extension("head.json"),
-        &json!({"schema":1,"checkpoint_sha256":c.checkpoint_sha256,"capability":capability}),
+        &json!({"schema":1,"checkpoint_sha256":c.checkpoint_sha256,"capability":capability,"sources":closure}),
     )?;
     Ok(report)
 }

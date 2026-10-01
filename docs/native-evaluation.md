@@ -118,6 +118,13 @@ fits remain in the denominator, and low-baseline exclusions are counted. See
 [Pilot 16](studies/pilot-16-continuation.md) for the fixed thresholds and the
 distinction between this geometric probe and learned camera heads.
 
+After scoring, `synthetic-pose --config <TOML> --report-only` revalidates every
+declared method, room and solver seed, recomputes mean pose AUC and angular errors,
+and writes a checkpoint-bound `.head.json` capability for the page/paper generator.
+It verifies the recursive input hashes and retains failures and seed ranges.
+The displayed sample count is unique rooms; solver repeats do not inflate it.
+This is calibrated geometric recovery, not learned intrinsic or camera-head accuracy.
+
 `gekko-eval audit-view-targets --config <TOML>` verifies the training-label cache
 and reports all directed pairs, empty targets and valid-query coverage per split.
 It uses the same bilinear-label policy as training, without launching GPU work.

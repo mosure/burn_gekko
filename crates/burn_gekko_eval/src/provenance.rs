@@ -51,6 +51,10 @@ pub const SOURCES: &[(&str, &str)] = &[
     ("pose/stability.rs", include_str!("pose/stability.rs")),
     ("pose/synthetic.rs", include_str!("pose/synthetic.rs")),
     (
+        "pose/synthetic/publication.rs",
+        include_str!("pose/synthetic/publication.rs"),
+    ),
+    (
         "pose/synthetic_comparison.rs",
         include_str!("pose/synthetic_comparison.rs"),
     ),
