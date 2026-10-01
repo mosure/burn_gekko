@@ -218,6 +218,9 @@ Top row, left to right: sparse target input; reference 1; reference 2 (or an exp
         body.push_str(&format!("\\item {}\n", tex(l)));
     }
     body.push_str("\\end{itemize}\n");
+    if let Some(demo) = &e.demo {
+        body.push_str(&format!("\n\\paragraph{{Interactive demonstration.}} \\url{{{}}} runs this foundation checkpoint and its attached heads on live procedural Zeroverse rooms or two to four uploaded RGB photographs. Native and WebGPU paths share Rust inference and metric code. A dedicated worker keeps the scene editor responsive. Camera edits invalidate previous annotations. This demonstration uses new captures and is separate from the fixed offline evaluation protocol; RGB sharpness and camera generalization limitations remain.\n", demo.url));
+    }
     body.push_str(r"\section{Reproducibility and extension}
 The model library, trainer, data reader, evaluation and publication are separate Rust crates. A new decoder/head supplies a checkpoint-bound capability record with explicit metric units, population, aggregation and evaluation status. Camera scoring includes SO(3) angular error, signed translation-direction error, normalized focal error and pose AUC at 5, 10 and 20 degrees. Zero ground-truth baselines are excluded from translation-direction and pose denominators; a zero predicted translation at a valid baseline is a failure. A trained head requires the separate checkpoint-bound optimization and prediction evidence reported in its capability section.
 

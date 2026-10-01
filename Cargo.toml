@@ -1,6 +1,6 @@
 [workspace]
-members = ["crates/burn_vjepa", "crates/burn_gekko_data", "crates/burn_gekko_train", "crates/burn_gekko_eval", "crates/burn_gekko_report"]
-exclude = ["tools/zeroverse_capture"]
+members = ["crates/burn_vjepa", "crates/burn_gekko_data", "crates/burn_gekko_train", "crates/burn_gekko_eval", "crates/burn_gekko_report", "crates/burn_gekko_metrics", "crates/burn_gekko_inference"]
+exclude = ["tools/zeroverse_capture", "crates/bevy_gekko"]
 resolver = "2"
 
 [package]

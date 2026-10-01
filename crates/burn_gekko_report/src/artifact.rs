@@ -96,6 +96,17 @@ pub fn load(e: &Experiment) -> Result<Report> {
         "checkpoint belongs to another run"
     );
     let mut sources = Vec::new();
+    if let Some(demo) = &e.demo {
+        ensure!(
+            demo.checkpoint_sha256 == e.checkpoint_sha256
+                && demo.url.starts_with("https://")
+                && demo
+                    .url
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b":/._-".contains(&b)),
+            "demo must identify this checkpoint and a valid HTTPS URL"
+        );
+    }
     ensure!(
         record(&e.checkpoint.join("model.mpk"), &mut sources)? == e.checkpoint_sha256,
         "checkpoint checksum mismatch"

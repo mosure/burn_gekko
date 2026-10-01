@@ -77,10 +77,14 @@ gate (positive precision-gain interval, no mean pixel-error regression).
 ## Local artifacts and deployment
 
 Building performs no commit, push, deploy or upload, regardless of repository visibility.
-The workflow template ends in `.disabled`. After user approval, copy the reviewed
-bundle to `www/project/`, review/enable the template, check distribution rights and
-provenance, and complete the normal release process. The optional public Gekko
-baseline remains isolated from training and is not included in the default page.
+The authorized `project-page.yml` workflow publishes the committed `www/project`
+bundle and builds the live demo on pushes to `main` or manual dispatch. It validates
+the publication, compiles the viewer and inference worker for WASM, and retrieves
+one SHA-256-pinned model release asset. The browser verifies every model part again.
+Model files stay outside Git; licenses and checkpoint provenance accompany them.
+The optional public Gekko baseline remains isolated from training and is not
+included in the default page or demo. An optional `[demo]` table adds a link to both
+page and PDF and must identify the experiment's foundation checkpoint.
 
 ## Actual camera-view diagnostics
 

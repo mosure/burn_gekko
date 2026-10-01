@@ -255,8 +255,13 @@ png (PNG copy)>] [23 <./media/pose-04.png (PNG copy)> <./media/pose-05.png (PNG
 [28 <./media/room-2610091053-view-0-sheet.png (PNG copy)>] [29 <./media/room-26
 10091078-view-2-sheet.png (PNG copy)>] [30 <./media/room-2610091104-view-0-shee
 t.png (PNG copy)>] [31 <./media/room-2610091129-view-3-sheet.png (PNG copy)>]
-[32] [33{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
-Underfull \hbox (badness 2689) in paragraph at lines 579--580
+[32]
+Overfull \hbox (2.52301pt too wide) in paragraph at lines 570--571
+ []\T1/cmr/bx/n/10 (-20) Interactive demon-stra-tion.[] []$\T1/cmtt/m/n/10 http
+s : / / mosure . github . io / burn _ gekko / demo/$[] \T1/cmr/m/n/10 (-20) run
+s this foun-da-tion check-
+[33{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+Underfull \hbox (badness 2689) in paragraph at lines 581--582
 []\T1/cmr/m/n/10 (+20) M. Mo-sure. bevy_zeroverse: Pro-ce-du-ral multi-view dat
 a. []$\T1/cmtt/m/n/10 https : / / mosure . github . io / bevy _
 [34] (./paper.aux) )
@@ -271,5 +276,5 @@ public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm
 /texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/type1/p
 ublic/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1
 728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on paper.pdf (34 pages, 5766911 bytes).
+Output written on paper.pdf (34 pages, 5767712 bytes).
 Transcript written on paper.log.

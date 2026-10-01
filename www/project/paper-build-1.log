@@ -262,14 +262,19 @@ t.png (PNG copy)>] [30 <./media/room-2610091104-view-0-sheet.png (PNG copy)>]
 LaTeX Warning: Citation `silk' on page 32 undefined on input line 555.
 
 [32]
-
-LaTeX Warning: Citation `rotation6d' on page 33 undefined on input line 575.
-
-
-LaTeX Warning: Citation `zeroco' on page 33 undefined on input line 576.
-
+Overfull \hbox (2.52301pt too wide) in paragraph at lines 570--571
+ []\T1/cmr/bx/n/10 (-20) Interactive demon-stra-tion.[] []$\T1/cmtt/m/n/10 http
+s : / / mosure . github . io / burn _ gekko / demo/$[] \T1/cmr/m/n/10 (-20) run
+s this foun-da-tion check-
 [33{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
-Underfull \hbox (badness 2689) in paragraph at lines 579--580
+
+LaTeX Warning: Citation `rotation6d' on page 34 undefined on input line 577.
+
+
+LaTeX Warning: Citation `zeroco' on page 34 undefined on input line 578.
+
+
+Underfull \hbox (badness 2689) in paragraph at lines 581--582
 []\T1/cmr/m/n/10 (+20) M. Mo-sure. bevy_zeroverse: Pro-ce-du-ral multi-view dat
 a. []$\T1/cmtt/m/n/10 https : / / mosure . github . io / bevy _
 [34] (./paper.aux)
@@ -296,5 +301,5 @@ public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm
 /texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/type1/p
 ublic/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1
 728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on paper.pdf (34 pages, 5764258 bytes).
+Output written on paper.pdf (34 pages, 5765139 bytes).
 Transcript written on paper.log.

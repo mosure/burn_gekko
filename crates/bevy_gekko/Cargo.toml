@@ -1,0 +1,57 @@
+[workspace]
+
+[package]
+name = "bevy_gekko"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98"
+license = "MIT OR Apache-2.0"
+description = "Live Zeroverse scenes and image uploads with native and WebGPU Burn Gekko inference"
+repository = "https://github.com/mosure/burn_gekko"
+readme = "README.md"
+publish = false
+
+[features]
+default = ["native"]
+native = ["bevy_zeroverse/multi_threaded", "dep:ureq", "dep:pollster", "burn_gekko_inference/wgpu"]
+web = ["bevy_zeroverse/web"]
+
+[dependencies]
+bevy = { version = "=0.19.1", default-features = false }
+bevy_zeroverse = { version = "=0.26.0", default-features = false, features = ["viewer"] }
+bevy_egui = "0.40"
+bevy_panorbit_camera = { version = "0.35.1", features = ["bevy_egui"] }
+burn_gekko_inference = { version = "0.1.0", path = "../burn_gekko_inference", default-features = false }
+burn_gekko_metrics = { version = "0.1.0", path = "../burn_gekko_metrics" }
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "1.1"
+rfd = "0.17.2"
+async-channel = "2"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+burn = { version = "=0.21.0", default-features = false, features = ["std", "wgpu", "fusion"] }
+ureq = { version = "3", optional = true }
+pollster = { version = "0.4", optional = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+serde-wasm-bindgen = "0.6"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Window", "Worker", "WorkerOptions", "WorkerType", "MessageEvent", "ErrorEvent", "Document", "Element", "Location"] }
+getrandom = { version = "0.3", features = ["wasm_js"] }
+getrandom04 = { package = "getrandom", version = "0.4", features = ["wasm_js"] }
+
+[profile.dev]
+debug = 0
+opt-level = 1
+[profile.dev.package."*"]
+opt-level = 2
+[profile.release]
+debug = 0
+opt-level = 3
+lto = "thin"
+codegen-units = 1

@@ -1,0 +1,4 @@
+id = "pilot13-head-stability15-f32"
+checkpoint = ".data/runs/pilot-13-geometry/final"
+heads = ".data/runs/head-stability-15/final"
+encoder_manifest = ".data/models/vjepa2_1_base/manifest.json"

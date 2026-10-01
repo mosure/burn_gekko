@@ -46,3 +46,7 @@ sha256 = "6bc8675735300050346575a53db40c580fee8c3cc8e58e4f0bf45037935adad5"
 [efficiency.telemetry]
 path = ".data/pilot-13/geometry-run/geometry-gpu.jsonl"
 sha256 = "a1ac32be19637d74ead2f74504b5ccff3cfda79da557981aaa351fbe8bfa110d"
+
+[demo]
+url = "https://mosure.github.io/burn_gekko/demo/"
+checkpoint_sha256 = "0639afa2e19d0e7ac5c9c1cc8caadc75d0dcf10f105ee2870607856b7a1ed5a7"

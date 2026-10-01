@@ -105,14 +105,7 @@ pub fn signal_to_error_db(signal_power: f64, mse: f64) -> Result<Option<f64>> {
     Ok((signal_power > 0. && mse > 0.).then(|| 10. * (signal_power / mse).log10()))
 }
 
-/// PSNR for declared data range; exact reconstruction is represented as None (+infinity).
-pub fn psnr(mse: f64, data_range: f64) -> Result<Option<f64>> {
-    ensure!(
-        mse.is_finite() && mse >= 0. && data_range.is_finite() && data_range > 0.,
-        "invalid PSNR input"
-    );
-    Ok((mse > 0.).then(|| 10. * (data_range * data_range / mse).log10()))
-}
+pub use burn_gekko_metrics::rgb::psnr;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct CorrespondenceMetrics {

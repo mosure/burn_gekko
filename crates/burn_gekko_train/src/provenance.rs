@@ -159,6 +159,7 @@ pub(crate) fn identity() -> anyhow::Result<String> {
     burn_gekko_data::fingerprint(&(
         "burn-gekko-source-v2",
         (SOURCES, MANIFEST, BUILD_SCRIPT, DEPENDENCY_LOCK),
+        (burn_gekko_metrics::SOURCES, burn_gekko_metrics::MANIFEST),
         (
             burn_gekko::provenance::SOURCES,
             burn_gekko::provenance::MANIFEST,

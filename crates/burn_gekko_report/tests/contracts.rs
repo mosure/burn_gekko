@@ -76,6 +76,7 @@ fn fixture(root: &Path) -> Experiment {
         id: "fixture".into(),
         title: "Fixture <test>".into(),
         author: "Fixture".into(),
+        demo: None,
         description: "Fixture".into(),
         architecture: "Fixture".into(),
         run,

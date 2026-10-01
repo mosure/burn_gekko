@@ -1,0 +1,66 @@
+name: Project paper and live demo
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: project-pages
+  cancel-in-progress: false
+env:
+  CARGO_BUILD_JOBS: 2
+  CARGO_TARGET_DIR: target/web
+jobs:
+  publish:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: dtolnay/rust-toolchain@1.98.0
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: demo-web-release
+          workspaces: '. -> target/web'
+      - name: Install matching WASM bindings generator
+        run: cargo install wasm-bindgen-cli --version 0.2.129 --locked
+      - name: Validate committed project page and PDF
+        run: cargo run --locked -p burn_gekko_report --bin gekko-report -- validate --bundle www/project
+      - name: Build native Rust code for browser renderer and inference worker
+        run: tools/demo/build_web.sh .data/site
+      - name: Fetch pinned audited checkpoint bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download demo-weights-heads15-v1 --pattern burn-gekko-demo-heads15.tar --dir .data
+          echo '3d543fc20033972cc4201cce798d6c815e25f16bd417b6e1ed0c722b84e6472d  .data/burn-gekko-demo-heads15.tar' | sha256sum -c -
+          mkdir -p .data/site/demo/models
+          tar -xf .data/burn-gekko-demo-heads15.tar -C .data/site/demo/models
+          du -sh .data/site
+      - name: Require successful CI for this source commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 30); do
+            conclusion=$(gh run list --workflow ci.yml --event push --commit "$GITHUB_SHA" --limit 1 --json status,conclusion --jq '.[0] | if .status == "completed" then .conclusion else "pending" end')
+            case "$conclusion" in
+              success) exit 0 ;;
+              pending|"") sleep 60 ;;
+              *) echo "Source CI did not pass: $conclusion"; exit 1 ;;
+            esac
+          done
+          echo "Timed out waiting for source CI"; exit 1
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .data/site
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -903,6 +903,7 @@ name = "burn_gekko_data"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "burn_gekko_metrics",
  "image",
  "safetensors 0.7.0",
  "serde",
@@ -919,12 +920,45 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "burn_gekko_data",
+ "burn_gekko_metrics",
  "clap",
  "nalgebra",
  "serde",
  "serde_json",
  "tempfile",
  "zip 4.6.1",
+]
+
+[[package]]
+name = "burn_gekko_inference"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "burn",
+ "burn_gekko",
+ "burn_gekko_metrics",
+ "burn_vjepa",
+ "console_error_panic_hook",
+ "getrandom 0.3.4",
+ "getrandom 0.4.3",
+ "image",
+ "pollster",
+ "serde",
+ "serde-wasm-bindgen",
+ "serde_json",
+ "sha2 0.10.9",
+ "tempfile",
+ "toml",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+]
+
+[[package]]
+name = "burn_gekko_metrics"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde",
 ]
 
 [[package]]
@@ -950,6 +984,7 @@ dependencies = [
  "burn_gekko",
  "burn_gekko_data",
  "burn_gekko_eval",
+ "burn_gekko_metrics",
  "burn_vjepa",
  "clap",
  "rand 0.9.5",
@@ -1325,6 +1360,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ca0197aee26d1ae37445ee532fefce43251d24cc7c166799f4d46817f1d3973"
 dependencies = [
  "crossbeam-utils",
+]
+
+[[package]]
+name = "console_error_panic_hook"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a06aeb73f470f66dcdbf7223caeebb85984942f22f1adb2a088cf9668146bbbc"
+dependencies = [
+ "cfg-if",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -2812,9 +2857,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "r-efi 5.3.0",
  "wasip2",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -4372,6 +4419,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "pollster"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f3a9f18d041e6d0e102a0a46750538147e5e8992d3b4873aaafee2520b00ce3"
+
+[[package]]
 name = "portable-atomic"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5121,6 +5174,17 @@ checksum = "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba"
 dependencies = [
  "serde_core",
  "serde_derive",
+]
+
+[[package]]
+name = "serde-wasm-bindgen"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8302e169f0eddcc139c70f139d19d6467353af16f9fce27e8c30158036a1e16b"
+dependencies = [
+ "js-sys",
+ "serde",
+ "wasm-bindgen",
 ]
 
 [[package]]

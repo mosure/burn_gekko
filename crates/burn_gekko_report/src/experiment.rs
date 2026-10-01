@@ -22,6 +22,12 @@ pub struct EfficiencyEvidence {
     pub telemetry: PinnedFile,
     pub command: String,
 }
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct InteractiveDemo {
+    pub url: String,
+    pub checkpoint_sha256: String,
+}
 /// Intentionally singular: private candidate-vs-candidate publishing is not supported.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -30,6 +36,8 @@ pub struct Experiment {
     pub id: String,
     pub title: String,
     pub author: String,
+    #[serde(default)]
+    pub demo: Option<InteractiveDemo>,
     pub description: String,
     pub architecture: String,
     pub run: PathBuf,

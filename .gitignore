@@ -2,3 +2,8 @@
 **/target/
 __pycache__/
 *.pyc
+**/node_modules/
+# Deploy generated modules and model parts from .data/, never from Git.
+/www/demo/viewer/
+/www/demo/inference/
+/www/demo/models/

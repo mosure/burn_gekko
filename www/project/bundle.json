@@ -3,9 +3,9 @@
   "experiment_id": "head-stability15",
   "files": [
     {
-      "bytes": 6874,
+      "bytes": 7019,
       "file": "experiment.toml",
-      "sha256": "3852c36db679759d884266f9823b2812f9fb06615f64220fe4e61c27e4cf5842"
+      "sha256": "71c5ef8878a3a0284b2c3cc2b562de86fa1d285e8a5daf2550c5e76b6d33bbcc"
     },
     {
       "bytes": 757,
@@ -13,9 +13,9 @@
       "sha256": "d43f3d9ebc49c5c72862b7723c1fb7b8c976ade45789df1bfab70ca4997001ba"
     },
     {
-      "bytes": 88705,
+      "bytes": 88799,
       "file": "index.html",
-      "sha256": "8b7e1ec6e6857369be647682e3b2fc943b37e1ddf27bcfb052d64acfc6b30c87"
+      "sha256": "1431b4597a9fec1385b4c21ff263da27863ff5cd16140861fc7ff828ff540448"
     },
     {
       "bytes": 215988,
@@ -573,24 +573,24 @@
       "sha256": "b4b81f0d50339667b0767f027b5bc012135a4ff3ca94af1f47366cc0a769c4c7"
     },
     {
-      "bytes": 16239,
+      "bytes": 16494,
       "file": "paper-build-1.log",
-      "sha256": "932109778f7abdd96721697eb4cdfc752ae6dab6301a859bc62e9c4485f4d740"
+      "sha256": "dc4e2c6ac15c9362ae3f0de1c25fa1973e04306d8876082a3723e16cee92a82e"
     },
     {
-      "bytes": 15652,
+      "bytes": 15906,
       "file": "paper-build-2.log",
-      "sha256": "05ced09bd6e06c0220412346d425ffaf3cfe6446ba2e8dd0e9c47b426100b84b"
+      "sha256": "3d38a927216a45176311192baf73c1c63f413c30b4df4cfbcfcb5e295cdd8e8c"
     },
     {
-      "bytes": 5766911,
+      "bytes": 5767712,
       "file": "paper.pdf",
-      "sha256": "c4e17a305cc2489134c1d68ee77fff8886e908f15aab492e590ee062d52d9d39"
+      "sha256": "11fe461e33f0d822e5742355d2566f68415a4cb0a219b8b63f017e0f369217c8"
     },
     {
-      "bytes": 67477,
+      "bytes": 68015,
       "file": "paper.tex",
-      "sha256": "4c0f3d9f09423793fe0d9e61fb190d4b4275fffde228071360be096f0d43f86b"
+      "sha256": "c7c5e459fed1b02f48e5533597de5ff4730cf201d29a448fb68d4c5b560c3a74"
     },
     {
       "bytes": 13823956,

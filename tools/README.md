@@ -6,6 +6,7 @@ Do not add another study-specific Python report here.
 | Directory | Purpose |
 | --- | --- |
 | `zeroverse_capture/` | Isolated Rust/Bevy capture process and lockfile; published generator dependencies |
+| `demo/` | Static WASM packaging and headed Playwright browser verification; inference and scoring stay in Rust |
 | `interop/` | Audited encoder import/parity and optional public Gekko baseline bridges |
 | `study/` | Existing bounded process runner, shared budget ledger and GPU telemetry |
 | `legacy/` | Historical analysis/report scripts retained for artifact reproducibility; not the active reporting API |

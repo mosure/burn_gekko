@@ -22,6 +22,9 @@ accuracy have separate qualification gates.
 | [`burn_gekko_train`](crates/burn_gekko_train) | Trainers, optimizers, checkpoint ancestry, Burn assessment and prediction exports |
 | [`burn_gekko_eval`](crates/burn_gekko_eval) | Native metrics, camera protocols, benchmark scoring, uncertainty and efficiency |
 | [`burn_gekko_report`](crates/burn_gekko_report) | One-experiment project page, annotated figures, LaTeX and PDF |
+| [`burn_gekko_metrics`](crates/burn_gekko_metrics) | Portable camera and RGB metric contracts shared by scoring and the viewer |
+| [`burn_gekko_inference`](crates/burn_gekko_inference) | Verified model bundles, preprocessing and asynchronous native/WebGPU prediction |
+| [`bevy_gekko`](crates/bevy_gekko) | Isolated Bevy 0.19 / Zeroverse 0.26 live demo, camera editor and local image uploads |
 
 The model library has no CLI, renderer or dataset-reader dependency. Scoring and
 reporting need neither a GPU nor Python. Capture keeps its [isolated Bevy
@@ -30,6 +33,15 @@ remaining import/parity and process-monitor bridges are described in
 [tools/README.md](tools/README.md).
 
 ## Install
+
+[Project and paper](https://mosure.github.io/burn_gekko/project/) ·
+[Live multi-view demo](https://mosure.github.io/burn_gekko/demo/)
+
+The [demo guide](crates/bevy_gekko/README.md) covers native startup, browser builds,
+camera placement, local image uploads and reproducible verification. The demo
+uses the same foundation and attached head weights as the current project page.
+Its newly rendered Zeroverse 0.26 scenes are separate from the historical training
+dataset and fixed evaluation cohorts.
 
 All crates start at version **0.1.0**, using Rust 1.98 and Burn 0.21.
 

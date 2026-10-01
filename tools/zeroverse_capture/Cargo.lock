@@ -2671,6 +2671,7 @@ name = "burn_gekko_data"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "burn_gekko_metrics",
  "image",
  "safetensors 0.7.0",
  "serde",
@@ -2678,6 +2679,14 @@ dependencies = [
  "sha2",
  "toml",
  "zstd 0.13.3",
+]
+
+[[package]]
+name = "burn_gekko_metrics"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde",
 ]
 
 [[package]]
